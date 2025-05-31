@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="'Factura ' + ${venta.numeroFactura} + ' - Boutique Uniformes'">Factura - Boutique Uniformes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos para pantalla */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            padding: 2rem 0;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .invoice-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .invoice-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            pointer-events: none;
+        }
+        
+        .invoice-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .invoice-body {
+            padding: 2rem;
+        }
+        
+        .invoice-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .invoice-date {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .info-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4f46e5;
+        }
+        
+        .info-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .info-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #6b7280;
+            display: inline-block;
+            width: 100px;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        .products-table {
+            margin: 2rem 0;
+        }
+        
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .table thead th {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 1rem 0.75rem;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .table tbody td {
+            padding: 1rem 0.75rem;
+            border-color: #f1f5f9;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .product-code {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .quantity-badge {
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .price-cell {
+            text-align: right;
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .totals-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .total-row:last-child {
+            border-bottom: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+            background: white;
+            margin: 0 -1.5rem -1.5rem;
+            padding: 1.5rem;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .total-label {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .total-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .payment-info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .payment-title {
+            color: #0369a1;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-title i {
+            margin-right: 0.5rem;
+        }
+        
+        .footer-info {
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .contact-item i {
+            margin-right: 0.5rem;
+            color: #4f46e5;
+        }
+        
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: #1e293b;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .print-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .print-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .print-btn:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+        
+        .print-btn.secondary {
+            background: #6b7280;
+        }
+        
+        .print-btn.secondary:hover {
+            background: #4b5563;
+        }
+        
+        /* Estilos para impresión */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                font-size: 12pt;
+                line-height: 1.4;
+            }
+            
+            .invoice-container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
+            
+            .print-controls {
+                display: none !important;
+            }
+            
+            .invoice-header {
+                background: #4f46e5 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .table thead th {
+                background: #4f46e5 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .footer-info {
+                background: #1e293b !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .invoice-header,
+            .invoice-body {
+                padding: 1.5rem;
+            }
+            
+            .invoice-number {
+                font-size: 1.5rem;
+            }
+            
+            .contact-info {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .print-controls {
+                position: relative;
+                top: auto;
+                right: auto;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Controles de impresión -->
+    <div class="print-controls no-print">
+        <button class="print-btn" onclick="window.print()" title="Imprimir Factura">
+            <i class="fas fa-print"></i>
+        </button>
+        <button class="print-btn secondary" onclick="descargarPDF()" title="Descargar PDF">
+            <i class="fas fa-download"></i>
+        </button>
+        <button class="print-btn secondary" onclick="window.close()" title="Cerrar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="invoice-container">
+        <!-- Header de la factura -->
+        <div class="invoice-header">
+            <div class="invoice-content">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <div class="company-logo me-4">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div>
+                                <h1 class="mb-2 fw-bold">Boutique Uniformes</h1>
+                                <p class="mb-0 opacity-90">Uniformes Escolares y Empresariales</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="invoice-number" th:text="${venta.numeroFactura}">FAC-001234</div>
+                        <div class="invoice-date">
+                            <i class="fas fa-calendar me-2"></i>
+                            <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuerpo de la factura -->
+        <div class="invoice-body">
+            <!-- Información de la empresa y cliente -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <div class="info-title">
+                            <i class="fas fa-building me-2"></i>
+                            Información de la Empresa
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Empresa:</span>
+                            <span class="info-value">Boutique Uniformes S.A.S</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">NIT:</span>
+                            <span class="info-value">900.123.456-7</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dirección:</span>
+                            <span class="info-value">Calle Principal #123, Centro</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ciudad:</span>
+                            <span class="info-value">Bogotá, Colombia</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Teléfono:</span>
+                            <span class="info-value">+57 (1) 234-5678</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <div class="info-title">
+                            <i class="fas fa-user me-2"></i>
+                            Información del Cliente
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Cliente:</span>
+                            <span class="info-value" th:text="${venta.cliente.nombreCompleto}">Nombre Cliente</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Documento:</span>
+                            <span class="info-value" th:text="${venta.cliente.documento}">12345678</span>
+                        </div>
+                        <div class="info-item" th:if="${venta.cliente.telefono}">
+                            <span class="info-label">Teléfono:</span>
+                            <span class="info-value" th:text="${venta.cliente.telefono}">123-456-7890</span>
+                        </div>
+                        <div class="info-item" th:if="${venta.cliente.email}">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" th:text="${venta.cliente.email}">email@ejemplo.com</span>
+                        </div>
+                        <div class="info-item" th:if="${venta.cliente.direccion}">
+                            <span class="info-label">Dirección:</span>
+                            <span class="info-value" th:text="${venta.cliente.direccion}">Dirección del cliente</span>
+                        </div>
+                        <div class="info-item" th:if="${venta.vendedor}">
+                            <span class="info-label">Vendedor:</span>
+                            <span class="info-value" th:text="${venta.vendedor.nombreCompleto}">Vendedor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de productos -->
+            <div class="products-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">Item</th>
+                            <th style="width: 40%;">Descripción</th>
+                            <th style="width: 15%;" class="text-center">Cantidad</th>
+                            <th style="width: 15%;" class="text-end">Precio Unit.</th>
+                            <th style="width: 20%;" class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="detalle, iterStat : ${venta.detalles}">
+                            <td class="text-center">
+                                <span class="badge bg-primary" th:text="${iterStat.count}">1</span>
+                            </td>
+                            <td>
+                                <div class="product-name" th:text="${detalle.uniforme.nombre}">Producto</div>
+                                <div class="product-code" th:text="'Código: ' + ${detalle.uniforme.codigo}">Código: ABC123</div>
+                                <div th:if="${detalle.uniforme.talla}" class="mt-1">
+                                    <span class="badge bg-secondary" th:text="'Talla: ' + ${detalle.uniforme.talla}">Talla: M</span>
+                                    <span th:if="${detalle.uniforme.color}" class="badge bg-info" th:text="'Color: ' + ${detalle.uniforme.color}">Color: Azul</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="quantity-badge" th:text="${detalle.cantidad}">1</span>
+                            </td>
+                            <td class="price-cell" th:text="${#numbers.formatCurrency(detalle.precioUnitario)}">$50.000</td>
+                            <td class="price-cell" th:text="${#numbers.formatCurrency(detalle.subtotal)}">$50.000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totales -->
+            <div class="row justify-content-end">
+                <div class="col-md-6">
+                    <div class="totals-section">
+                        <div class="total-row">
+                            <span class="total-label">Subtotal:</span>
+                            <span class="total-value" th:text="${#numbers.formatCurrency(venta.subtotal)}">$150.000</span>
+                        </div>
+                        
+                        <div class="total-row" th:if="${venta.descuento > 0}">
+                            <span class="total-label">
+                                Descuento:
+                                <small class="text-muted" th:text="'(' + ${#numbers.formatPercent(venta.descuento / venta.subtotal)} + ')'"></small>
+                            </span>
+                            <span class="total-value text-danger">-<span th:text="${#numbers.formatCurrency(venta.descuento)}">$0</span></span>
+                        </div>
+                        
+                        <div class="total-row">
+                            <span class="total-label">IVA (19%):</span>
+                            <span class="total-value" th:text="${#numbers.formatCurrency(venta.impuesto)}">$28.500</span>
+                        </div>
+                        
+                        <div class="total-row">
+                            <span class="total-label">TOTAL A PAGAR:</span>
+                            <span class="total-value" th:text="${#numbers.formatCurrency(venta.total)}">$178.500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de pago -->
+            <div class="payment-info">
+                <div class="payment-title">
+                    <i class="fas fa-credit-card"></i>
+                    Información de Pago
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <strong>Estado del Pago:</strong>
+                            <span th:switch="${venta.estado}" class="ms-2">
+                                <span th:case="'COMPLETADA'" class="badge bg-success">Pagado</span>
+                                <span th:case="'PENDIENTE'" class="badge bg-warning">Pendiente</span>
+                                <span th:case="'CANCELADA'" class="badge bg-danger">Cancelado</span>
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Método de Pago:</strong>
+                            <span class="ms-2" th:text="${venta.metodoPago ?: 'Efectivo'}">Efectivo</span>
+                        </div>
+                        <div th:if="${venta.observaciones}">
+                            <strong>Observaciones:</strong>
+                            <div class="mt-1 text-muted" th:text="${venta.observaciones}">Observaciones de la venta</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="qr-code">
+                            <div>
+                                <i class="fas fa-qrcode fa-2x mb-2"></i>
+                                <div>Código QR</div>
+                                <small>Verificación</small>
+                            </div>
+                        </div>
+                        <small class="text-muted">Escanea para verificar la factura</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Términos y condiciones -->
+            <div class="mt-4">
+                <h6 class="fw-bold mb-3">Términos y Condiciones:</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="small text-muted">
+                            <li>Los cambios se realizan únicamente con la factura original</li>
+                            <li>Plazo máximo para cambios: 8 días calendario</li>
+                            <li>Los productos deben estar en perfecto estado</li>
+                            <li>No se aceptan devoluciones de productos personalizados</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="small text-muted">
+                            <li>Garantía de 30 días por defectos de fabricación</li>
+                            <li>Conserve esta factura como comprobante de compra</li>
+                            <li>Para reclamos contacte nuestro servicio al cliente</li>
+                            <li>Horario de atención: Lunes a Viernes 8:00 AM - 6:00 PM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-info">
+            <div class="footer-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+57 (1) 234-5678</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@boutiqueuniformes.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-globe"></i>
+                        <span>www.boutiqueuniformes.com</span>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="mb-2">¡Gracias por su compra!</p>
+                    <p class="mb-0 small opacity-75">
+                        Esta factura fue generada electrónicamente el 
+                        <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function descargarPDF() {
+            // Ocultar controles antes de generar PDF
+            const controls = document.querySelector('.print-controls');
+            controls.style.display = 'none';
+            
+            // Simular descarga de PDF
+            showNotification('Generando PDF...', 'info');
+            
+            setTimeout(() => {
+                // Aquí implementarías la generación real del PDF
+                // Por ejemplo, usando jsPDF o enviando a un endpoint del servidor
+                const facturaNumero = /*[[${venta.numeroFactura}]]*/ 'FAC-001234';
+                
+                // Crear enlace de descarga simulado
+                const link = document.createElement('a');
+                link.href = `/ventas/pdf/${/*[[${venta.id}]]*/ 1}`;
+                link.download = `Factura_${facturaNumero}.pdf`;
+                link.click();
+                
+                showNotification('PDF descargado exitosamente', 'success');
+                
+                // Mostrar controles nuevamente
+                controls.style.display = 'flex';
+            }, 2000);
+        }
+        
+        function showNotification(message, type) {
+            // Crear notificación temporal
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} position-fixed`;
+            notification.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle me-2"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Auto-imprimir si se especifica en la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('print') === 'true') {
+                setTimeout(() => {
+                    window.print();
+                }, 1000);
+            }
+            
+            // Animación de entrada
+            const container = document.querySelector('.invoice-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.8s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+        
+        // Atajos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+            
+            if (e.key === 'Escape') {
+                window.close();
+            }
+        });
+        
+        // Detectar cuando se imprime
+        window.addEventListener('beforeprint', function() {
+            console.log('Preparando para imprimir...');
+        });
+        
+        window.addEventListener('afterprint', function() {
+            console.log('Impresión completada');
+        });
+    </script>
+</body>
+</html>

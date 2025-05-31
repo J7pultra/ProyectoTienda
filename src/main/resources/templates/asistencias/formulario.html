@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="#{asistencias.registrar} + ' - Boutique Uniformes'">Registrar Asistencia - Boutique Uniformes</title>
+</head>
+<body>
+    <main th:fragment="content" class="fade-in">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-white rounded shadow-sm p-3">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/dashboard}" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/asistencias}" class="text-decoration-none" th:text="#{nav.asistencias}">Asistencias</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="#{asistencias.registrar}">Registrar</li>
+            </ol>
+        </nav>
+
+        <!-- Header del formulario -->
+        <div class="form-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="form-title">
+                        <i class="fas fa-user-clock me-3 text-primary"></i>
+                        <span th:text="#{asistencias.registrar}">Registrar Asistencia</span>
+                    </h1>
+                    <p class="form-subtitle text-muted mb-0" th:text="#{asistencias.registrar.descripcion}">
+                        Registra la asistencia de un empleado para el día actual
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="current-datetime">
+                        <div class="current-time" id="currentTime">
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'HH:mm:ss')}">10:30:45</span>
+                        </div>
+                        <div class="current-date">
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">01/01/2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de registro -->
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            <span th:text="#{asistencias.datos.registro}">Datos del Registro</span>
+                        </h6>
+                    </div>
+                    
+                    <div class="card-body">
+                        <form th:action="@{/asistencias/guardar}" method="post" th:object="${asistencia}" 
+                              id="asistenciaForm" class="needs-validation" novalidate>
+                            
+                            <!-- ID oculto para edición -->
+                            <input type="hidden" th:field="*{id}">
+                            
+                            <!-- Sección: Información del Empleado -->
+                            <div class="form-section mb-4">
+                                <h5 class="section-title">
+                                    <i class="fas fa-user me-2"></i>
+                                    <span th:text="#{asistencias.info.empleado}">Información del Empleado</span>
+                                </h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        <label for="empleadoId" class="form-label required" th:text="#{form.empleado}">Empleado</label>
+                                        <select class="form-select" id="empleadoId" th:field="*{empleado.id}" required>
+                                            <option value="" th:text="#{form.seleccionar.empleado}">Seleccionar empleado...</option>
+                                            <option th:each="emp : ${empleados}" th:value="${emp.id}" 
+                                                    th:text="${emp.nombreCompleto + ' - ' + emp.cargo}">
+                                                Empleado - Cargo
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('empleado')}" th:errors="*{empleado}">
+                                            Error en empleado
+                                        </div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('empleado')}">
+                                            <span th:text="#{validation.empleado.requerido}">Debe seleccionar un empleado</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="fecha" class="form-label required" th:text="#{form.fecha}">Fecha</label>
+                                        <input type="date" class="form-control" id="fecha" th:field="*{fecha}" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}">
+                                            Error en fecha
+                                        </div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('fecha')}">
+                                            <span th:text="#{validation.fecha.requerida}">La fecha es requerida</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Información del empleado seleccionado -->
+                                <div id="empleadoInfo" class="employee-info" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <strong th:text="#{form.cargo}">Cargo:</strong>
+                                                <span id="empleadoCargo">-</span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong th:text="#{form.documento}">Documento:</strong>
+                                                <span id="empleadoDocumento">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sección: Horarios -->
+                            <div class="form-section mb-4">
+                                <h5 class="section-title">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span th:text="#{asistencias.horarios}">Horarios</span>
+                                </h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="horaEntrada" class="form-label" th:text="#{form.hora.entrada}">Hora de Entrada</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </span>
+                                            <input type="time" class="form-control" id="horaEntrada" th:field="*{horaEntrada}">
+                                            <button type="button" class="btn btn-outline-primary" onclick="marcarHoraActual('entrada')">
+                                                <i class="fas fa-clock me-1"></i>
+                                                <span th:text="#{btn.ahora}">Ahora</span>
+                                            </button>
+                                        </div>
+                                        <div class="form-text" th:text="#{form.hora.entrada.ayuda}">
+                                            Hora en que el empleado ingresó al trabajo
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="horaSalida" class="form-label" th:text="#{form.hora.salida}">Hora de Salida</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </span>
+                                            <input type="time" class="form-control" id="horaSalida" th:field="*{horaSalida}">
+                                            <button type="button" class="btn btn-outline-primary" onclick="marcarHoraActual('salida')">
+                                                <i class="fas fa-clock me-1"></i>
+                                                <span th:text="#{btn.ahora}">Ahora</span>
+                                            </button>
+                                        </div>
+                                        <div class="form-text" th:text="#{form.hora.salida.ayuda}">
+                                            Hora en que el empleado salió del trabajo (opcional)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Calculadora de horas trabajadas -->
+                                <div class="hours-calculator">
+                                    <div class="alert alert-light">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-8">
+                                                <strong th:text="#{asistencias.horas.trabajadas}">Horas Trabajadas:</strong>
+                                                <span id="horasTrabajadas" class="fs-5 text-primary">-</span>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="calcularHoras()">
+                                                    <i class="fas fa-calculator me-1"></i>
+                                                    <span th:text="#{btn.calcular}">Calcular</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sección: Estado y Observaciones -->
+                            <div class="form-section mb-4">
+                                <h5 class="section-title">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <span th:text="#{asistencias.estado.observaciones}">Estado y Observaciones</span>
+                                </h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="estado" class="form-label required" th:text="#{form.estado}">Estado</label>
+                                        <select class="form-select" id="estado" th:field="*{estado}" required>
+                                            <option value="" th:text="#{form.seleccionar.estado}">Seleccionar estado...</option>
+                                            <option value="PRESENTE" th:text="#{status.presente}">Presente</option>
+                                            <option value="AUSENTE" th:text="#{status.ausente}">Ausente</option>
+                                            <option value="TARDANZA" th:text="#{status.tardanza}">Tardanza</option>
+                                            <option value="PERMISO" th:text="#{status.permiso}">Permiso</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}">
+                                            Error en estado
+                                        </div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('estado')}">
+                                            <span th:text="#{validation.estado.requerido}">Debe seleccionar un estado</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="observaciones" class="form-label" th:text="#{form.observaciones}">Observaciones</label>
+                                    <textarea class="form-control" id="observaciones" th:field="*{observaciones}" rows="3"
+                                              th:placeholder="#{form.observaciones.placeholder}" 
+                                              placeholder="Comentarios adicionales sobre la asistencia..."></textarea>
+                                    <div class="form-text" th:text="#{form.observaciones.ayuda}">
+                                        Información adicional sobre la asistencia (motivo de tardanza, permiso, etc.)
+                                    </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('observaciones')}" th:errors="*{observaciones}">
+                                        Error en observaciones
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-success btn-lg w-100" id="btnGuardar">
+                                            <i class="fas fa-save me-2"></i>
+                                            <span th:text="#{btn.registrar.asistencia}">Registrar Asistencia</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a th:href="@{/asistencias}" class="btn btn-outline-secondary btn-lg w-100">
+                                            <i class="fas fa-times me-2"></i>
+                                            <span th:text="#{btn.cancelar}">Cancelar</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta de ayuda -->
+                <div class="card shadow mt-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-question-circle me-2"></i>
+                            <span th:text="#{asistencias.ayuda}">Ayuda</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 th:text="#{asistencias.estados.disponibles}">Estados Disponibles:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <span class="badge bg-success me-2" th:text="#{status.presente}">Presente</span>
+                                        <span th:text="#{asistencias.estado.presente.desc}">El empleado asistió normalmente</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <span class="badge bg-danger me-2" th:text="#{status.ausente}">Ausente</span>
+                                        <span th:text="#{asistencias.estado.ausente.desc}">El empleado no asistió</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <span class="badge bg-warning me-2" th:text="#{status.tardanza}">Tardanza</span>
+                                        <span th:text="#{asistencias.estado.tardanza.desc}">El empleado llegó tarde</span>
+                                    </li>
+                                    <li>
+                                        <span class="badge bg-info me-2" th:text="#{status.permiso}">Permiso</span>
+                                        <span th:text="#{asistencias.estado.permiso.desc}">El empleado tiene permiso autorizado</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 th:text="#{asistencias.consejos}">Consejos:</h6>
+                                <ul class="small text-muted">
+                                    <li th:text="#{asistencias.consejo.1}">Usa el botón "Ahora" para marcar la hora actual</li>
+                                    <li th:text="#{asistencias.consejo.2}">Las observaciones son útiles para justificar tardanzas o ausencias</li>
+                                    <li th:text="#{asistencias.consejo.3}">Puedes registrar solo la entrada y marcar la salida después</li>
+                                    <li th:text="#{asistencias.consejo.4}">El sistema calcula automáticamente las horas trabajadas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CSS específico -->
+    <th:block th:fragment="css">
+        <style>
+            .form-header {
+                background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(79, 70, 229, 0.1);
+            }
+            
+            .form-title {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 0.5rem;
+            }
+            
+            .current-datetime {
+                text-align: center;
+                background: rgba(79, 70, 229, 0.1);
+                border-radius: 12px;
+                padding: 1rem;
+            }
+            
+            .current-time {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #4f46e5;
+                font-family: 'Courier New', monospace;
+                margin-bottom: 0.25rem;
+            }
+            
+            .current-date {
+                font-size: 1rem;
+                color: #6b7280;
+                font-weight: 500;
+            }
+            
+            .form-section {
+                border-bottom: 1px solid #f1f5f9;
+                padding-bottom: 1.5rem;
+            }
+            
+            .form-section:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .section-title {
+                color: #4f46e5;
+                font-weight: 600;
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #e5e7eb;
+                display: flex;
+                align-items: center;
+            }
+            
+            .form-label.required::after {
+                content: ' *';
+                color: #ef4444;
+                font-weight: bold;
+            }
+            
+            .form-control, .form-select {
+                border-radius: 8px;
+                border: 2px solid #e5e7eb;
+                padding: 0.75rem 1rem;
+                transition: all 0.3s ease;
+            }
+            
+            .form-control:focus, .form-select:focus {
+                border-color: #4f46e5;
+                box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+            }
+            
+            .input-group-text {
+                background: #f8fafc;
+                border: 2px solid #e5e7eb;
+                border-right: none;
+                color: #6b7280;
+            }
+            
+            .input-group .form-control {
+                border-left: none;
+                border-right: none;
+            }
+            
+            .input-group:focus-within .input-group-text {
+                border-color: #4f46e5;
+                background: rgba(79, 70, 229, 0.05);
+                color: #4f46e5;
+            }
+            
+            .employee-info {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 1rem;
+                margin-top: 1rem;
+                border: 1px solid #e5e7eb;
+            }
+            
+            .hours-calculator {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 1rem;
+                border: 1px solid #e5e7eb;
+            }
+            
+            .form-actions {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 2rem;
+                margin-top: 2rem;
+            }
+            
+            .form-text {
+                font-size: 0.8rem;
+                color: #6b7280;
+                margin-top: 0.25rem;
+            }
+            
+            @media (max-width: 768px) {
+                .form-title {
+                    font-size: 1.75rem;
+                }
+                
+                .form-header {
+                    padding: 1.5rem;
+                }
+                
+                .current-time {
+                    font-size: 1.5rem;
+                }
+                
+                .form-actions .row > div {
+                    margin-bottom: 1rem;
+                }
+            }
+        </style>
+    </th:block>
+
+    <!-- JavaScript específico -->
+    <th:block th:fragment="scripts">
+        <script>
+            // Actualizar reloj en tiempo real
+            function updateClock() {
+                const now = new Date();
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.textContent = now.toLocaleTimeString('es-ES');
+                }
+            }
+            
+            setInterval(updateClock, 1000);
+            
+            function marcarHoraActual(tipo) {
+                const now = new Date();
+                const timeString = now.toTimeString().slice(0, 5); // HH:MM
+                
+                if (tipo === 'entrada') {
+                    document.getElementById('horaEntrada').value = timeString;
+                } else if (tipo === 'salida') {
+                    document.getElementById('horaSalida').value = timeString;
+                }
+                
+                calcularHoras();
+                showNotification(`Hora de ${tipo} marcada: ${timeString}`, 'success');
+            }
+            
+            function calcularHoras() {
+                const entrada = document.getElementById('horaEntrada').value;
+                const salida = document.getElementById('horaSalida').value;
+                const horasElement = document.getElementById('horasTrabajadas');
+                
+                if (entrada && salida) {
+                    const [horaE, minE] = entrada.split(':').map(Number);
+                    const [horaS, minS] = salida.split(':').map(Number);
+                    
+                    const entradaMinutos = horaE * 60 + minE;
+                    const salidaMinutos = horaS * 60 + minS;
+                    
+                    if (salidaMinutos > entradaMinutos) {
+                        const totalMinutos = salidaMinutos - entradaMinutos;
+                        const horas = Math.floor(totalMinutos / 60);
+                        const minutos = totalMinutos % 60;
+                        
+                        horasElement.textContent = `${horas}h ${minutos}m`;
+                        horasElement.className = 'fs-5 text-success';
+                    } else {
+                        horasElement.textContent = 'Hora de salida debe ser posterior a la entrada';
+                                                horasElement.className = 'fs-5 text-danger';
+                    }
+                } else {
+                    horasElement.textContent = '-';
+                    horasElement.className = 'fs-5 text-muted';
+                }
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('asistenciaForm');
+                const empleadoSelect = document.getElementById('empleadoId');
+                const fechaInput = document.getElementById('fecha');
+                const estadoSelect = document.getElementById('estado');
+                const horaEntradaInput = document.getElementById('horaEntrada');
+                const horaSalidaInput = document.getElementById('horaSalida');
+                
+                // Establecer fecha actual por defecto
+                if (!fechaInput.value) {
+                    fechaInput.value = new Date().toISOString().split('T')[0];
+                }
+                
+                // Mostrar información del empleado seleccionado
+                empleadoSelect.addEventListener('change', function() {
+                    const empleadoId = this.value;
+                    if (empleadoId) {
+                        loadEmpleadoInfo(empleadoId);
+                        checkExistingAttendance(empleadoId, fechaInput.value);
+                    } else {
+                        hideEmpleadoInfo();
+                    }
+                });
+                
+                // Verificar asistencia existente al cambiar fecha
+                fechaInput.addEventListener('change', function() {
+                    const empleadoId = empleadoSelect.value;
+                    if (empleadoId) {
+                        checkExistingAttendance(empleadoId, this.value);
+                    }
+                });
+                
+                // Auto-calcular horas al cambiar horarios
+                horaEntradaInput.addEventListener('change', calcularHoras);
+                horaSalidaInput.addEventListener('change', calcularHoras);
+                
+                // Auto-seleccionar estado basado en horarios
+                horaEntradaInput.addEventListener('change', function() {
+                    autoSelectEstado();
+                });
+                
+                // Validación del formulario
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        const firstInvalid = form.querySelector(':invalid');
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    } else {
+                        // Mostrar loading en el botón
+                        const btnGuardar = document.getElementById('btnGuardar');
+                        btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Registrando...';
+                        btnGuardar.disabled = true;
+                    }
+                    
+                    form.classList.add('was-validated');
+                });
+                
+                // Animación de entrada
+                const card = document.querySelector('.card');
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            });
+            
+            function loadEmpleadoInfo(empleadoId) {
+                fetch(`/api/empleados/${empleadoId}`)
+                    .then(response => response.json())
+                    .then(empleado => {
+                        document.getElementById('empleadoCargo').textContent = empleado.cargo || '-';
+                        document.getElementById('empleadoDocumento').textContent = empleado.documento || '-';
+                        document.getElementById('empleadoInfo').style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error cargando información del empleado:', error);
+                        hideEmpleadoInfo();
+                    });
+            }
+            
+            function hideEmpleadoInfo() {
+                document.getElementById('empleadoInfo').style.display = 'none';
+            }
+            
+            function checkExistingAttendance(empleadoId, fecha) {
+                fetch(`/api/asistencias/check?empleadoId=${empleadoId}&fecha=${fecha}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            Swal.fire({
+                                title: 'Asistencia Existente',
+                                text: `Ya existe un registro de asistencia para este empleado en la fecha ${fecha}`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ver Registro',
+                                cancelButtonText: 'Continuar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = `/asistencias/ver/${data.asistenciaId}`;
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verificando asistencia:', error);
+                    });
+            }
+            
+            function autoSelectEstado() {
+                const horaEntrada = document.getElementById('horaEntrada').value;
+                const estadoSelect = document.getElementById('estado');
+                
+                if (horaEntrada && !estadoSelect.value) {
+                    const [hora, minuto] = horaEntrada.split(':').map(Number);
+                    const entradaMinutos = hora * 60 + minuto;
+                    const horaLimite = 8 * 60 + 30; // 8:30 AM
+                    
+                    if (entradaMinutos <= horaLimite) {
+                        estadoSelect.value = 'PRESENTE';
+                    } else {
+                        estadoSelect.value = 'TARDANZA';
+                    }
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

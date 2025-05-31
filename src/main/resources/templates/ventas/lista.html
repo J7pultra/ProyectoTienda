@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="#{title.ventas}">Gestión de Ventas - Boutique Uniformes</title>
+</head>
+<body>
+    <main th:fragment="content" class="fade-in">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-white rounded shadow-sm p-3">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/dashboard}" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="#{nav.ventas}">Ventas</li>
+            </ol>
+        </nav>
+
+        <!-- Header de la página -->
+        <div class="page-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="page-title">
+                        <i class="fas fa-shopping-cart me-3 text-primary"></i>
+                        <span th:text="#{title.ventas}">Gestión de Ventas</span>
+                    </h1>
+                    <p class="page-subtitle text-muted mb-0" th:text="#{ventas.descripcion}">
+                        Administra todas las ventas y transacciones de la boutique
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a th:href="@{/ventas/nueva}" class="btn btn-success btn-lg" 
+                       sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                        <i class="fas fa-plus me-2"></i>
+                        <span th:text="#{btn.nueva.venta}">Nueva Venta</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card bg-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" th:text="${#numbers.formatCurrency(ventasHoy ?: 0)}">$0</div>
+                        <div class="stat-label" th:text="#{stat.ventas.hoy}">Ventas Hoy</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card bg-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" th:text="${totalVentas ?: 0}">0</div>
+                        <div class="stat-label" th:text="#{stat.total.ventas}">Total Ventas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card bg-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" th:text="${#numbers.formatCurrency(ventasMes ?: 0)}">$0</div>
+                        <div class="stat-label" th:text="#{stat.ventas.mes}">Ventas del Mes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card bg-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" th:text="${ventasPendientes ?: 0}">0</div>
+                        <div class="stat-label" th:text="#{stat.ventas.pendientes}">Pendientes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form th:action="@{/ventas}" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="buscar" class="form-label" th:text="#{form.buscar}">Buscar</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="buscar" name="buscar" 
+                                   th:value="${buscar}" th:placeholder="#{ventas.buscar.placeholder}"
+                                   placeholder="Número de factura, cliente...">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="estado" class="form-label" th:text="#{form.estado}">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="" th:text="#{filter.todos}">Todos</option>
+                            <option value="COMPLETADA" th:selected="${estado == 'COMPLETADA'}" th:text="#{status.completada}">Completada</option>
+                            <option value="PENDIENTE" th:selected="${estado == 'PENDIENTE'}" th:text="#{status.pendiente}">Pendiente</option>
+                            <option value="CANCELADA" th:selected="${estado == 'CANCELADA'}" th:text="#{status.cancelada}">Cancelada</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="fechaInicio" class="form-label" th:text="#{form.fecha.inicio}">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" 
+                               th:value="${fechaInicio}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="fechaFin" class="form-label" th:text="#{form.fecha.fin}">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fechaFin" name="fechaFin" 
+                               th:value="${fechaFin}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="ordenar" class="form-label" th:text="#{form.ordenar}">Ordenar por</label>
+                        <select class="form-select" id="ordenar" name="sortBy">
+                            <option value="fechaVenta" th:selected="${sortBy == 'fechaVenta'}" 
+                                    th:text="#{sort.fecha}">Fecha</option>
+                            <option value="numeroFactura" th:selected="${sortBy == 'numeroFactura'}" 
+                                    th:text="#{sort.factura}">Factura</option>
+                            <option value="total" th:selected="${sortBy == 'total'}" 
+                                    th:text="#{sort.total}">Total</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-1 d-flex align-items-end">
+                        <div class="btn-group w-100" role="group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <a th:href="@{/ventas}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla de ventas -->
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-list me-2"></i>
+                    <span th:text="#{ventas.lista}">Lista de Ventas</span>
+                    <span class="badge bg-primary ms-2" th:text="${ventas.totalElements}">0</span>
+                </h6>
+                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="exportarVentas()">
+                        <i class="fas fa-file-excel me-1"></i>
+                        <span th:text="#{btn.exportar}">Exportar</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="imprimirLista()">
+                        <i class="fas fa-print me-1"></i>
+                        <span th:text="#{btn.imprimir}">Imprimir</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="generarReporte()">
+                        <i class="fas fa-chart-bar me-1"></i>
+                        <span th:text="#{btn.reporte}">Reporte</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="ventasTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">
+                                    <a th:href="@{/ventas(sortBy='numeroFactura', sortDir=${reverseSortDir}, buscar=${buscar})}" 
+                                       class="text-decoration-none text-dark">
+                                        <span th:text="#{table.factura}">Factura</span>
+                                        <i class="fas fa-sort ms-1" th:if="${sortBy != 'numeroFactura'}"></i>
+                                        <i class="fas fa-sort-up ms-1" th:if="${sortBy == 'numeroFactura' and sortDir == 'asc'}"></i>
+                                        <i class="fas fa-sort-down ms-1" th:if="${sortBy == 'numeroFactura' and sortDir == 'desc'}"></i>
+                                    </a>
+                                </th>
+                                <th scope="col" th:text="#{table.cliente}">Cliente</th>
+                                <th scope="col" th:text="#{table.vendedor}">Vendedor</th>
+                                <th scope="col">
+                                    <a th:href="@{/ventas(sortBy='fechaVenta', sortDir=${reverseSortDir}, buscar=${buscar})}" 
+                                       class="text-decoration-none text-dark">
+                                        <span th:text="#{table.fecha}">Fecha</span>
+                                        <i class="fas fa-sort ms-1" th:if="${sortBy != 'fechaVenta'}"></i>
+                                        <i class="fas fa-sort-up ms-1" th:if="${sortBy == 'fechaVenta' and sortDir == 'asc'}"></i>
+                                        <i class="fas fa-sort-down ms-1" th:if="${sortBy == 'fechaVenta' and sortDir == 'desc'}"></i>
+                                    </a>
+                                </th>
+                                <th scope="col" th:text="#{table.productos}">Productos</th>
+                                <th scope="col">
+                                    <a th:href="@{/ventas(sortBy='total', sortDir=${reverseSortDir}, buscar=${buscar})}" 
+                                       class="text-decoration-none text-dark">
+                                        <span th:text="#{table.total}">Total</span>
+                                        <i class="fas fa-sort ms-1" th:if="${sortBy != 'total'}"></i>
+                                        <i class="fas fa-sort-up ms-1" th:if="${sortBy == 'total' and sortDir == 'asc'}"></i>
+                                        <i class="fas fa-sort-down ms-1" th:if="${sortBy == 'total' and sortDir == 'desc'}"></i>
+                                    </a>
+                                </th>
+                                <th scope="col" th:text="#{table.estado}">Estado</th>
+                                <th scope="col" class="text-center" th:text="#{table.acciones}">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${ventas.empty}">
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted" th:text="#{ventas.no.encontradas}">No se encontraron ventas</h5>
+                                        <p class="text-muted" th:text="#{ventas.no.encontradas.descripcion}">
+                                            Intenta ajustar los filtros de búsqueda o registra una nueva venta.
+                                        </p>
+                                        <a th:href="@{/ventas/nueva}" class="btn btn-success" 
+                                           sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                                            <i class="fas fa-plus me-2"></i>
+                                            <span th:text="#{btn.nueva.venta}">Nueva Venta</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr th:each="venta : ${ventas.content}" class="venta-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="invoice-icon me-3">
+                                            <i class="fas fa-file-invoice text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${venta.numeroFactura}">FAC-001234</div>
+                                            <small class="text-muted" th:text="'ID: ' + ${venta.id}">ID: 1</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm me-3">
+                                            <div class="avatar-circle bg-info text-white">
+                                                <span th:text="${#strings.substring(venta.cliente.nombre, 0, 1) + #strings.substring(venta.cliente.apellido, 0, 1)}">AB</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${venta.cliente.nombreCompleto}">Cliente</div>
+                                            <small class="text-muted" th:text="${venta.cliente.documento}">Documento</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div th:if="${venta.vendedor}">
+                                        <div class="fw-bold" th:text="${venta.vendedor.nombreCompleto}">Vendedor</div>
+                                        <small class="text-muted" th:text="${venta.vendedor.cargo}">Cargo</small>
+                                    </div>
+                                    <span th:unless="${venta.vendedor}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}">01/01/2024</span>
+                                    <br>
+                                    <small class="text-muted" th:text="${#temporals.format(venta.fechaVenta, 'HH:mm')}">10:30</small>
+                                </td>
+                                <td>
+                                    <div class="products-summary">
+                                        <span class="badge bg-light text-dark" th:text="${venta.detalles.size()} + ' productos'">0 productos</span>
+                                        <div class="product-preview mt-1">
+                                            <small class="text-muted" th:each="detalle, iterStat : ${venta.detalles}" 
+                                                   th:if="${iterStat.index < 2}">
+                                                <span th:text="${detalle.uniforme.nombre}">Producto</span>
+                                                <span th:if="${!iterStat.last and iterStat.index < 1}">, </span>
+                                            </small>
+                                            <small th:if="${venta.detalles.size() > 2}" class="text-muted">
+                                                <span th:text="'... +' + (${venta.detalles.size()} - 2) + ' más'">... +1 más</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="total-summary">
+                                        <div class="fw-bold text-success fs-5" th:text="${#numbers.formatCurrency(venta.total)}">$150.000</div>
+                                        <small class="text-muted" th:if="${venta.descuento > 0}">
+                                            <span th:text="'Desc: ' + ${#numbers.formatCurrency(venta.descuento)}">Desc: $0</span>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:switch="${venta.estado}">
+                                        <span th:case="'COMPLETADA'" class="badge bg-success" th:text="#{status.completada}">Completada</span>
+                                        <span th:case="'PENDIENTE'" class="badge bg-warning" th:text="#{status.pendiente}">Pendiente</span>
+                                        <span th:case="'CANCELADA'" class="badge bg-danger" th:text="#{status.cancelada}">Cancelada</span>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/ventas/ver/{id}(id=${venta.id})}" 
+                                           class="btn btn-outline-info btn-sm" 
+                                           th:title="#{btn.ver.detalle}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a th:href="@{/ventas/factura/{id}(id=${venta.id})}" 
+                                           class="btn btn-outline-primary btn-sm" 
+                                           th:title="#{btn.imprimir.factura}"
+                                           target="_blank">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-success btn-sm" 
+                                                th:onclick="'duplicarVenta(' + ${venta.id} + ')'"
+                                                th:title="#{btn.duplicar}"
+                                                sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                th:onclick="'cancelarVenta(' + ${venta.id} + ')'"
+                                                th:title="#{btn.cancelar}"
+                                                th:if="${venta.estado == 'PENDIENTE'}"
+                                                sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Paginación -->
+            <div class="card-footer" th:if="${ventas.totalPages > 1}">
+                <nav aria-label="Paginación de ventas">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${ventas.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/ventas(page=0, size=${ventas.size}, sortBy=${sortBy}, sortDir=${sortDir}, buscar=${buscar})}">
+                                <i class="fas fa-angle-double-left"></i>
+                                <span th:text="#{page.primera}">Primera</span>
+                            </a>
+                        </li>
+                        
+                        <li class="page-item" th:classappend="${ventas.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/ventas(page=${ventas.number - 1}, size=${ventas.size}, sortBy=${sortBy}, sortDir=${sortDir}, buscar=${buscar})}">
+                                <i class="fas fa-angle-left"></i>
+                                <span th:text="#{page.anterior}">Anterior</span>
+                            </a>
+                        </li>
+                        
+                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, ventas.totalPages - 1)}" 
+                            th:if="${pageNum >= ventas.number - 2 and pageNum <= ventas.number + 2}"
+                            th:classappend="${pageNum == ventas.number} ? 'active'">
+                            <a class="page-link" th:href="@{/ventas(page=${pageNum}, size=${ventas.size}, sortBy=${sortBy}, sortDir=${sortDir}, buscar=${buscar})}" 
+                               th:text="${pageNum + 1}">1</a>
+                        </li>
+                        
+                        <li class="page-item" th:classappend="${ventas.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/ventas(page=${ventas.number + 1}, size=${ventas.size}, sortBy=${sortBy}, sortDir=${sortDir}, buscar=${buscar})}">
+                                <span th:text="#{page.siguiente}">Siguiente</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        
+                        <li class="page-item" th:classappend="${ventas.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/ventas(page=${ventas.totalPages - 1}, size=${ventas.size}, sortBy=${sortBy}, sortDir=${sortDir}, buscar=${buscar})}">
+                                <span th:text="#{page.ultima}">Última</span>
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <span th:text="#{page.mostrando}">Mostrando</span>
+                        <strong th:text="${ventas.numberOfElements}">10</strong>
+                        <span th:text="#{page.de}">de</span>
+                        <strong th:text="${ventas.totalElements}">100</strong>
+                        <span th:text="#{page.registros}">registros</span>
+                        | <strong th:text="${#numbers.formatCurrency(totalVentasPagina ?: 0)}">$0</strong>
+                        <span th:text="#{ventas.total.pagina}">en esta página</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CSS específico -->
+    <th:block th:fragment="css">
+        <style>
+            .page-header {
+                background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(79, 70, 229, 0.1);
+            }
+            
+            .page-title {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-card {
+                background: white;
+                border-radius: 15px;
+                padding: 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                color: white;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            }
+            
+            .stat-icon {
+                font-size: 2.5rem;
+                margin-right: 1.5rem;
+                opacity: 0.8;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 0.25rem;
+            }
+            
+            .stat-label {
+                font-size: 0.875rem;
+                opacity: 0.9;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            
+            .invoice-icon {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(79, 70, 229, 0.1);
+                border-radius: 8px;
+                font-size: 1.2rem;
+            }
+            
+            .avatar-sm {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .avatar-circle {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 0.875rem;
+            }
+            
+            .products-summary {
+                max-width: 200px;
+            }
+            
+            .product-preview {
+                max-height: 40px;
+                overflow: hidden;
+            }
+            
+            .total-summary {
+                text-align: right;
+            }
+            
+            .venta-row {
+                transition: all 0.2s ease;
+            }
+            
+            .venta-row:hover {
+                background-color: rgba(79, 70, 229, 0.02);
+                transform: translateX(2px);
+            }
+            
+            .empty-state {
+                padding: 3rem 2rem;
+            }
+            
+            .table th {
+                border-top: none;
+                font-weight: 600;
+                color: #374151;
+                background-color: #f8fafc;
+                padding: 1rem 0.75rem;
+            }
+            
+            .table td {
+                padding: 1rem 0.75rem;
+                vertical-align: middle;
+                border-color: #f1f5f9;
+            }
+            
+            .btn-group .btn {
+                border-radius: 6px;
+                margin: 0 1px;
+            }
+            
+            .pagination .page-link {
+                border-radius: 8px;
+                margin: 0 2px;
+                border: 1px solid #e5e7eb;
+                color: #374151;
+            }
+            
+            .pagination .page-item.active .page-link {
+                background-color: #4f46e5;
+                border-color: #4f46e5;
+            }
+            
+            @media (max-width: 768px) {
+                .page-title {
+                    font-size: 1.75rem;
+                }
+                
+                .stat-card {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                
+                .stat-icon {
+                    margin-right: 0;
+                    margin-bottom: 1rem;
+                }
+                
+                .table-responsive {
+                    font-size: 0.875rem;
+                }
+                
+                .btn-group {
+                    flex-direction: column;
+                }
+                
+                .btn-group .btn {
+                    margin: 1px 0;
+                }
+                
+                .products-summary,
+                .total-summary {
+                    max-width: none;
+                }
+            }
+        </style>
+    </th:block>
+
+    <!-- JavaScript específico -->
+    <th:block th:fragment="scripts">
+        <script>
+            function duplicarVenta(id) {
+                Swal.fire({
+                    title: '¿Duplicar venta?',
+                    text: 'Se creará una nueva venta con los mismos productos',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, duplicar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/ventas/duplicar/${id}`;
+                    }
+                });
+            }
+            
+            function cancelarVenta(id) {
+                Swal.fire({
+                    title: '¿Cancelar venta?',
+                    text: 'Esta acción no se puede deshacer',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Sí, cancelar',
+                    cancelButtonText: 'No cancelar',
+                    input: 'textarea',
+                    inputPlaceholder: 'Motivo de la cancelación (opcional)',
+                    inputAttributes: {
+                        'aria-label': 'Motivo de la cancelación'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ventas/cancelar/${id}`;
+                        
+                        if (result.value) {
+                            const motivoInput = document.createElement('input');
+                            motivoInput.type = 'hidden';
+                            motivoInput.name = 'motivo';
+                            motivoInput.value = result.value;
+                            form.appendChild(motivoInput);
+                        }
+                        
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
+            
+            function exportarVentas() {
+                showNotification('Exportando ventas...', 'info');
+                
+                setTimeout(() => {
+                    showNotification('Ventas exportadas exitosamente', 'success');
+                    window.open('/ventas/exportar', '_blank');
+                }, 1500);
+            }
+            
+            function generarReporte() {
+                Swal.fire({
+                    title: 'Generar Reporte',
+                    html: `
+                        <div class="text-start">
+                            <label for="tipoReporte" class="form-label">Tipo de Reporte:</label>
+                            <select id="tipoReporte" class="form-select mb-3">
+                                <option value="ventas">Reporte de Ventas</option>
+                                <option value="productos">Productos Más Vendidos</option>
+                                <option value="vendedores">Rendimiento de Vendedores</option>
+                                <option value="clientes">Análisis de Clientes</option>
+                            </select>
+                            
+                            <label for="periodo" class="form-label">Período:</label>
+                            <select id="periodo" class="form-select">
+                                <option value="hoy">Hoy</option>
+                                <option value="semana">Esta Semana</option>
+                                <option value="mes">Este Mes</option>
+                                <option value="trimestre">Este Trimestre</option>
+                                <option value="año">Este Año</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Generar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const tipo = document.getElementById('tipoReporte').value;
+                        const periodo = document.getElementById('periodo').value;
+                        
+                        showNotification('Generando reporte...', 'info');
+                        setTimeout(() => {
+                            showNotification('Reporte generado exitosamente', 'success');
+                            window.open(`/ventas/reporte?tipo=${tipo}&periodo=${periodo}`, '_blank');
+                        }, 2000);
+                    }
+                });
+            }
+            
+            function imprimirLista() {
+                window.print();
+            }
+            
+            // Inicializar cuando el DOM esté listo
+            document.addEventListener('DOMContentLoaded', function() {
+                // Configurar fechas por defecto en filtros
+                const today = new Date();
+                const fechaInicio = document.getElementById('fechaInicio');
+                const fechaFin = document.getElementById('fechaFin');
+                
+                if (!fechaInicio.value) {
+                    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                    fechaInicio.value = firstDay.toISOString().split('T')[0];
+                }
+                if (!fechaFin.value) {
+                    fechaFin.value = today.toISOString().split('T')[0];
+                }
+                
+                // Animaciones de entrada
+                const rows = document.querySelectorAll('.venta-row');
+                rows.forEach((row, index) => {
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        row.style.transition = 'all 0.4s ease';
+                        row.style.opacity = '1';
+                        row.style.transform = 'translateY(0)';
+                    }, index * 50);
+                });
+                
+                // Actualizar estadísticas cada 30 segundos
+                setInterval(updateVentasStats, 30000);
+            });
+            
+            function updateVentasStats() {
+                fetch('/api/ventas/stats')
+                    .then(response => response.json())
+                    .then(stats => {
+                        // Actualizar estadísticas en la interfaz
+                        console.log('Estadísticas actualizadas:', stats);
+                    })
+                    .catch(error => {
+                        console.error('Error actualizando estadísticas:', error);
+                    });
+            }
+        </script>
+    </th:block>
+</body>
+</html>

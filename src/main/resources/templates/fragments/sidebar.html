@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Sidebar para desktop -->
+    <nav th:fragment="sidebar" class="sidebar d-none d-lg-block">
+        <div class="sidebar-content">
+            <!-- Header del sidebar -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <i class="fas fa-store me-2"></i>
+                    <span class="brand-text">Boutique</span>
+                </div>
+                <div class="sidebar-subtitle">
+                    <span th:text="#{nav.sistema.gestion}">Sistema de Gestión</span>
+                </div>
+            </div>
+            
+            <!-- Información del usuario en sidebar -->
+            <div class="sidebar-user-info">
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <img th:if="${#authentication.principal.avatar}" 
+                             th:src="@{'/images/avatars/' + #authentication.principal.avatar}" 
+                             class="rounded-circle" alt="Avatar">
+                        <div th:unless="${#authentication.principal.avatar}" class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" sec:authentication="principal.nombre">Usuario</div>
+                        <div class="user-role">
+                            <span class="badge bg-primary" sec:authentication="principal.rol">ROL</span>
+                        </div>
+                    </div>
+                    <div class="user-status">
+                        <i class="fas fa-circle text-success" title="En línea"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Menú principal -->
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-title">
+                        <i class="fas fa-home me-2"></i>
+                        <span th:text="#{nav.menu.principal}">Menú Principal</span>
+                    </div>
+                    
+                    <ul class="menu-list">
+                        <!-- Dashboard -->
+                        <li class="menu-item">
+                            <a th:href="@{/dashboard}" class="menu-link" 
+                               th:classappend="${#httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.dashboard}">Dashboard</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sección de Gestión -->
+                <div class="menu-section" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                    <div class="menu-title">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span th:text="#{nav.menu.gestion}">Gestión</span>
+                    </div>
+                    
+                    <ul class="menu-list">
+                        <!-- Clientes -->
+                        <li class="menu-item" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a th:href="@{/clientes}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/clientes')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.clientes}">Clientes</span>
+                                <div class="menu-badge" th:if="${totalClientes != null}">
+                                    <span class="badge bg-info" th:text="${totalClientes}">0</span>
+                                </div>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                        
+                        <!-- Empleados -->
+                        <li class="menu-item" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a th:href="@{/empleados}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/empleados')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.empleados}">Empleados</span>
+                                <div class="menu-badge" th:if="${totalEmpleados != null}">
+                                    <span class="badge bg-success" th:text="${totalEmpleados}">0</span>
+                                </div>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                        
+                        <!-- Uniformes -->
+                        <li class="menu-item" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a th:href="@{/uniformes}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/uniformes')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-tshirt"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.uniformes}">Uniformes</span>
+                                <div class="menu-badge" th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}">
+                                    <span class="badge bg-warning" th:text="${uniformesBajoStock}">0</span>
+                                </div>
+                                <div class="menu-indicator"></div>
+                            </a>
+                            
+                            <!-- Submenu de uniformes -->
+                            <ul class="submenu" th:if="${#strings.startsWith(#httpServletRequest.requestURI, '/uniformes')}">
+                                <li>
+                                    <a th:href="@{/uniformes}" class="submenu-link">
+                                        <i class="fas fa-list me-2"></i>
+                                        <span th:text="#{nav.ver.todos}">Ver Todos</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/uniformes/nuevo}" class="submenu-link">
+                                        <i class="fas fa-plus me-2"></i>
+                                        <span th:text="#{nav.agregar.nuevo}">Agregar Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/uniformes?bajoStock=true}" class="submenu-link">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <span th:text="#{nav.stock.bajo}">Stock Bajo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Proveedores -->
+                        <li class="menu-item" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a th:href="@{/proveedores}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/proveedores')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.proveedores}">Proveedores</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sección de Ventas -->
+                <div class="menu-section" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                    <div class="menu-title">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        <span th:text="#{nav.menu.ventas}">Ventas</span>
+                    </div>
+                    
+                    <ul class="menu-list">
+                        <!-- Ventas -->
+                        <li class="menu-item">
+                            <a th:href="@{/ventas}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/ventas')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-cash-register"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.ventas}">Ventas</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                            
+                            <!-- Submenu de ventas -->
+                            <ul class="submenu" th:if="${#strings.startsWith(#httpServletRequest.requestURI, '/ventas')}">
+                                <li>
+                                    <a th:href="@{/ventas}" class="submenu-link">
+                                        <i class="fas fa-list me-2"></i>
+                                        <span th:text="#{nav.ver.todas}">Ver Todas</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/ventas/nueva}" class="submenu-link">
+                                        <i class="fas fa-plus me-2"></i>
+                                        <span th:text="#{nav.nueva.venta}">Nueva Venta</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/ventas/reportes}" class="submenu-link">
+                                        <i class="fas fa-chart-bar me-2"></i>
+                                        <span th:text="#{nav.reportes}">Reportes</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sección de Control -->
+                <div class="menu-section" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                    <div class="menu-title">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        <span th:text="#{nav.menu.control}">Control</span>
+                    </div>
+                    
+                    <ul class="menu-list">
+                        <!-- Asistencias -->
+                        <li class="menu-item">
+                            <a th:href="@{/asistencias}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/asistencias')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.asistencias}">Asistencias</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sección de Administración -->
+                <div class="menu-section" sec:authorize="hasRole('ADMIN')">
+                    <div class="menu-title">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <span th:text="#{nav.menu.administracion}">Administración</span>
+                    </div>
+                    
+                    <ul class="menu-list">
+                        <!-- Usuarios -->
+                        <li class="menu-item">
+                            <a th:href="@{/usuarios}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/usuarios')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-user-cog"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.usuarios}">Usuarios</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                        
+                        <!-- Configuración -->
+                        <li class="menu-item">
+                            <a th:href="@{/configuracion}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/configuracion')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.configuracion}">Configuración</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                        
+                        <!-- Reportes -->
+                        <li class="menu-item">
+                            <a th:href="@{/reportes}" class="menu-link"
+                               th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/reportes')} ? 'active' : ''">
+                                <div class="menu-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <span class="menu-text" th:text="#{nav.reportes}">Reportes</span>
+                                <div class="menu-indicator"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Accesos rápidos en sidebar -->
+            <div class="sidebar-quick-actions">
+                <div class="quick-actions-title">
+                    <i class="fas fa-bolt me-2"></i>
+                    <span th:text="#{nav.accesos.rapidos}">Accesos Rápidos</span>
+                </div>
+                
+                <div class="quick-actions-grid">
+                    <a th:href="@{/ventas/nueva}" class="quick-action-btn" 
+                       sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')"
+                       title="Nueva Venta">
+                        <i class="fas fa-plus"></i>
+                        <span th:text="#{quick.venta}">Venta</span>
+                    </a>
+                    
+                    <a th:href="@{/clientes/nuevo}" class="quick-action-btn" 
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')"
+                       title="Nuevo Cliente">
+                        <i class="fas fa-user-plus"></i>
+                        <span th:text="#{quick.cliente}">Cliente</span>
+                    </a>
+                    
+                    <a th:href="@{/uniformes/nuevo}" class="quick-action-btn" 
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')"
+                       title="Nuevo Uniforme">
+                        <i class="fas fa-tshirt"></i>
+                        <span th:text="#{quick.uniforme}">Uniforme</span>
+                    </a>
+                    
+                    <a th:href="@{/asistencias/nueva}" class="quick-action-btn" 
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')"
+                       title="Registrar Asistencia">
+                        <i class="fas fa-clock"></i>
+                        <span th:text="#{quick.asistencia}">Asistencia</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer del sidebar -->
+            <div class="sidebar-footer">
+                <div class="system-info">
+                    <div class="info-item">
+                        <i class="fas fa-server me-2"></i>
+                        <span>Sistema v1.0.0</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar me-2"></i>
+                        <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">01/01/2024</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock me-2"></i>
+                        <span id="sidebar-time" th:text="${#temporals.format(#temporals.createNow(), 'HH:mm')}">00:00</span>
+                    </div>
+                </div>
+                
+                <!-- Toggle para colapsar sidebar -->
+                <div class="sidebar-toggle">
+                    <button class="btn btn-sm btn-outline-light" onclick="toggleSidebar()" title="Colapsar menú">
+                        <i class="fas fa-angle-left" id="sidebar-toggle-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar offcanvas para móvil -->
+    <div th:fragment="sidebar-mobile" class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarOffcanvas">
+        <div class="offcanvas-header bg-primary text-white">
+            <h5 class="offcanvas-title d-flex align-items-center">
+                <i class="fas fa-store me-2"></i>
+                Boutique Uniformes
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        
+        <div class="offcanvas-body p-0">
+            <!-- Usuario info móvil -->
+            <div class="mobile-user-info p-3 bg-light border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">
+                        <img th:if="${#authentication.principal.avatar}" 
+                             th:src="@{'/images/avatars/' + #authentication.principal.avatar}" 
+                             class="rounded-circle" width="40" height="40" alt="Avatar">
+                        <div th:unless="${#authentication.principal.avatar}" class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fw-semibold" sec:authentication="principal.nombre">Usuario</div>
+                        <div class="small text-muted" sec:authentication="principal.email">email@ejemplo.com</div>
+                        <span class="badge bg-primary" sec:authentication="principal.rol">ROL</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Menú móvil -->
+            <div class="mobile-menu">
+                <!-- Dashboard -->
+                <a th:href="@{/dashboard}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    <span th:text="#{nav.dashboard}">Dashboard</span>
+                </a>
+                
+                <!-- Gestión -->
+                <div class="mobile-menu-section" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                    <div class="mobile-menu-header">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span th:text="#{nav.menu.gestion}">Gestión</span>
+                    </div>
+                    
+                    <a th:href="@{/clientes}" class="mobile-menu-item" data-bs-dismiss="offcanvas"
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <i class="fas fa-users me-3"></i>
+                        <span th:text="#{nav.clientes}">Clientes</span>
+                        <span class="badge bg-info ms-auto" th:if="${totalClientes != null}" th:text="${totalClientes}">0</span>
+                    </a>
+                    
+                    <a th:href="@{/empleados}" class="mobile-menu-item" data-bs-dismiss="offcanvas"
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <i class="fas fa-user-tie me-3"></i>
+                        <span th:text="#{nav.empleados}">Empleados</span>
+                        <span class="badge bg-success ms-auto" th:if="${totalEmpleados != null}" th:text="${totalEmpleados}">0</span>
+                    </a>
+                    
+                    <a th:href="@{/uniformes}" class="mobile-menu-item" data-bs-dismiss="offcanvas"
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <i class="fas fa-tshirt me-3"></i>
+                        <span th:text="#{nav.uniformes}">Uniformes</span>
+                        <span class="badge bg-warning ms-auto" th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}" th:text="${uniformesBajoStock}">0</span>
+                    </a>
+                    
+                    <a th:href="@{/proveedores}" class="mobile-menu-item" data-bs-dismiss="offcanvas"
+                       sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <i class="fas fa-truck me-3"></i>
+                        <span th:text="#{nav.proveedores}">Proveedores</span>
+                    </a>
+                </div>
+                
+                <!-- Ventas -->
+                <div class="mobile-menu-section" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                    <div class="mobile-menu-header">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        <span th:text="#{nav.menu.ventas}">Ventas</span>
+                    </div>
+                    
+                    <a th:href="@{/ventas}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                        <i class="fas fa-cash-register me-3"></i>
+                        <span th:text="#{nav.ventas}">Ventas</span>
+                    </a>
+                </div>
+                
+                <!-- Control -->
+                <div class="mobile-menu-section" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                    <div class="mobile-menu-header">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        <span th:text="#{nav.menu.control}">Control</span>
+                    </div>
+                    
+                    <a th:href="@{/asistencias}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                        <i class="fas fa-clock me-3"></i>
+                        <span th:text="#{nav.asistencias}">Asistencias</span>
+                    </a>
+                </div>
+                
+                <!-- Administración -->
+                <div class="mobile-menu-section" sec:authorize="hasRole('ADMIN')">
+                    <div class="mobile-menu-header">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <span th:text="#{nav.menu.administracion}">Administración</span>
+                    </div>
+                    
+                    <a th:href="@{/usuarios}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                        <i class="fas fa-user-cog me-3"></i>
+                        <span th:text="#{nav.usuarios}">Usuarios</span>
+                    </a>
+                    
+                    <a th:href="@{/configuracion}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                        <i class="fas fa-cogs me-3"></i>
+                        <span th:text="#{nav.configuracion}">Configuración</span>
+                    </a>
+                    
+                    <a th:href="@{/reportes}" class="mobile-menu-item" data-bs-dismiss="offcanvas">
+                        <i class="fas fa-chart-pie me-3"></i>
+                        <span th:text="#{nav.reportes}">Reportes</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Acciones rápidas móvil -->
+            <div class="mobile-quick-actions p-3 border-top">
+                <div class="fw-semibold mb-3">
+                    <i class="fas fa-bolt me-2"></i>
+                    <span th:text="#{nav.accesos.rapidos}">Accesos Rápidos</span>
+                </div>
+                
+                <div class="row g-2">
+                    <div class="col-6" sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                        <a th:href="@{/ventas/nueva}" class="btn btn-success btn-sm w-100" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-plus me-1"></i>
+                            <span th:text="#{quick.venta}">Venta</span>
+                        </a>
+                    </div>
+                    <div class="col-6" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/clientes/nuevo}" class="btn btn-primary btn-sm w-100" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-user-plus me-1"></i>
+                            <span th:text="#{quick.cliente}">Cliente</span>
+                        </a>
+                    </div>
+                    <div class="col-6" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/uniformes/nuevo}" class="btn btn-info btn-sm w-100" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-tshirt me-1"></i>
+                            <span th:text="#{quick.uniforme}">Uniforme</span>
+                        </a>
+                    </div>
+                    <div class="col-6" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/asistencias/nueva}" class="btn btn-warning btn-sm w-100" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-clock me-1"></i>
+                            <span th:text="#{quick.asistencia}">Asistencia</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script específico del sidebar -->
+    <script th:fragment="sidebar-script">
+        // Función para colapsar/expandir sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            const mainContent = document.querySelector('.main-content');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                icon.className = 'fas fa-angle-right';
+                mainContent.style.marginLeft = '80px';
+                localStorage.setItem('sidebarCollapsed', 'true');
+            } else {
+                icon.className = 'fas fa-angle-left';
+                mainContent.style.marginLeft = '260px';
+                localStorage.setItem('sidebarCollapsed', 'false');
+            }
+        }
+        
+        // Restaurar estado del sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                toggleSidebar();
+            }
+        });
+        
+        // Actualizar reloj del sidebar
+        function updateSidebarTime() {
+            const timeElement = document.getElementById('sidebar-time');
+            if (timeElement) {
+                const now = new Date();
+                timeElement.textContent = now.toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Actualizar cada minuto
+        setInterval(updateSidebarTime, 60000);
+        
+        // Highlight del menú activo
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.menu-link');
+            
+            menuLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (currentPath.startsWith(href) && href !== '/') {
+                    link.classList.add('active');
+                    
+                    // Expandir submenu si existe
+                    const submenu = link.nextElementSibling;
+                    if (submenu && submenu.classList.contains('submenu')) {
+                        submenu.style.display = 'block';
+                    }
+                }
+            });
+        });
+        
+        // Animación de hover en menús
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+</html>

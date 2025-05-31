@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="'Asistencia: ' + ${asistencia.empleado.nombreCompleto} + ' - Boutique Uniformes'">Asistencia - Boutique Uniformes</title>
+</head>
+<body>
+    <main th:fragment="content" class="fade-in">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-white rounded shadow-sm p-3">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/dashboard}" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/asistencias}" class="text-decoration-none" th:text="#{nav.asistencias}">Asistencias</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="#{asistencias.detalle}">Detalle</li>
+            </ol>
+        </nav>
+
+        <!-- Header de la asistencia -->
+        <div class="attendance-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center">
+                        <div class="employee-avatar me-4">
+                            <div class="avatar-large bg-primary text-white">
+                                <span th:text="${#strings.substring(asistencia.empleado.nombre, 0, 1) + #strings.substring(asistencia.empleado.apellido, 0, 1)}">AB</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="employee-name" th:text="${asistencia.empleado.nombreCompleto}">Nombre Empleado</h1>
+                            <p class="employee-info mb-1">
+                                <i class="fas fa-briefcase me-2"></i>
+                                <span th:text="${asistencia.empleado.cargo}">Cargo</span>
+                            </p>
+                            <p class="attendance-date mb-0">
+                                <i class="fas fa-calendar me-2"></i>
+                                <span th:text="${#temporals.format(asistencia.fecha, 'EEEE, dd MMMM yyyy')}">Lunes, 01 Enero 2024</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="attendance-status mb-3">
+                        <span th:switch="${asistencia.estado}" class="status-badge">
+                            <span th:case="'PRESENTE'" class="badge bg-success fs-6" th:text="#{status.presente}">Presente</span>
+                            <span th:case="'AUSENTE'" class="badge bg-danger fs-6" th:text="#{status.ausente}">Ausente</span>
+                            <span th:case="'TARDANZA'" class="badge bg-warning fs-6" th:text="#{status.tardanza}">Tardanza</span>
+                            <span th:case="'PERMISO'" class="badge bg-info fs-6" th:text="#{status.permiso}">Permiso</span>
+                        </span>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/asistencias/editar/{id}(id=${asistencia.id})}" 
+                           class="btn btn-primary" sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <i class="fas fa-edit me-2"></i>
+                            <span th:text="#{btn.editar}">Editar</span>
+                        </a>
+                        <button type="button" class="btn btn-success" 
+                                th:onclick="'marcarSalida(' + ${asistencia.id} + ')'"
+                                th:if="${asistencia.horaEntrada and !asistencia.horaSalida}">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            <span th:text="#{btn.marcar.salida}">Marcar Salida</span>
+                        </button>
+                        <a th:href="@{/asistencias}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span th:text="#{btn.volver}">Volver</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información detallada -->
+        <div class="row mb-4">
+            <!-- Información de Horarios -->
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-clock me-2"></i>
+                            <span th:text="#{asistencias.informacion.horarios}">Información de Horarios</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="time-info-card entrada">
+                                    <div class="time-icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </div>
+                                    <div class="time-content">
+                                        <div class="time-label" th:text="#{form.hora.entrada}">Hora de Entrada</div>
+                                        <div class="time-value" th:if="${asistencia.horaEntrada}" 
+                                             th:text="${#temporals.format(asistencia.horaEntrada, 'HH:mm')}">08:00</div>
+                                        <div class="time-value text-muted" th:unless="${asistencia.horaEntrada}">No registrada</div>
+                                        <div class="time-status" th:if="${asistencia.horaEntrada}">
+                                            <span class="badge bg-success">Registrada</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="time-info-card salida">
+                                    <div class="time-icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </div>
+                                    <div class="time-content">
+                                        <div class="time-label" th:text="#{form.hora.salida}">Hora de Salida</div>
+                                        <div class="time-value" th:if="${asistencia.horaSalida}" 
+                                             th:text="${#temporals.format(asistencia.horaSalida, 'HH:mm')}">17:00</div>
+                                        <div class="time-value text-muted" th:unless="${asistencia.horaSalida}">No registrada</div>
+                                        <div class="time-status" th:if="${asistencia.horaSalida}">
+                                            <span class="badge bg-info">Registrada</span>
+                                        </div>
+                                        <div class="time-status" th:unless="${asistencia.horaSalida}">
+                                            <span class="badge bg-warning">Pendiente</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resumen de horas trabajadas -->
+                        <div class="hours-summary mt-4">
+                            <div class="alert alert-light">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h5 class="mb-1" th:text="#{asistencias.horas.trabajadas}">Horas Trabajadas</h5>
+                                        <div class="hours-calculation">
+                                            <span th:if="${asistencia.horaEntrada and asistencia.horaSalida}" 
+                                                  class="fs-3 text-primary fw-bold">8h 00m</span>
+                                            <span th:unless="${asistencia.horaEntrada and asistencia.horaSalida}" 
+                                                  class="fs-3 text-muted">-</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <div class="hours-breakdown">
+                                            <div class="small text-muted">
+                                                <div th:text="#{asistencias.jornada.laboral}">Jornada Laboral: 8h</div>
+                                                <div th:if="${asistencia.horaEntrada and asistencia.horaSalida}">
+                                                    <span class="text-success" th:text="#{asistencias.tiempo.completo}">Tiempo Completo</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Observaciones -->
+                        <div th:if="${asistencia.observaciones}" class="observations mt-4">
+                            <h6 th:text="#{form.observaciones}">Observaciones</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-comment me-2"></i>
+                                <span th:text="${asistencia.observaciones}">Observaciones del registro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Información del Empleado -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user me-2"></i>
+                            <span th:text="#{asistencias.info.empleado}">Información del Empleado</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="employee-detail">
+                            <div class="detail-item mb-3">
+                                <label class="detail-label" th:text="#{form.nombre.completo}">Nombre Completo</label>
+                                <div class="detail-value" th:text="${asistencia.empleado.nombreCompleto}">Nombre Empleado</div>
+                            </div>
+                            
+                            <div class="detail-item mb-3">
+                                <label class="detail-label" th:text="#{form.documento}">Documento</label>
+                                <div class="detail-value font-monospace" th:text="${asistencia.empleado.documento}">12345678</div>
+                            </div>
+                            
+                            <div class="detail-item mb-3">
+                                <label class="detail-label" th:text="#{form.cargo}">Cargo</label>
+                                <div class="detail-value" th:text="${asistencia.empleado.cargo}">Cargo</div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label class="detail-label" th:text="#{form.email}">Email</label>
+                                <div class="detail-value">
+                                    <a th:if="${asistencia.empleado.email}" 
+                                       th:href="'mailto:' + ${asistencia.empleado.email}" 
+                                       th:text="${asistencia.empleado.email}" 
+                                       class="text-decoration-none">email@ejemplo.com</a>
+                                    <span th:unless="${asistencia.empleado.email}" class="text-muted">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estadísticas del mes -->
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            <span th:text="#{asistencias.estadisticas.mes}">Estadísticas del Mes</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-item mb-3">
+                            <div class="stat-icon bg-success">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">20</div>
+                                <div class="stat-label" th:text="#{stat.dias.presentes}">Días Presentes</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item mb-3">
+                            <div class="stat-icon bg-warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">2</div>
+                                <div class="stat-label" th:text="#{stat.tardanzas}">Tardanzas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item mb-3">
+                            <div class="stat-icon bg-danger">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">1</div>
+                                <div class="stat-label" th:text="#{stat.ausencias}">Ausencias</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon bg-info">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">91%</div>
+                                <div class="stat-label" th:text="#{stat.asistencia}">% Asistencia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de asistencias del empleado -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-history me-2"></i>
+                            <span th:text="#{asistencias.historial.empleado}">Historial de Asistencias</span>
+                        </h6>
+                        <a th:href="@{/asistencias(empleadoId=${asistencia.empleado.id})}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>
+                            <span th:text="#{btn.ver.todas}">Ver Todas</span>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th th:text="#{table.fecha}">Fecha</th>
+                                        <th th:text="#{table.entrada}">Entrada</th>
+                                        <th th:text="#{table.salida}">Salida</th>
+                                        <th th:text="#{table.horas}">Horas</th>
+                                        <th th:text="#{table.estado}">Estado</th>
+                                        <th th:text="#{table.acciones}">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Datos de ejemplo -->
+                                    <tr>
+                                        <td>Hoy</td>
+                                        <td><span class="badge bg-success">08:00</span></td>
+                                        <td><span class="badge bg-info">17:00</span></td>
+                                        <td><strong>8h 00m</strong></td>
+                                        <td><span class="badge bg-success">Presente</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ayer</td>
+                                        <td><span class="badge bg-warning">08:15</span></td>
+                                        <td><span class="badge bg-info">17:00</span></td>
+                                        <td><strong>7h 45m</strong></td>
+                                        <td><span class="badge bg-warning">Tardanza</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CSS específico -->
+    <th:block th:fragment="css">
+        <style>
+            .attendance-header {
+                background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(79, 70, 229, 0.1);
+            }
+            
+            .employee-avatar {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .avatar-large {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                font-weight: 700;
+                box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            }
+            
+            .employee-name {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 0.5rem;
+            }
+            
+            .employee-info {
+                color: #6b7280;
+                font-size: 1.1rem;
+            }
+            
+            .attendance-date {
+                color: #6b7280;
+                font-size: 1rem;
+            }
+            
+            .status-badge .badge {
+                font-size: 1rem;
+                padding: 0.75rem 1.25rem;
+            }
+            
+            .time-info-card {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 1.5rem;
+                text-align: center;
+                border: 2px solid #e5e7eb;
+                transition: all 0.3s ease;
+                height: 100%;
+            }
+            
+            .time-info-card.entrada {
+                border-color: #10b981;
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, #f8fafc 100%);
+            }
+            
+            .time-info-card.salida {
+                border-color: #3b82f6;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, #f8fafc 100%);
+            }
+            
+            .time-icon {
+                font-size: 2rem;
+                color: #4f46e5;
+                margin-bottom: 1rem;
+            }
+            
+            .time-label {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.5rem;
+            }
+            
+            .time-value {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 0.5rem;
+                font-family: 'Courier New', monospace;
+            }
+            
+            .time-status .badge {
+                font-size: 0.75rem;
+            }
+            
+            .hours-summary {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 1.5rem;
+                border: 1px solid #e5e7eb;
+            }
+            
+            .hours-calculation {
+                margin-top: 0.5rem;
+            }
+            
+            .hours-breakdown {
+                text-align: right;
+            }
+            
+            .detail-item {
+                border-bottom: 1px solid #f1f5f9;
+                padding-bottom: 0.75rem;
+            }
+            
+            .detail-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .detail-label {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.25rem;
+                display: block;
+            }
+            
+            .detail-value {
+                font-size: 1rem;
+                color: #1e293b;
+                font-weight: 500;
+            }
+            
+            .stat-item {
+                display: flex;
+                align-items: center;
+                padding: 1rem;
+                background: #f8fafc;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+            
+            .stat-item:hover {
+                background: #f1f5f9;
+                transform: translateX(5px);
+            }
+            
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                margin-right: 1rem;
+                flex-shrink: 0;
+            }
+            
+            .stat-content {
+                flex: 1;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 0.25rem;
+            }
+            
+            .stat-label {
+                font-size: 0.875rem;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            
+            @media (max-width: 768px) {
+                .employee-name {
+                    font-size: 1.75rem;
+                }
+                
+                .attendance-header {
+                    padding: 1.5rem;
+                }
+                
+                .employee-avatar {
+                    width: 60px;
+                    height: 60px;
+                }
+                
+                .avatar-large {
+                    font-size: 1.5rem;
+                }
+                
+                .time-value {
+                    font-size: 1.5rem;
+                }
+                
+                .stat-item {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                
+                .stat-icon {
+                    margin-right: 0;
+                    margin-bottom: 0.75rem;
+                }
+            }
+        </style>
+    </th:block>
+
+    <!-- JavaScript específico -->
+    <th:block th:fragment="scripts">
+        <script>
+            function marcarSalida(id) {
+                Swal.fire({
+                    title: '¿Marcar salida?',
+                    text: 'Se registrará la hora actual como hora de salida',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, marcar salida',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/asistencias/marcar-salida/${id}`;
+                        
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
+            
+            // Animaciones de entrada
+            document.addEventListener('DOMContentLoaded', function() {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+                
+                // Cargar estadísticas del empleado
+                loadEmployeeStats();
+            });
+            
+            function loadEmployeeStats() {
+                const empleadoId = /*[[${asistencia.empleado.id}]]*/ 1;
+                
+                fetch(`/api/asistencias/stats/${empleadoId}`)
+                    .then(response => response.json())
+                    .then(stats => {
+                        updateEmployeeStats(stats);
+                    })
+                    .catch(error => {
+                        console.error('Error cargando estadísticas:', error);
+                    });
+            }
+            
+            function updateEmployeeStats(stats) {
+                if (stats) {
+                    // Actualizar estadísticas en la interfaz
+                    console.log('Estadísticas del empleado:', stats);
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

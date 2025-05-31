@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="'Detalle de Venta ' + ${venta.numeroFactura} + ' - Boutique Uniformes'">Detalle de Venta - Boutique Uniformes</title>
+</head>
+<body>
+    <main th:fragment="content" class="fade-in">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-white rounded shadow-sm p-3">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/dashboard}" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/ventas}" class="text-decoration-none" th:text="#{nav.ventas}">Ventas</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="'Venta ' + ${venta.numeroFactura}">Venta</li>
+            </ol>
+        </nav>
+
+        <!-- Header de la venta -->
+        <div class="sale-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="sale-title">
+                        <i class="fas fa-shopping-cart me-3 text-primary"></i>
+                        <span th:text="'Venta ' + ${venta.numeroFactura}">Venta FAC-001234</span>
+                    </h1>
+                    <p class="sale-date text-muted mb-0">
+                        <i class="fas fa-calendar me-2"></i>
+                        <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                    </p>
+                    <div class="mt-2">
+                        <span th:switch="${venta.estado}">
+                            <span th:case="'COMPLETADA'" class="badge bg-success fs-6" th:text="#{status.completada}">Completada</span>
+                            <span th:case="'PENDIENTE'" class="badge bg-warning fs-6" th:text="#{status.pendiente}">Pendiente</span>
+                            <span th:case="'CANCELADA'" class="badge bg-danger fs-6" th:text="#{status.cancelada}">Cancelada</span>
+                        </span>
+                        <span class="ms-2 badge bg-primary" th:if="${venta.metodoPago}" th:text="${venta.metodoPago}">Efectivo</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/ventas/factura/{id}(id=${venta.id})}" class="btn btn-outline-primary" target="_blank">
+                            <i class="fas fa-file-invoice me-2"></i>
+                            <span th:text="#{btn.ver.factura}">Ver Factura</span>
+                        </a>
+                        <a th:href="@{/ventas/duplicar/{id}(id=${venta.id})}" class="btn btn-outline-success" 
+                           sec:authorize="hasAnyRole('ADMIN','VENDEDOR','EMPLEADO')">
+                            <i class="fas fa-copy me-2"></i>
+                            <span th:text="#{btn.duplicar}">Duplicar</span>
+                        </a>
+                        <a th:href="@{/ventas}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span th:text="#{btn.volver}">Volver</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de cliente y vendedor -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user me-2"></i>
+                            <span th:text="#{ventas.info.cliente}">Cliente</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong th:text="#{form.nombre.completo}">Nombre:</strong>
+                            <span th:text="${venta.cliente.nombreCompleto}">Nombre Cliente</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong th:text="#{form.documento}">Documento:</strong>
+                            <span th:text="${venta.cliente.documento}">12345678</span>
+                        </div>
+                        <div class="mb-2" th:if="${venta.cliente.telefono}">
+                            <strong th:text="#{form.telefono}">Teléfono:</strong>
+                            <span th:text="${venta.cliente.telefono}">123-456-7890</span>
+                        </div>
+                        <div class="mb-2" th:if="${venta.cliente.email}">
+                            <strong th:text="#{form.email}">Email:</strong>
+                            <span th:text="${venta.cliente.email}">email@ejemplo.com</span>
+                        </div>
+                        <div class="mb-2" th:if="${venta.cliente.direccion}">
+                            <strong th:text="#{form.direccion}">Dirección:</strong>
+                            <span th:text="${venta.cliente.direccion}">Dirección cliente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user-tie me-2"></i>
+                            <span th:text="#{ventas.info.vendedor}">Vendedor</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${venta.vendedor}">
+                            <div class="mb-2">
+                                <strong th:text="#{form.nombre.completo}">Nombre:</strong>
+                                <span th:text="${venta.vendedor.nombreCompleto}">Nombre Vendedor</span>
+                            </div>
+                            <div class="mb-2">
+                                <strong th:text="#{form.cargo}">Cargo:</strong>
+                                <span th:text="${venta.vendedor.cargo}">Cargo</span>
+                            </div>
+                        </div>
+                        <div th:unless="${venta.vendedor}">
+                            <span class="text-muted">-</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong th:text="#{form.fecha.venta}">Fecha de Venta:</strong>
+                            <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong th:text="#{ventas.metodo.pago}">Método de Pago:</strong>
+                            <span th:text="${venta.metodoPago ?: 'Efectivo'}">Efectivo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de productos vendidos -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-list me-2"></i>
+                    <span th:text="#{ventas.productos}">Productos Vendidos</span>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th th:text="#{table.producto}">Producto</th>
+                                <th th:text="#{table.codigo}">Código</th>
+                                <th th:text="#{table.talla}">Talla</th>
+                                <th th:text="#{table.cantidad}">Cantidad</th>
+                                <th class="text-end" th:text="#{table.precio}">Precio Unitario</th>
+                                <th class="text-end" th:text="#{table.subtotal}">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="detalle, iterStat : ${venta.detalles}">
+                                <td th:text="${iterStat.count}">1</td>
+                                <td>
+                                    <div class="fw-bold" th:text="${detalle.uniforme.nombre}">Producto</div>
+                                    <small class="text-muted" th:text="${detalle.uniforme.categoria}">Categoría</small>
+                                </td>
+                                <td th:text="${detalle.uniforme.codigo}">ABC123</td>
+                                <td th:text="${detalle.uniforme.talla}">M</td>
+                                <td>
+                                    <span class="badge bg-primary" th:text="${detalle.cantidad}">1</span>
+                                </td>
+                                <td class="text-end" th:text="${#numbers.formatCurrency(detalle.precioUnitario)}">$50.000</td>
+                                <td class="text-end" th:text="${#numbers.formatCurrency(detalle.subtotal)}">$50.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de totales -->
+        <div class="row justify-content-end mb-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span th:text="#{ventas.subtotal}">Subtotal:</span>
+                            <span th:text="${#numbers.formatCurrency(venta.subtotal)}">$150.000</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2" th:if="${venta.descuento > 0}">
+                            <span th:text="#{ventas.descuento}">Descuento:</span>
+                            <span class="text-danger" th:text="'- ' + #numbers.formatCurrency(venta.descuento)">- $0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span th:text="#{ventas.impuesto}">IVA (19%):</span>
+                            <span th:text="${#numbers.formatCurrency(venta.impuesto)}">$28.500</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fs-5 fw-bold">
+                            <span th:text="#{ventas.total}">Total:</span>
+                            <span th:text="${#numbers.formatCurrency(venta.total)}">$178.500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="row mb-4" th:if="${venta.observaciones}">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-comment me-2"></i>
+                    <span th:text="${venta.observaciones}">Observaciones de la venta</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de acciones o cambios (opcional) -->
+        <div class="row mb-4" th:if="${historial != null and !#lists.isEmpty(historial)}">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-history me-2"></i>
+                            <span th:text="#{ventas.historial.cambios}">Historial de Cambios</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="timeline">
+                            <li th:each="evento : ${historial}">
+                                <span class="badge bg-secondary me-2" th:text="${#temporals.format(evento.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 11:00</span>
+                                <span th:text="${evento.descripcion}">Venta creada</span>
+                                <span class="text-muted ms-2" th:text="'por ' + evento.usuario">por Usuario</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CSS específico -->
+    <th:block th:fragment="css">
+        <style>
+            .sale-header {
+                background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(79, 70, 229, 0.1);
+            }
+            .sale-title {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+            .sale-date {
+                font-size: 1.1rem;
+            }
+            .timeline {
+                list-style: none;
+                padding-left: 0;
+            }
+            .timeline li {
+                margin-bottom: 1rem;
+                position: relative;
+                padding-left: 2rem;
+            }
+            .timeline li::before {
+                content: '';
+                position: absolute;
+                left: 0.5rem;
+                top: 0.5rem;
+                width: 10px;
+                height: 10px;
+                background: #4f46e5;
+                border-radius: 50%;
+            }
+            .table th {
+                border-top: none;
+                font-weight: 600;
+                color: #374151;
+                background-color: #f8fafc;
+                padding: 1rem 0.75rem;
+            }
+            .table td {
+                padding: 1rem 0.75rem;
+                vertical-align: middle;
+                border-color: #f1f5f9;
+            }
+            @media (max-width: 768px) {
+                .sale-title {
+                    font-size: 1.75rem;
+                }
+                .sale-header {
+                    padding: 1.5rem;
+                }
+                .table-responsive {
+                    font-size: 0.875rem;
+                }
+            }
+        </style>
+    </th:block>
+</body>
+</html>

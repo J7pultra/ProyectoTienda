@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Footer principal -->
+    <footer th:fragment="footer" class="footer bg-dark text-light mt-auto">
+        <!-- Contenido principal del footer -->
+        <div class="footer-content py-5">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- Información de la empresa -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <div class="footer-brand mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="brand-icon me-3">
+                                        <i class="fas fa-store fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="mb-0 text-white">Boutique Uniformes</h4>
+                                        <p class="mb-0 text-muted small" th:text="#{footer.slogan}">
+                                            Tu mejor opción en uniformes
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-muted mb-4" th:text="#{footer.descripcion}">
+                                Somos una empresa dedicada a la venta de uniformes escolares y empresariales 
+                                con más de 10 años de experiencia en el mercado, ofreciendo calidad y 
+                                excelente servicio al cliente.
+                            </p>
+                            
+                            <!-- Redes sociales -->
+                            <div class="social-links">
+                                <h6 class="text-white mb-3" th:text="#{footer.siguenos}">Síguenos</h6>
+                                <div class="d-flex gap-3">
+                                    <a href="#" class="social-link facebook" title="Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="#" class="social-link instagram" title="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="#" class="social-link whatsapp" title="WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    <a href="#" class="social-link twitter" title="Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="social-link linkedin" title="LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enlaces rápidos -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h5 class="text-white mb-4" th:text="#{footer.enlaces.rapidos}">Enlaces Rápidos</h5>
+                            <ul class="footer-links">
+                                <li>
+                                    <a th:href="@{/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+                                </li>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                                    <a th:href="@{/clientes}" th:text="#{nav.clientes}">Clientes</a>
+                                </li>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                                    <a th:href="@{/uniformes}" th:text="#{nav.uniformes}">Uniformes</a>
+                                </li>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                                    <a th:href="@{/ventas}" th:text="#{nav.ventas}">Ventas</a>
+                                </li>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                                    <a th:href="@{/reportes}" th:text="#{nav.reportes}">Reportes</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Servicios -->
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-section">
+                            <h5 class="text-white mb-4" th:text="#{footer.servicios}">Servicios</h5>
+                            <ul class="footer-links">
+                                <li>
+                                    <a href="#" th:text="#{footer.uniformes.escolares}">Uniformes Escolares</a>
+                                </li>
+                                <li>
+                                    <a href="#" th:text="#{footer.uniformes.empresariales}">Uniformes Empresariales</a>
+                                </li>
+                                <li>
+                                    <a href="#" th:text="#{footer.bordados}">Bordados</a>
+                                </li>
+                                <li>
+                                    <a href="#" th:text="#{footer.estampados}">Estampados</a>
+                                </li>
+                                <li>
+                                    <a href="#" th:text="#{footer.medidas.especiales}">Medidas Especiales</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Información de contacto -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-section">
+                            <h5 class="text-white mb-4" th:text="#{footer.contacto}">Contacto</h5>
+                            
+                            <!-- Información de contacto -->
+                            <div class="contact-info mb-4">
+                                <div class="contact-item mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="contact-icon me-3">
+                                            <i class="fas fa-map-marker-alt text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-1" th:text="#{footer.direccion}">Dirección</h6>
+                                            <p class="text-muted mb-0">
+                                                Calle Principal #123, Centro<br>
+                                                Ciudad, País 12345
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-item mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="contact-icon me-3">
+                                            <i class="fas fa-phone text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-1" th:text="#{footer.telefono}">Teléfono</h6>
+                                            <p class="text-muted mb-0">
+                                                <a href="tel:+1234567890" class="text-muted text-decoration-none">
+                                                    +1 (234) 567-8900
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-item mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="contact-icon me-3">
+                                            <i class="fas fa-envelope text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-1" th:text="#{footer.email}">Email</h6>
+                                            <p class="text-muted mb-0">
+                                                <a href="mailto:info@boutiqueuniformes.com" class="text-muted text-decoration-none">
+                                                    info@boutiqueuniformes.com
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-item">
+                                    <div class="d-flex align-items-start">
+                                        <div class="contact-icon me-3">
+                                            <i class="fas fa-clock text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white mb-1" th:text="#{footer.horarios}">Horarios</h6>
+                                            <p class="text-muted mb-0">
+                                                Lun - Vie: 8:00 AM - 6:00 PM<br>
+                                                Sáb: 9:00 AM - 4:00 PM
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Newsletter -->
+                            <div class="newsletter-section">
+                                <h6 class="text-white mb-3" th:text="#{footer.newsletter}">Newsletter</h6>
+                                <p class="text-muted small mb-3" th:text="#{footer.newsletter.descripcion}">
+                                    Suscríbete para recibir ofertas especiales y novedades
+                                </p>
+                                <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                                    <div class="input-group">
+                                        <input type="email" class="form-control" 
+                                               th:placeholder="#{footer.email.placeholder}" 
+                                               placeholder="Tu email" required>
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Separador -->
+        <hr class="footer-divider my-0">
+        
+        <!-- Footer bottom -->
+        <div class="footer-bottom py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="copyright text-muted">
+                            <p class="mb-0">
+                                © <span id="current-year">2024</span> 
+                                <strong>Boutique Uniformes</strong>. 
+                                <span th:text="#{footer.derechos.reservados}">Todos los derechos reservados</span>.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="footer-info text-md-end">
+                            <div class="d-flex flex-column flex-md-row justify-content-md-end align-items-md-center gap-3">
+                                <!-- Información del sistema -->
+                                <div class="system-info text-muted small">
+                                    <span th:text="#{footer.version}">Versión</span> 1.0.0 | 
+                                    <span th:text="#{footer.desarrollado.con}">Desarrollado con</span>
+                                    <i class="fas fa-heart text-danger mx-1"></i>
+                                    Spring Boot & Thymeleaf
+                                </div>
+                                
+                                <!-- Enlaces legales -->
+                                <div class="legal-links">
+                                    <a href="#" class="text-muted text-decoration-none me-3" 
+                                       th:text="#{footer.privacidad}">Privacidad</a>
+                                    <a href="#" class="text-muted text-decoration-none me-3" 
+                                       th:text="#{footer.terminos}">Términos</a>
+                                    <a href="#" class="text-muted text-decoration-none" 
+                                       th:text="#{footer.soporte}">Soporte</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botón volver arriba -->
+        <button class="back-to-top" onclick="scrollToTop()" title="Volver arriba">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+    </footer>
+    
+    <!-- Estilos específicos del footer -->
+    <style th:fragment="footer-styles">
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+        
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-section h5,
+        .footer-section h6 {
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            border-radius: 1px;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .footer-links a::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #007bff;
+            font-size: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #ffffff;
+            padding-left: 20px;
+        }
+        
+        .footer-links a:hover::before {
+            color: #0056b3;
+        }
+        
+        .social-links .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+        
+        .social-link:hover::before {
+            transform: scale(1);
+        }
+        
+        .social-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .social-link.facebook { background: #3b5998; }
+        .social-link.instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .social-link.whatsapp { background: #25d366; }
+        .social-link.twitter { background: #1da1f2; }
+        .social-link.linkedin { background: #0077b5; }
+        
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .newsletter-form .input-group {
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .newsletter-form .form-control {
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+        }
+        
+        .newsletter-form .btn {
+            border: none;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+        }
+        
+        .footer-divider {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 0;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                padding: 3rem 0;
+            }
+            
+            .social-links .d-flex {
+                justify-content: center;
+            }
+            
+            .footer-info .d-flex {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+            
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+    
+    <!-- Scripts específicos del footer -->
+    <script th:fragment="footer-scripts">
+        // Actualizar año actual
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Función para volver arriba
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Mostrar/ocultar botón volver arriba
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        // Función para suscribirse al newsletter
+        function subscribeNewsletter(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            
+            // Aquí puedes agregar la lógica para enviar el email al backend
+            Swal.fire({
+                icon: 'success',
+                title: '¡Suscripción exitosa!',
+                text: `Gracias por suscribirte con el email: ${email}`,
+                timer: 3000,
+                showConfirmButton: false
+            });
+            
+            // Limpiar el formulario
+            event.target.reset();
+        }
+        
+        // Animaciones al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observar elementos del footer
+        document.addEventListener('DOMContentLoaded', function() {
+            const footerSections = document.querySelectorAll('.footer-section');
+            footerSections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'all 0.6s ease';
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
