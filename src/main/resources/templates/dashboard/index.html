@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Boutique Uniformes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(79, 70, 229, 0.2);
+            color: white;
+            border-left-color: #4f46e5;
+        }
+        
+        .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--light-color);
+        }
+        
+        .top-navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .clock-widget {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        
+        .clock-time {
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .clock-date {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-btn {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .language-btn:hover {
+            border-color: #4f46e5;
+            background: #f0f9ff;
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .language-dropdown.show {
+            display: block;
+        }
+        
+        .language-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s ease;
+        }
+        
+        .language-option:hover {
+            background: #f8fafc;
+        }
+        
+        .dashboard-content {
+            padding: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card.primary { border-left-color: var(--primary-color); }
+        .stat-card.success { border-left-color: var(--success-color); }
+        .stat-card.warning { border-left-color: var(--warning-color); }
+        .stat-card.info { border-left-color: var(--info-color); }
+        
+        .stat-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.primary { background: var(--primary-color); }
+        .stat-icon.success { background: var(--success-color); }
+        .stat-icon.warning { background: var(--warning-color); }
+        .stat-icon.info { background: var(--info-color); }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--primary-color);
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .top-navbar {
+                padding: 1rem;
+            }
+            
+            .dashboard-content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-store"></i> Boutique Uniformes
+            </div>
+            <div class="sidebar-subtitle">Sistema de Gestión</div>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span data-lang-es="Dashboard" data-lang-en="Dashboard">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ventas" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span data-lang-es="Ventas" data-lang-en="Sales">Ventas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/ventas/nueva" class="nav-link">
+                    <i class="fas fa-plus-circle"></i>
+                    <span data-lang-es="Nueva Venta" data-lang-en="New Sale">Nueva Venta</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/clientes" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span data-lang-es="Clientes" data-lang-en="Customers">Clientes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/uniformes" class="nav-link">
+                    <i class="fas fa-tshirt"></i>
+                    <span data-lang-es="Uniformes" data-lang-en="Uniforms">Uniformes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/proveedores" class="nav-link">
+                    <i class="fas fa-truck"></i>
+                    <span data-lang-es="Proveedores" data-lang-en="Suppliers">Proveedores</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/empleados" class="nav-link">
+                    <i class="fas fa-user-tie"></i>
+                    <span data-lang-es="Empleados" data-lang-en="Employees">Empleados</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/asistencias" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span data-lang-es="Asistencias" data-lang-en="Attendance">Asistencias</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/facturas" class="nav-link">
+                    <i class="fas fa-file-invoice"></i>
+                    <span data-lang-es="Facturas" data-lang-en="Invoices">Facturas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/reportes" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span data-lang-es="Reportes" data-lang-en="Reports">Reportes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/inventario" class="nav-link">
+                    <i class="fas fa-boxes"></i>
+                    <span data-lang-es="Inventario" data-lang-en="Inventory">Inventario</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/configuracion" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span data-lang-es="Configuración" data-lang-en="Settings">Configuración</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="navbar-left">
+                <button class="btn btn-outline-primary d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h4 class="mb-0 ms-3" data-lang-es="Panel de Control" data-lang-en="Control Panel">Panel de Control</h4>
+            </div>
+            
+            <div class="navbar-right">
+                <!-- Clock Widget -->
+                <div class="clock-widget">
+                    <div class="clock-time" id="currentTime">00:00:00</div>
+                    <div class="clock-date" id="currentDate">01/01/2024</div>
+                </div>
+                
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <div class="language-btn" onclick="toggleLanguageDropdown()">
+                        <i class="fas fa-globe"></i>
+                        <span id="currentLang">ES</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="language-dropdown" id="languageDropdown">
+                        <div class="language-option" onclick="changeLanguage('es')">
+                            <i class="fas fa-flag"></i>
+                            <span>Español</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguage('en')">
+                            <i class="fas fa-flag"></i>
+                            <span>English</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user"></i>
+                        <span data-lang-es="Usuario" data-lang-en="User">Usuario</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/perfil">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span data-lang-es="Mi Perfil" data-lang-en="My Profile">Mi Perfil</span>
+                        </a></li>
+                        <li><a class="dropdown-item" href="/configuracion">
+                            <i class="fas fa-cog me-2"></i>
+                            <span data-lang-es="Configuración" data-lang-en="Settings">Configuración</span>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            <span data-lang-es="Cerrar Sesión" data-lang-en="Logout">Cerrar Sesión</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <h1 class="page-title" data-lang-es="Dashboard Principal" data-lang-en="Main Dashboard">Dashboard Principal</h1>
+            <p class="page-subtitle" data-lang-es="Resumen general del negocio y accesos rápidos" data-lang-en="Business overview and quick access">Resumen general del negocio y accesos rápidos</p>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" th:text="${totalClientes ?: 0}">0</div>
+                            <div class="stat-label" data-lang-es="Total Clientes" data-lang-en="Total Customers">Total Clientes</div>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" th:text="${ventasHoy ?: 0}">0</div>
+                            <div class="stat-label" data-lang-es="Ventas Hoy" data-lang-en="Sales Today">Ventas Hoy</div>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" th:text="${totalUniformes ?: 0}">0</div>
+                            <div class="stat-label" data-lang-es="Productos" data-lang-en="Products">Productos</div>
+                        </div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card info">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-number" th:text="${totalEmpleados ?: 0}">0</div>
+                            <div class="stat-label" data-lang-es="Empleados" data-lang-en="Employees">Empleados</div>
+                        </div>
+                        <div class="stat-icon info">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    <span data-lang-es="Acciones Rápidas" data-lang-en="Quick Actions">Acciones Rápidas</span>
+                </h3>
+                
+                <div class="action-grid">
+                    <a href="/ventas/nueva" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Nueva Venta" data-lang-en="New Sale">Nueva Venta</div>
+                        <div class="action-desc" data-lang-es="Registrar una nueva venta" data-lang-en="Register a new sale">Registrar una nueva venta</div>
+                    </a>
+
+                    <a href="/clientes/nuevo" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Nuevo Cliente" data-lang-en="New Customer">Nuevo Cliente</div>
+                        <div class="action-desc" data-lang-es="Agregar cliente al sistema" data-lang-en="Add customer to system">Agregar cliente al sistema</div>
+                    </a>
+
+                    <a href="/uniformes/nuevo" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Nuevo Producto" data-lang-en="New Product">Nuevo Producto</div>
+                        <div class="action-desc" data-lang-es="Agregar uniforme al inventario" data-lang-en="Add uniform to inventory">Agregar uniforme al inventario</div>
+                    </a>
+
+                    <a href="/facturas" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Ver Facturas" data-lang-en="View Invoices">Ver Facturas</div>
+                        <div class="action-desc" data-lang-es="Consultar facturas emitidas" data-lang-en="Check issued invoices">Consultar facturas emitidas</div>
+                    </a>
+
+                    <a href="/inventario" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Inventario" data-lang-en="Inventory">Inventario</div>
+                        <div class="action-desc" data-lang-es="Gestionar stock de productos" data-lang-en="Manage product stock">Gestionar stock de productos</div>
+                    </a>
+
+                    <a href="/reportes" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Reportes" data-lang-en="Reports">Reportes</div>
+                        <div class="action-desc" data-lang-es="Generar reportes de ventas" data-lang-en="Generate sales reports">Generar reportes de ventas</div>
+                    </a>
+
+                    <a href="/asistencias" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Asistencias" data-lang-en="Attendance">Asistencias</div>
+                        <div class="action-desc" data-lang-es="Control de asistencia" data-lang-en="Attendance control">Control de asistencia</div>
+                    </a>
+
+                    <a href="/configuracion" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="action-title" data-lang-es="Configuración" data-lang-en="Settings">Configuración</div>
+                        <div class="action-desc" data-lang-es="Ajustes del sistema" data-lang-en="System settings">Ajustes del sistema</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i>
+                    <span data-lang-es="Actividad Reciente" data-lang-en="Recent Activity">Actividad Reciente</span>
+                </h3>
+                
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: var(--success-color); color: white;">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Nueva venta registrada" data-lang-en="New sale registered">Nueva venta registrada</div>
+                        <div class="activity-time" data-lang-es="Hace 5 minutos" data-lang-en="5 minutes ago">Hace 5 minutos</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: var(--info-color); color: white;">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Nuevo cliente agregado" data-lang-en="New customer added">Nuevo cliente agregado</div>
+                        <div class="activity-time" data-lang-es="Hace 15 minutos" data-lang-en="15 minutes ago">Hace 15 minutos</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: var(--warning-color); color: white;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Stock bajo en uniformes" data-lang-en="Low stock in uniforms">Stock bajo en uniformes</div>
+                        <div class="activity-time" data-lang-es="Hace 1 hora" data-lang-en="1 hour ago">Hace 1 hora</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Reloj en tiempo real
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES');
+            const dateString = now.toLocaleDateString('es-ES');
+            
+            document.getElementById('currentTime').textContent = timeString;
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        // Actualizar reloj cada segundo
+        setInterval(updateClock, 1000);
+        updateClock(); // Llamada inicial
+
+        // Toggle sidebar en móviles
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Toggle dropdown de idiomas
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('languageDropdown');
+            
+            if (!languageSelector.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Cambiar idioma
+        function changeLanguage(lang) {
+            const currentLangElement = document.getElementById('currentLang');
+            const dropdown = document.getElementById('languageDropdown');
+            
+            // Actualizar indicador de idioma
+            currentLangElement.textContent = lang.toUpperCase();
+            
+            // Cambiar textos según el idioma
+            const elements = document.querySelectorAll('[data-lang-es][data-lang-en]');
+            elements.forEach(element => {
+                if (lang === 'es') {
+                    element.textContent = element.getAttribute('data-lang-es');
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                }
+            });
+            
+            // Guardar preferencia en localStorage
+            localStorage.setItem('language', lang);
+            
+            // Cerrar dropdown
+            dropdown.classList.remove('show');
+            
+            // Mostrar notificación
+            showNotification(
+                lang === 'es' ? 'Idioma cambiado a Español' : 'Language changed to English',
+                'success'
+            );
+        }
+
+        // Cargar idioma guardado
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('language') || 'es';
+            changeLanguage(savedLang);
+            
+            // Animaciones de entrada
+            const cards = document.querySelectorAll('.stat-card, .action-btn');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
