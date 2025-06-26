@@ -16,38 +16,270 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- CSS personalizado -->
-    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - REGISTRO CON TRADUCCIÓN
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: rgba(30, 41, 59, 0.9);
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+            --info-gradient: linear-gradient(135deg, #00d4ff 0%, #06ffa5 100%);
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-light: rgba(255, 255, 255, 0.95);
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(15, 15, 35, 0.95);
+        }
+
+        :root {
+            --border-radius: 20px;
+            --border-radius-sm: 12px;
+            --border-radius-lg: 28px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             padding: 20px 0;
+            overflow-x: hidden;
+            position: relative;
+            transition: var(--transition);
         }
-        
-        .register-container {
-            background: rgba(255, 255, 255, 0.95);
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] body::before {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 255, 165, 0.2) 0%, transparent 50%);
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Top controls */
+        .top-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Language button */
+        .language-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .language-button:hover::before {
+            left: 100%;
+        }
+
+        .language-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: var(--glass-border);
+        }
+
+        .language-button .globe-icon {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .language-button .language-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .language-button .chevron-icon {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            transition: transform var(--transition);
+        }
+
+        .language-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(30px);
+            background: var(--warning-gradient);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .theme-icon.sun {
+            right: 8px;
+            opacity: 1;
+        }
+
+        .theme-icon.moon {
+            left: 8px;
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+        }
+
+        /* Register container */
+        .register-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--glass-shadow);
             overflow: hidden;
             max-width: 1000px;
             margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
         }
-        
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .register-header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: var(--text-light);
             padding: 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            border-bottom: 1px solid var(--glass-border);
         }
-        
+
         .register-header::before {
             content: '';
             position: absolute;
@@ -55,101 +287,386 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="%234f46e5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
             animation: rotate 30s linear infinite;
         }
-        
+
+        [data-theme="dark"] .register-header::before {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="%23ff006e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+        }
+
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
+
         .register-content {
             position: relative;
             z-index: 2;
         }
-        
-        .register-body {
-            padding: 2.5rem;
+
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-right: 1rem;
+            animation: logoFloat 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: logoShine 2s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(3deg); }
+        }
+
+        @keyframes logoShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+        }
+
+        .register-body {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        /* NUEVA ANIMACIÓN DE PARTÍCULAS FLOTANTES */
+        .floating-animation {
+            position: relative;
+            margin-bottom: 2rem;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatUp 4s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            width: 8px;
+            height: 8px;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 3s;
+        }
+
+        .particle:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            left: 20%;
+            animation-delay: 0.5s;
+            animation-duration: 4s;
+        }
+
+        .particle:nth-child(3) {
+            width: 10px;
+            height: 10px;
+            left: 30%;
+            animation-delay: 1s;
+            animation-duration: 3.5s;
+        }
+
+        .particle:nth-child(4) {
+            width: 7px;
+            height: 7px;
+            left: 40%;
+            animation-delay: 1.5s;
+            animation-duration: 4.2s;
+        }
+
+        .particle:nth-child(5) {
+            width: 9px;
+            height: 9px;
+            left: 50%;
+            animation-delay: 2s;
+            animation-duration: 3.8s;
+        }
+
+        .particle:nth-child(6) {
+            width: 5px;
+            height: 5px;
+            left: 60%;
+            animation-delay: 0.3s;
+            animation-duration: 4.5s;
+        }
+
+        .particle:nth-child(7) {
+            width: 8px;
+            height: 8px;
+            left: 70%;
+            animation-delay: 1.2s;
+            animation-duration: 3.2s;
+        }
+
+        .particle:nth-child(8) {
+            width: 6px;
+            height: 6px;
+            left: 80%;
+            animation-delay: 1.8s;
+            animation-duration: 4.1s;
+        }
+
+        .particle:nth-child(9) {
+            width: 11px;
+            height: 11px;
+            left: 90%;
+            animation-delay: 0.8s;
+            animation-duration: 3.6s;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(80px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        [data-theme="dark"] .particle {
+            background: var(--secondary-gradient);
+            box-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+        }
+
+        /* ANIMACIÓN DE ONDAS EN EL CENTRO */
+        .wave-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+        }
+
+        .wave {
+            position: absolute;
+            border: 2px solid;
+            border-color: var(--secondary-gradient);
+            border-radius: 50%;
+            animation: wave 3s ease-out infinite;
+        }
+
+        .wave:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        @keyframes wave {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+            }
+        }
+
         .form-section {
             margin-bottom: 2rem;
+            animation: slideInLeft 0.6s ease-out both;
         }
-        
+
+        .form-section:nth-child(1) { animation-delay: 0.2s; }
+        .form-section:nth-child(2) { animation-delay: 0.4s; }
+        .form-section:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .section-title {
-            color: #4f46e5;
+            color: var(--text-light);
             font-weight: 600;
             font-size: 1.1rem;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
         }
-        
+
         .section-title i {
             margin-right: 0.5rem;
             width: 20px;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .form-floating {
+
+        /* CAMPOS SIN LABELS - SOLO PLACEHOLDERS */
+        .form-group {
             margin-bottom: 1.25rem;
+            position: relative;
         }
-        
+
         .form-control, .form-select {
-            border-radius: 12px;
-            border: 2px solid #e5e7eb;
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem 0.75rem 1rem 3rem;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            color: var(--text-light);
+            font-weight: 500;
+            width: 100%;
+            height: calc(3.5rem + 2px);
         }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background: rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.95);
         }
-        
+
+        .form-control::placeholder,
+        .form-select::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        [data-theme="dark"] .form-control::placeholder,
+        [data-theme="dark"] .form-select::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--secondary-gradient);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.1);
+        }
+
+        /* ICONOS DENTRO DE LOS CAMPOS */
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        [data-theme="dark"] .input-icon {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
         .password-strength {
             margin-top: 0.5rem;
         }
-        
+
         .strength-bar {
             height: 4px;
-            background: #e5e7eb;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
             overflow: hidden;
             margin-bottom: 0.5rem;
         }
-        
+
         .strength-fill {
             height: 100%;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             border-radius: 2px;
         }
-        
-        .strength-weak { background: #ef4444; width: 25%; }
-        .strength-fair { background: #f59e0b; width: 50%; }
-        .strength-good { background: #10b981; width: 75%; }
-        .strength-strong { background: #059669; width: 100%; }
-        
+
+        .strength-weak { background: var(--danger-gradient); width: 25%; }
+        .strength-fair { background: var(--warning-gradient); width: 50%; }
+        .strength-good { background: var(--success-gradient); width: 75%; }
+        .strength-strong { background: var(--success-gradient); width: 100%; }
+
         .strength-text {
             font-size: 0.8rem;
             font-weight: 500;
+            color: var(--text-secondary);
         }
-        
+
+        [data-theme="dark"] .strength-text {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         .btn-register {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: var(--secondary-gradient);
             border: none;
-            border-radius: 12px;
+            border-radius: var(--border-radius-sm);
             padding: 1rem 2rem;
             font-weight: 600;
             font-size: 1.1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
+            color: white;
         }
-        
+
         .btn-register::before {
             content: '';
             position: absolute;
@@ -160,105 +677,293 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
-        
+
         .btn-register:hover::before {
             left: 100%;
         }
-        
+
         .btn-register:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+            color: white;
         }
-        
+
+        [data-theme="dark"] .btn-register:hover {
+            box-shadow: 0 10px 25px rgba(255, 0, 110, 0.3);
+        }
+
         .terms-checkbox {
-            background: #f8fafc;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-sm);
             padding: 1.25rem;
             margin-bottom: 1.5rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--glass-border);
         }
-        
+
+        [data-theme="dark"] .terms-checkbox {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .form-check-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+        }
+
+        [data-theme="dark"] .form-check-input {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .form-check-input:checked {
+            background: var(--secondary-gradient);
+            border-color: var(--secondary-gradient);
+        }
+
+        .form-check-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .form-check-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
         .alert {
-            border-radius: 12px;
-            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
             padding: 1rem 1.25rem;
             margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            color: var(--text-light);
         }
-        
-        .progress-steps {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
+
+        .alert-danger {
+            border-left-color: #ef4444;
         }
-        
-        .step {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #e5e7eb;
-            color: #6b7280;
+
+        .alert-success {
+            border-left-color: #10b981;
+        }
+
+        .alert-warning {
+            border-left-color: #f59e0b;
+        }
+
+        .btn-outline-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="dark"] .btn-outline-secondary {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .btn-outline-secondary:hover {
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Dropdowns */
+        .language-dropdown {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--glass-shadow);
+            min-width: 160px;
+            z-index: 10000;
+            display: none;
+            overflow: hidden;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin: 0 0.5rem;
-            transition: all 0.3s ease;
+            gap: 0.75rem;
+            transition: var(--transition-fast);
+            font-weight: 500;
+            color: var(--text-light);
         }
-        
-        .step.active {
-            background: #4f46e5;
-            color: white;
+
+        .language-option:hover {
+            background: rgba(79, 70, 229, 0.1);
         }
-        
-        .step.completed {
-            background: #10b981;
-            color: white;
+
+        [data-theme="dark"] .language-option:hover {
+            background: rgba(255, 0, 110, 0.1);
         }
-        
-        .step-connector {
-            width: 50px;
-            height: 2px;
-            background: #e5e7eb;
-            margin-top: 19px;
+
+        .language-option.active {
+            background: rgba(79, 70, 229, 0.15);
         }
-        
-        .step-connector.completed {
-            background: #10b981;
+
+        [data-theme="dark"] .language-option.active {
+            background: rgba(255, 0, 110, 0.15);
         }
-        
+
+        .language-option.active::after {
+            content: '✓';
+            margin-left: auto;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        /* Text colors */
+        .header-title {
+            color: var(--text-light);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        /* Dark mode overrides */
+        [data-theme="dark"] .header-title,
+        [data-theme="dark"] .header-subtitle,
+        [data-theme="dark"] .footer-text,
+        [data-theme="dark"] .footer-link {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="dark"] .header-subtitle,
+        [data-theme="dark"] .footer-text,
+        [data-theme="dark"] .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         @media (max-width: 768px) {
             .register-container {
                 margin: 10px;
                 border-radius: 15px;
             }
-            
+
             .register-header,
             .register-body {
                 padding: 1.5rem;
             }
-            
-            .progress-steps {
-                display: none;
+
+            .floating-animation {
+                height: 60px;
+                margin-bottom: 1.5rem;
+            }
+
+            .top-controls {
+                top: 10px;
+                right: 10px;
+                gap: 0.5rem;
+            }
+
+            .language-button {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .register-header,
+            .register-body {
+                padding: 1rem;
+            }
+
+            .form-control,
+            .form-select {
+                padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            }
+
+            .btn-register {
+                padding: 0.75rem 1.5rem;
+            }
+
+            .floating-animation {
+                height: 50px;
             }
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <div class="language-button" onclick="toggleLanguageDropdown()" id="btnLang">
+                <i class="fas fa-globe globe-icon"></i>
+                <span class="language-text" id="languageText">Idioma</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-sun theme-icon sun"></i>
+            <i class="fas fa-moon theme-icon moon"></i>
+        </div>
+    </div>
+
     <div class="container">
         <div class="register-container">
             <!-- Header -->
             <div class="register-header">
                 <div class="register-content">
                     <div class="d-flex align-items-center justify-content-center mb-3">
-                        <div class="brand-icon me-3">
-                            <i class="fas fa-store fa-2x"></i>
+                        <div class="brand-icon">
+                            <i class="fas fa-store"></i>
                         </div>
-                        <h2 class="fw-bold mb-0">Boutique Uniformes</h2>
+                        <h2 class="fw-bold mb-0 header-title">Boutique Uniformes</h2>
                     </div>
-                    <p class="fs-5 mb-0 opacity-90" th:text="#{auth.crear.cuenta}">
+                    <p class="fs-5 mb-0 header-subtitle" id="headerTitle">
                         Crear Nueva Cuenta
                     </p>
-                    <p class="opacity-75 mb-0" th:text="#{auth.registro.descripcion}">
+                    <p class="header-subtitle mb-0" id="headerSubtitle">
                         Únete a nosotros y gestiona tu boutique de manera profesional
                     </p>
                 </div>
@@ -266,13 +971,24 @@
             
             <!-- Body -->
             <div class="register-body">
-                <!-- Progress Steps -->
-                <div class="progress-steps d-none d-md-flex">
-                    <div class="step active">1</div>
-                    <div class="step-connector"></div>
-                    <div class="step">2</div>
-                    <div class="step-connector"></div>
-                    <div class="step">3</div>
+                <!-- NUEVA ANIMACIÓN DE PARTÍCULAS FLOTANTES -->
+                <div class="floating-animation">
+                    <div class="floating-particles">
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                    </div>
+                    <div class="wave-animation">
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                        <div class="wave"></div>
+                    </div>
                 </div>
                 
                 <!-- Mensajes de alerta -->
@@ -294,18 +1010,15 @@
                     <div class="form-section">
                         <h4 class="section-title">
                             <i class="fas fa-user-circle"></i>
-                            <span th:text="#{auth.info.cuenta}">Información de la Cuenta</span>
+                            <span id="accountInfoTitle">Información de la Cuenta</span>
                         </h4>
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-user input-icon"></i>
                                     <input type="text" class="form-control" id="username" th:field="*{username}" 
-                                           th:placeholder="#{form.username}" placeholder="Nombre de usuario" required>
-                                    <label for="username">
-                                        <i class="fas fa-user me-2"></i>
-                                        <span th:text="#{form.username}">Nombre de usuario</span>
-                                    </label>
+                                           placeholder="Nombre de usuario" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
                                         Error en username
                                     </div>
@@ -313,13 +1026,10 @@
                             </div>
                             
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-envelope input-icon"></i>
                                     <input type="email" class="form-control" id="email" th:field="*{email}" 
-                                           th:placeholder="#{form.email}" placeholder="Email" required>
-                                    <label for="email">
-                                        <i class="fas fa-envelope me-2"></i>
-                                        <span th:text="#{form.email}">Email</span>
-                                    </label>
+                                           placeholder="Email" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
                                         Error en email
                                     </div>
@@ -329,13 +1039,10 @@
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-lock input-icon"></i>
                                     <input type="password" class="form-control" id="password" th:field="*{password}" 
-                                           th:placeholder="#{auth.password}" placeholder="Contraseña" required>
-                                    <label for="password">
-                                        <i class="fas fa-lock me-2"></i>
-                                        <span th:text="#{auth.password}">Contraseña</span>
-                                    </label>
+                                           placeholder="Contraseña" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
                                         Error en password
                                     </div>
@@ -347,21 +1054,18 @@
                                         <div class="strength-fill" id="strengthFill"></div>
                                     </div>
                                     <div class="strength-text" id="strengthText">
-                                        <span th:text="#{auth.password.fortaleza}">Fortaleza de la contraseña</span>
+                                        Fortaleza de la contraseña
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-lock input-icon"></i>
                                     <input type="password" class="form-control" id="confirmPassword" 
                                            placeholder="Confirmar contraseña" required>
-                                    <label for="confirmPassword">
-                                        <i class="fas fa-lock me-2"></i>
-                                        <span th:text="#{auth.confirmar.password}">Confirmar contraseña</span>
-                                    </label>
                                     <div class="invalid-feedback">
-                                        <span th:text="#{auth.passwords.no.coinciden}">Las contraseñas no coinciden</span>
+                                        <span id="passwordMismatchText">Las contraseñas no coinciden</span>
                                     </div>
                                 </div>
                             </div>
@@ -372,18 +1076,15 @@
                     <div class="form-section">
                         <h4 class="section-title">
                             <i class="fas fa-id-card"></i>
-                            <span th:text="#{auth.info.personal}">Información Personal</span>
+                            <span id="personalInfoTitle">Información Personal</span>
                         </h4>
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-user input-icon"></i>
                                     <input type="text" class="form-control" id="nombre" th:field="*{nombre}" 
-                                           th:placeholder="#{form.nombre}" placeholder="Nombre" required>
-                                    <label for="nombre">
-                                        <i class="fas fa-user me-2"></i>
-                                        <span th:text="#{form.nombre}">Nombre</span>
-                                    </label>
+                                           placeholder="Nombre" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
                                         Error en nombre
                                     </div>
@@ -391,13 +1092,10 @@
                             </div>
                             
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-user input-icon"></i>
                                     <input type="text" class="form-control" id="apellido" th:field="*{apellido}" 
-                                           th:placeholder="#{form.apellido}" placeholder="Apellido" required>
-                                    <label for="apellido">
-                                        <i class="fas fa-user me-2"></i>
-                                        <span th:text="#{form.apellido}">Apellido</span>
-                                    </label>
+                                           placeholder="Apellido" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">
                                         Error en apellido
                                     </div>
@@ -407,17 +1105,14 @@
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-floating">
+                                <div class="form-group">
+                                    <i class="fas fa-user-tag input-icon"></i>
                                     <select class="form-select" id="rol" th:field="*{rol}" required>
-                                        <option value="" th:text="#{form.seleccionar.rol}">Seleccionar rol...</option>
-                                        <option value="EMPLEADO" th:text="#{rol.empleado}">Empleado</option>
-                                        <option value="VENDEDOR" th:text="#{rol.vendedor}">Vendedor</option>
-                                        <option value="ADMIN" th:text="#{rol.admin}" sec:authorize="hasRole('ADMIN')">Administrador</option>
+                                        <option value="" id="selectRoleOption">Seleccionar rol...</option>
+                                        <option value="EMPLEADO" id="employeeOption">Empleado</option>
+                                        <option value="VENDEDOR" id="vendorOption">Vendedor</option>
+                                        <option value="ADMIN" id="adminOption" sec:authorize="hasRole('ADMIN')">Administrador</option>
                                     </select>
-                                    <label for="rol">
-                                        <i class="fas fa-user-tag me-2"></i>
-                                        <span th:text="#{form.rol}">Rol</span>
-                                    </label>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}">
                                         Error en rol
                                     </div>
@@ -430,27 +1125,27 @@
                     <div class="form-section">
                         <h4 class="section-title">
                             <i class="fas fa-file-contract"></i>
-                            <span th:text="#{auth.terminos.condiciones}">Términos y Condiciones</span>
+                            <span id="termsTitle">Términos y Condiciones</span>
                         </h4>
                         
                         <div class="terms-checkbox">
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="acceptTerms" required>
                                 <label class="form-check-label" for="acceptTerms">
-                                    <span th:text="#{auth.acepto.terminos.1}">Acepto los</span>
-                                    <a href="#" class="text-primary" th:text="#{auth.terminos.servicio}">términos de servicio</a>
-                                    <span th:text="#{auth.acepto.terminos.2}">y la</span>
-                                    <a href="#" class="text-primary" th:text="#{auth.politica.privacidad}">política de privacidad</a>
+                                    <span id="acceptTermsText">Acepto los</span>
+                                    <a href="#" class="text-primary" id="termsServiceLink">términos de servicio</a>
+                                    <span id="andText">y la</span>
+                                    <a href="#" class="text-primary" id="privacyPolicyLink">política de privacidad</a>
                                 </label>
                                 <div class="invalid-feedback">
-                                    <span th:text="#{auth.debe.aceptar.terminos}">Debes aceptar los términos y condiciones</span>
+                                    <span id="mustAcceptTermsText">Debes aceptar los términos y condiciones</span>
                                 </div>
                             </div>
                             
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="acceptNewsletter">
                                 <label class="form-check-label" for="acceptNewsletter">
-                                    <span th:text="#{auth.acepto.newsletter}">Acepto recibir noticias y actualizaciones por email</span>
+                                    <span id="acceptNewsletterText">Acepto recibir noticias y actualizaciones por email</span>
                                 </label>
                             </div>
                         </div>
@@ -460,21 +1155,21 @@
                     <div class="d-grid gap-2 d-md-flex justify-content-md-between">
                         <a th:href="@{/login}" class="btn btn-outline-secondary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>
-                            <span th:text="#{btn.volver.login}">Volver al Login</span>
+                            <span id="backToLoginText">Volver al Login</span>
                         </a>
                         
                         <button type="submit" class="btn btn-register text-white btn-lg">
                             <i class="fas fa-user-plus me-2"></i>
-                            <span th:text="#{auth.crear.cuenta}">Crear Cuenta</span>
+                            <span id="createAccountText">Crear Cuenta</span>
                         </button>
                     </div>
                 </form>
                 
                 <!-- Información adicional -->
                 <div class="text-center mt-4">
-                    <small class="text-muted">
-                        <span th:text="#{auth.ya.tienes.cuenta}">¿Ya tienes cuenta?</span>
-                        <a th:href="@{/login}" class="text-primary ms-1" th:text="#{auth.inicia.sesion}">
+                    <small class="footer-text">
+                        <span id="alreadyHaveAccountText">¿Ya tienes cuenta?</span>
+                        <a th:href="@{/login}" class="footer-link ms-1" id="loginHereText">
                             Inicia sesión aquí
                         </a>
                     </small>
@@ -482,11 +1177,239 @@
             </div>
         </div>
     </div>
+
+    <!-- Language Dropdown -->
+    <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+            <i class="fas fa-flag"></i>
+            <span>Español</span>
+        </div>
+        <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+            <i class="fas fa-flag"></i>
+            <span>English</span>
+        </div>
+    </div>
     
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // DICCIONARIO DE TRADUCCIONES
+        const translations = {
+            es: {
+                languageText: 'Idioma',
+                headerTitle: 'Crear Nueva Cuenta',
+                headerSubtitle: 'Únete a nosotros y gestiona tu boutique de manera profesional',
+                accountInfoTitle: 'Información de la Cuenta',
+                personalInfoTitle: 'Información Personal',
+                termsTitle: 'Términos y Condiciones',
+                usernamePlaceholder: 'Nombre de usuario',
+                emailPlaceholder: 'Email',
+                passwordPlaceholder: 'Contraseña',
+                confirmPasswordPlaceholder: 'Confirmar contraseña',
+                namePlaceholder: 'Nombre',
+                lastnamePlaceholder: 'Apellido',
+                strengthText: 'Fortaleza de la contraseña',
+                passwordMismatchText: 'Las contraseñas no coinciden',
+                selectRoleOption: 'Seleccionar rol...',
+                employeeOption: 'Empleado',
+                vendorOption: 'Vendedor',
+                adminOption: 'Administrador',
+                acceptTermsText: 'Acepto los',
+                termsServiceLink: 'términos de servicio',
+                andText: 'y la',
+                privacyPolicyLink: 'política de privacidad',
+                mustAcceptTermsText: 'Debes aceptar los términos y condiciones',
+                acceptNewsletterText: 'Acepto recibir noticias y actualizaciones por email',
+                backToLoginText: 'Volver al Login',
+                createAccountText: 'Crear Cuenta',
+                alreadyHaveAccountText: '¿Ya tienes cuenta?',
+                loginHereText: 'Inicia sesión aquí',
+                darkModeActivated: 'Modo oscuro activado',
+                lightModeActivated: 'Modo claro activado',
+                languageChangedSpanish: 'Idioma cambiado a Español'
+            },
+            en: {
+                languageText: 'Language',
+                headerTitle: 'Create New Account',
+                headerSubtitle: 'Join us and manage your boutique professionally',
+                accountInfoTitle: 'Account Information',
+                personalInfoTitle: 'Personal Information',
+                termsTitle: 'Terms and Conditions',
+                usernamePlaceholder: 'Username',
+                emailPlaceholder: 'Email',
+                passwordPlaceholder: 'Password',
+                confirmPasswordPlaceholder: 'Confirm password',
+                namePlaceholder: 'First name',
+                lastnamePlaceholder: 'Last name',
+                strengthText: 'Password strength',
+                passwordMismatchText: 'Passwords do not match',
+                selectRoleOption: 'Select role...',
+                employeeOption: 'Employee',
+                vendorOption: 'Vendor',
+                adminOption: 'Administrator',
+                acceptTermsText: 'I accept the',
+                termsServiceLink: 'terms of service',
+                andText: 'and the',
+                privacyPolicyLink: 'privacy policy',
+                mustAcceptTermsText: 'You must accept the terms and conditions',
+                acceptNewsletterText: 'I accept to receive news and updates by email',
+                backToLoginText: 'Back to Login',
+                createAccountText: 'Create Account',
+                alreadyHaveAccountText: 'Already have an account?',
+                loginHereText: 'Login here',
+                darkModeActivated: 'Dark mode activated',
+                lightModeActivated: 'Light mode activated',
+                languageChangedEnglish: 'Language changed to English'
+            }
+        };
+
+        // FUNCIÓN PARA CAMBIAR IDIOMA
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            
+            // Actualizar todos los textos
+            document.getElementById('languageText').textContent = t.languageText;
+            document.getElementById('headerTitle').textContent = t.headerTitle;
+            document.getElementById('headerSubtitle').textContent = t.headerSubtitle;
+            document.getElementById('accountInfoTitle').textContent = t.accountInfoTitle;
+            document.getElementById('personalInfoTitle').textContent = t.personalInfoTitle;
+            document.getElementById('termsTitle').textContent = t.termsTitle;
+            document.getElementById('strengthText').textContent = t.strengthText;
+            document.getElementById('passwordMismatchText').textContent = t.passwordMismatchText;
+            document.getElementById('selectRoleOption').textContent = t.selectRoleOption;
+            document.getElementById('employeeOption').textContent = t.employeeOption;
+            document.getElementById('vendorOption').textContent = t.vendorOption;
+            document.getElementById('adminOption').textContent = t.adminOption;
+            document.getElementById('acceptTermsText').textContent = t.acceptTermsText;
+            document.getElementById('termsServiceLink').textContent = t.termsServiceLink;
+            document.getElementById('andText').textContent = t.andText;
+            document.getElementById('privacyPolicyLink').textContent = t.privacyPolicyLink;
+            document.getElementById('mustAcceptTermsText').textContent = t.mustAcceptTermsText;
+            document.getElementById('acceptNewsletterText').textContent = t.acceptNewsletterText;
+            document.getElementById('backToLoginText').textContent = t.backToLoginText;
+            document.getElementById('createAccountText').textContent = t.createAccountText;
+            document.getElementById('alreadyHaveAccountText').textContent = t.alreadyHaveAccountText;
+            document.getElementById('loginHereText').textContent = t.loginHereText;
+            
+            // Actualizar placeholders
+            document.getElementById('username').placeholder = t.usernamePlaceholder;
+            document.getElementById('email').placeholder = t.emailPlaceholder;
+            document.getElementById('password').placeholder = t.passwordPlaceholder;
+            document.getElementById('confirmPassword').placeholder = t.confirmPasswordPlaceholder;
+            document.getElementById('nombre').placeholder = t.namePlaceholder;
+            document.getElementById('apellido').placeholder = t.lastnamePlaceholder;
+            
+            // Actualizar opciones activas en el dropdown
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            // Guardar preferencia
+            localStorage.setItem('language', lang);
+            
+            // Cerrar dropdown
+            const dropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            dropdown.classList.remove('show');
+            languageBtn.classList.remove('active');
+            
+            // Mostrar notificación
+            const message = lang === 'es' ? t.languageChangedSpanish : t.languageChangedEnglish;
+            showNotification(message, 'success');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const currentLang = getCurrentLanguage();
+            const t = translations[currentLang];
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Show notification
+            const message = newTheme === 'dark' ? t.darkModeActivated : t.lightModeActivated;
+            showNotification(message, 'success');
+        }
+
+        // Language functions
+        function toggleLanguageDropdown() {
+            const btn = document.getElementById('btnLang');
+            const dropdown = document.getElementById('languageDropdown');
+            
+            // Calcular posición del botón
+            const rect = btn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+            
+            // Toggle dropdown y animación del chevron
+            dropdown.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function getCurrentLanguage() {
+            return localStorage.getItem('language') || 'es';
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            // Close language dropdown
+            if (!languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10001;
+                min-width: 300px;
+                padding: 1rem 1.5rem;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius);
+                box-shadow: var(--glass-shadow);
+                color: var(--text-light);
+                font-weight: 500;
+                animation: slideInDown 0.5s ease-out;
+                text-align: center;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutUp 0.5s ease-in forwards';
+                    setTimeout(() => notification.remove(), 500);
+                }
+            }, 3000);
+        }
+
         // Validación del formulario
         (function() {
             'use strict';
@@ -528,29 +1451,35 @@
             }
             
             function updatePasswordStrength(strength) {
+                const currentLang = getCurrentLanguage();
                 strengthFill.className = 'strength-fill';
+                
+                const strengthTexts = {
+                    es: ['Muy débil', 'Débil', 'Regular', 'Buena', 'Muy fuerte'],
+                    en: ['Very weak', 'Weak', 'Fair', 'Good', 'Very strong']
+                };
                 
                 switch(strength) {
                     case 0:
                     case 1:
                         strengthFill.classList.add('strength-weak');
-                        strengthText.textContent = 'Débil';
+                        strengthText.textContent = strengthTexts[currentLang][strength];
                         strengthText.style.color = '#ef4444';
                         break;
                     case 2:
                         strengthFill.classList.add('strength-fair');
-                        strengthText.textContent = 'Regular';
+                        strengthText.textContent = strengthTexts[currentLang][2];
                         strengthText.style.color = '#f59e0b';
                         break;
                     case 3:
                     case 4:
                         strengthFill.classList.add('strength-good');
-                        strengthText.textContent = 'Buena';
+                        strengthText.textContent = strengthTexts[currentLang][3];
                         strengthText.style.color = '#10b981';
                         break;
                     case 5:
                         strengthFill.classList.add('strength-strong');
-                        strengthText.textContent = 'Muy fuerte';
+                        strengthText.textContent = strengthTexts[currentLang][4];
                         strengthText.style.color = '#059669';
                         break;
                 }
@@ -588,19 +1517,6 @@
                 form.classList.add('was-validated');
             });
             
-            // Animación de entrada
-            document.addEventListener('DOMContentLoaded', function() {
-                const container = document.querySelector('.register-container');
-                container.style.opacity = '0';
-                container.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    container.style.transition = 'all 0.6s ease';
-                    container.style.opacity = '1';
-                    container.style.transform = 'translateY(0)';
-                }, 100);
-            });
-            
             // Auto-hide alerts
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
@@ -610,6 +1526,41 @@
                 });
             }, 5000);
         })();
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme and language
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedLang = localStorage.getItem('language') || 'es';
+            
+            document.body.setAttribute('data-theme', savedTheme);
+            changeLanguage(savedLang);
+
+            // Animación de entrada
+            const container = document.querySelector('.register-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Add CSS for notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInDown {
+                from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+            @keyframes slideOutUp {
+                from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                to { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

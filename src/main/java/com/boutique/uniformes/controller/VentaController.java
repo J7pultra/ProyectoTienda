@@ -81,7 +81,7 @@ public class VentaController {
         model.addAttribute("uniformes", uniformeService.obtenerUniformesDisponibles());
         model.addAttribute("titulo", "Nueva Venta");
         
-        return "ventas/formulario";
+        return "ventas/factura";
     }
 
     @PostMapping("/guardar")
@@ -95,7 +95,7 @@ public class VentaController {
             model.addAttribute("empleados", empleadoService.obtenerEmpleadosActivos());
             model.addAttribute("uniformes", uniformeService.obtenerUniformesDisponibles());
             model.addAttribute("titulo", "Nueva Venta");
-            return "ventas/formulario";
+            return "ventas/factura";
         }
 
         try {
@@ -109,7 +109,7 @@ public class VentaController {
             model.addAttribute("empleados", empleadoService.obtenerEmpleadosActivos());
             model.addAttribute("uniformes", uniformeService.obtenerUniformesDisponibles());
             model.addAttribute("titulo", "Nueva Venta");
-            return "ventas/formulario";
+            return "ventas/factura";
         }
     }
 

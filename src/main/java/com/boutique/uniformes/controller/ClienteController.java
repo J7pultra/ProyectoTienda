@@ -1,4 +1,4 @@
-package com.boutiqueuniformes.controller;
+package com.boutique.uniformes.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
