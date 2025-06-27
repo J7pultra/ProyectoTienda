@@ -18,55 +18,89 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Uniforme {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotBlank(message = "El código es obligatorio")
     @Column(unique = true, nullable = false)
     private String codigo;
-    
+
     @NotBlank(message = "El nombre es obligatorio")
     @Column(nullable = false)
     private String nombre;
-    
+
     private String descripcion;
-    
+
     @NotBlank(message = "La categoría es obligatoria")
     private String categoria;
-    
+
     @NotBlank(message = "La talla es obligatoria")
     private String talla;
-    
+
     private String color;
-    
+
     @NotNull(message = "El precio es obligatorio")
     @Positive(message = "El precio debe ser positivo")
     @Column(precision = 10, scale = 2)
     private BigDecimal precio;
-    
+
     @NotNull(message = "El stock es obligatorio")
     @Column(name = "stock_actual")
     private Integer stockActual;
-    
+
     @Column(name = "stock_minimo")
     private Integer stockMinimo = 5;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id")
     private Proveedor proveedor;
-    
+
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro = LocalDateTime.now();
-    
+
     @Column(name = "activo")
     private Boolean activo = true;
-    
+
     @OneToMany(mappedBy = "uniforme", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetalleVenta> detallesVenta;
-    
+
     public boolean isBajoStock() {
         return stockActual <= stockMinimo;
     }
+
+    // Agregar estos métodos:
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getCodigo() {
+        return this.codigo;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public BigDecimal getPrecio() {
+        return this.precio;
+    }
+
+    public Integer getStockActual() {
+        return this.stockActual;
+    }
+
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public void setStockActual(Integer stockActual) {
+        this.stockActual = stockActual;
+    }
+
 }

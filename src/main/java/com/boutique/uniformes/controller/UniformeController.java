@@ -4,25 +4,33 @@
  */
 package com.boutique.uniformes.controller;
 
+import com.boutique.uniformes.domain.Uniforme;
+import com.boutique.uniformes.service.UniformeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/uniformes")
+@RequiredArgsConstructor
 public class UniformeController {
+
+    private final UniformeService uniformeService;
 
     /**
      * Lista de uniformes con filtros y paginación
@@ -39,17 +47,17 @@ public class UniformeController {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
-        
+
         // Crear paginación vacía por ahora
         Pageable pageable = PageRequest.of(page, size);
         Page<Object> uniformes = new PageImpl<>(Collections.emptyList(), pageable, 0);
-        
+
         // Estadísticas para las tarjetas superiores
         model.addAttribute("totalUniformes", 0);
         model.addAttribute("uniformesActivos", 0);
         model.addAttribute("uniformesBajoStock", 0);
         model.addAttribute("categorias", 5);
-        
+
         // Datos para filtros
         model.addAttribute("uniformes", uniformes);
         model.addAttribute("buscar", buscar);
@@ -60,11 +68,11 @@ public class UniformeController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-        
+
         // Listas para filtros
         model.addAttribute("categorias", createMockCategorias());
         model.addAttribute("tallas", createMockTallas());
-        
+
         return "uniformes/lista";
     }
 
@@ -75,16 +83,16 @@ public class UniformeController {
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLEADO')")
     public String nuevo(Model model) {
         Object uniforme = createMockUniforme(null);
-        
+
         model.addAttribute("uniforme", uniforme);
         model.addAttribute("titulo", "Nuevo Uniforme");
-        
+
         // Listas para los selects
         model.addAttribute("categorias", createMockCategorias());
         model.addAttribute("tallas", createMockTallas());
         model.addAttribute("colores", createMockColores());
         model.addAttribute("proveedores", createMockProveedores());
-        
+
         return "uniformes/formulario";
     }
 
@@ -96,14 +104,14 @@ public class UniformeController {
     public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Object uniforme = createMockUniforme(id);
-            
+
             model.addAttribute("uniforme", uniforme);
             model.addAttribute("titulo", "Editar Uniforme");
             model.addAttribute("categorias", createMockCategorias());
             model.addAttribute("tallas", createMockTallas());
             model.addAttribute("colores", createMockColores());
             model.addAttribute("proveedores", createMockProveedores());
-            
+
             return "uniformes/formulario";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Uniforme no encontrado");
@@ -118,11 +126,11 @@ public class UniformeController {
     public String ver(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Object uniforme = createMockUniforme(id);
-            
+
             model.addAttribute("uniforme", uniforme);
             model.addAttribute("ventasRecientes", Collections.emptyList());
             model.addAttribute("stockHistorial", Collections.emptyList());
-            
+
             return "uniformes/detalle";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Uniforme no encontrado");
@@ -138,11 +146,11 @@ public class UniformeController {
     public String guardar(
             @ModelAttribute Object uniforme,
             RedirectAttributes redirectAttributes) {
-        
+
         try {
             // Aquí implementarías la lógica para guardar
             // uniformeService.guardar(uniforme);
-            
+
             redirectAttributes.addFlashAttribute("success", "Uniforme guardado exitosamente");
             return "redirect:/uniformes";
         } catch (Exception e) {
@@ -160,12 +168,12 @@ public class UniformeController {
         try {
             // Aquí implementarías la lógica para eliminar
             // uniformeService.eliminar(id);
-            
+
             redirectAttributes.addFlashAttribute("success", "Uniforme eliminado exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el uniforme: " + e.getMessage());
         }
-        
+
         return "redirect:/uniformes";
     }
 
@@ -179,16 +187,16 @@ public class UniformeController {
             @RequestParam int nuevoStock,
             @RequestParam(required = false) String motivo,
             RedirectAttributes redirectAttributes) {
-        
+
         try {
             // Aquí implementarías la lógica para actualizar stock
             // uniformeService.actualizarStock(id, nuevoStock, motivo);
-            
+
             redirectAttributes.addFlashAttribute("success", "Stock actualizado exitosamente");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar stock: " + e.getMessage());
         }
-        
+
         return "redirect:/uniformes/ver/" + id;
     }
 
@@ -221,16 +229,6 @@ public class UniformeController {
     }
 
     /**
-     * API: Buscar uniformes por término
-     */
-    @GetMapping("/api/buscar")
-    @ResponseBody
-    public List<Object> buscarUniformes(@RequestParam String q) {
-        // Simular búsqueda
-        return createMockUniformesDisponibles();
-    }
-
-    /**
      * API: Validar código único
      */
     @GetMapping("/api/validate-codigo")
@@ -238,9 +236,11 @@ public class UniformeController {
     public Object validateCodigo(@RequestParam String codigo) {
         // Simular validación
         boolean exists = false; // uniformeService.existePorCodigo(codigo);
-        
+
         return new Object() {
-            public boolean isExists() { return exists; }
+            public boolean isExists() {
+                return exists;
+            }
         };
     }
 
@@ -249,29 +249,81 @@ public class UniformeController {
      */
     private Object createMockUniforme(Long id) {
         return new Object() {
-            public Long getId() { return id != null ? id : 1L; }
-            public String getNombre() { return "Camisa Escolar Blanca"; }
-            public String getCodigo() { return "CAM-001"; }
-            public String getDescripcion() { return "Camisa escolar de alta calidad, tela 100% algodón"; }
-            public String getCategoria() { return "Camisas"; }
-            public String getTalla() { return "M"; }
-            public String getColor() { return "Blanco"; }
-            public BigDecimal getPrecio() { return BigDecimal.valueOf(50000); }
-            public BigDecimal getPrecioCompra() { return BigDecimal.valueOf(30000); }
-            public int getStock() { return 25; }
-            public int getStockMinimo() { return 5; }
-            public boolean isActivo() { return true; }
-            public String getMarca() { return "Uniformes Premium"; }
-            public String getMaterial() { return "100% Algodón"; }
-            public Object getProveedor() { return createMockProveedor(); }
+            public Long getId() {
+                return id != null ? id : 1L;
+            }
+
+            public String getNombre() {
+                return "Camisa Escolar Blanca";
+            }
+
+            public String getCodigo() {
+                return "CAM-001";
+            }
+
+            public String getDescripcion() {
+                return "Camisa escolar de alta calidad, tela 100% algodón";
+            }
+
+            public String getCategoria() {
+                return "Camisas";
+            }
+
+            public String getTalla() {
+                return "M";
+            }
+
+            public String getColor() {
+                return "Blanco";
+            }
+
+            public BigDecimal getPrecio() {
+                return BigDecimal.valueOf(50000);
+            }
+
+            public BigDecimal getPrecioCompra() {
+                return BigDecimal.valueOf(30000);
+            }
+
+            public int getStock() {
+                return 25;
+            }
+
+            public int getStockMinimo() {
+                return 5;
+            }
+
+            public boolean isActivo() {
+                return true;
+            }
+
+            public String getMarca() {
+                return "Uniformes Premium";
+            }
+
+            public String getMaterial() {
+                return "100% Algodón";
+            }
+
+            public Object getProveedor() {
+                return createMockProveedor();
+            }
         };
     }
 
     private Object createMockProveedor() {
         return new Object() {
-            public Long getId() { return 1L; }
-            public String getNombre() { return "Textiles Colombia S.A.S"; }
-            public String getNit() { return "900.123.456-7"; }
+            public Long getId() {
+                return 1L;
+            }
+
+            public String getNombre() {
+                return "Textiles Colombia S.A.S";
+            }
+
+            public String getNit() {
+                return "900.123.456-7";
+            }
         };
     }
 
@@ -318,14 +370,64 @@ public class UniformeController {
         List<Object> uniformes = new ArrayList<>();
         uniformes.add(createMockUniforme(1L));
         uniformes.add(new Object() {
-            public Long getId() { return 2L; }
-            public String getNombre() { return "Pantalón Escolar Azul"; }
-            public String getCodigo() { return "PAN-001"; }
-            public BigDecimal getPrecio() { return BigDecimal.valueOf(75000); }
-            public int getStock() { return 15; }
-            public String getCategoria() { return "Pantalones"; }
-            public String getTalla() { return "M"; }
+            public Long getId() {
+                return 2L;
+            }
+
+            public String getNombre() {
+                return "Pantalón Escolar Azul";
+            }
+
+            public String getCodigo() {
+                return "PAN-001";
+            }
+
+            public BigDecimal getPrecio() {
+                return BigDecimal.valueOf(75000);
+            }
+
+            public int getStock() {
+                return 15;
+            }
+
+            public String getCategoria() {
+                return "Pantalones";
+            }
+
+            public String getTalla() {
+                return "M";
+            }
         });
         return uniformes;
+    }
+
+    @GetMapping("/api/uniformes/buscar-por-codigo")
+    @ResponseBody
+    public ResponseEntity<Uniforme> buscarUniformePorCodigo(@RequestParam String codigo) {
+        try {
+            Uniforme uniforme = uniformeService.obtenerUniformePorCodigo(codigo);
+            return ResponseEntity.ok(uniforme);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/api/uniformes/disponibles")
+    @ResponseBody
+    public ResponseEntity<List<Uniforme>> obtenerUniformesDisponibles() {
+        List<Uniforme> uniformes = uniformeService.obtenerUniformesDisponibles();
+        return ResponseEntity.ok(uniformes);
+    }
+
+    @GetMapping("/api/uniformes/buscar")
+    @ResponseBody
+    public ResponseEntity<List<Uniforme>> buscarUniformes(@RequestParam String q) {
+        try {
+            Pageable pageable = PageRequest.of(0, 20);
+            Page<Uniforme> uniformes = uniformeService.buscarUniformes(q, pageable);
+            return ResponseEntity.ok(uniformes.getContent());
+        } catch (Exception e) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 }

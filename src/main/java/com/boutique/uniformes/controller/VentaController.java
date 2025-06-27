@@ -5,6 +5,7 @@
 package com.boutique.uniformes.controller;
 
 
+import com.boutique.uniformes.domain.Empleado;
 import com.boutique.uniformes.domain.Venta;
 import com.boutique.uniformes.service.ClienteService;
 import com.boutique.uniformes.service.EmpleadoService;
@@ -24,6 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/ventas")
@@ -137,4 +144,40 @@ public class VentaController {
         }
         return "redirect:/ventas";
     }
+    
+
+
+@PostMapping("/api/ventas/guardar")
+@ResponseBody
+public ResponseEntity<Map<String, Object>> guardarFactura(@RequestBody Venta venta) {
+    try {
+        // Obtener usuario actual
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        
+        // Buscar empleado por email/username si tienes esa relación
+        // Si no, puedes usar un empleado por defecto o el primer empleado activo
+        List<Empleado> empleados = empleadoService.obtenerEmpleadosActivos();
+        if (!empleados.isEmpty()) {
+            venta.setVendedor(empleados.get(0)); // Usar primer empleado como vendedor por defecto
+        }
+        
+        Venta ventaGuardada = ventaService.procesarVenta(venta);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Factura guardada exitosamente");
+        response.put("numeroFactura", ventaGuardada.getNumeroFactura());
+        response.put("id", ventaGuardada.getId());
+        
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", "Error al guardar la factura: " + e.getMessage());
+        
+        return ResponseEntity.badRequest().body(response);
+    }
+}
+
 }

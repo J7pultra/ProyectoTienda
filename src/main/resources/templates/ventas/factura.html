@@ -1126,51 +1126,77 @@
         // FUNCIONES DE FACTURACIÓN
 
         async function searchClient() {
-            const document = document.getElementById('clientDocument').value.trim();
+            const documento = document.getElementById('clientDocument').value.trim();
             const currentLang = getCurrentLanguage();
             const t = translations[currentLang];
             
-            if (!document) {
+            if (!documento) {
                 showNotification(currentLang === 'es' ? 'Ingrese la cédula del cliente' : 'Enter customer ID', 'warning');
                 return;
             }
 
-            // Datos simulados
-            const mockClients = {
-                '1234567890': {
-                    id: 1,
-                    documento: '1234567890',
-                    nombreCompleto: 'Juan Pérez García',
-                    email: 'juan.perez@email.com',
-                    telefono: '0987654321',
-                    direccion: 'Av. Principal 123, Quito'
-                },
-                '0987654321': {
-                    id: 2,
-                    documento: '0987654321',
-                    nombreCompleto: 'María González López',
-                    email: 'maria.gonzalez@email.com',
-                    telefono: '0912345678',
-                    direccion: 'Calle Secundaria 456, Guayaquil'
-                }
-            };
+            // Validar formato de cédula ecuatoriana (10 dígitos)
+            if (!/^\d{10}$/.test(documento)) {
+                showNotification(currentLang === 'es' ? 'La cédula debe tener 10 dígitos' : 'ID must have 10 digits', 'warning');
+                return;
+            }
 
-            const client = mockClients[document];
-            
-            if (client) {
-                currentClient = client;
-                document.getElementById('clientName').value = client.nombreCompleto;
-                document.getElementById('clientEmail').value = client.email;
-                document.getElementById('clientPhone').value = client.telefono;
-                document.getElementById('clientAddress').value = client.direccion;
-                
-                document.getElementById('clientInfo').style.display = 'grid';
-                document.getElementById('nextToProducts').style.display = 'inline-flex';
-                
-                showNotification(t.clientFound, 'success');
-            } else {
+            try {
+                // Mostrar loading
+                const searchBtn = document.querySelector('#clientSection .btn-primary');
+                const originalText = searchBtn.innerHTML;
+                searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Buscando...</span>';
+                searchBtn.disabled = true;
+
+                // Llamada a tu API usando el endpoint de tu ClienteController
+                const response = await fetch(`/api/clientes/buscar-por-documento?documento=${documento}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const cliente = await response.json();
+                    
+                    if (cliente && cliente.id) {
+                        // Cliente encontrado
+                        currentClient = cliente;
+                        
+                        // Llenar los campos con los datos del cliente
+                        document.getElementById('clientName').value = cliente.nombreCompleto || `${cliente.nombre} ${cliente.apellido}`;
+                        document.getElementById('clientEmail').value = cliente.email || '';
+                        document.getElementById('clientPhone').value = cliente.telefono || '';
+                        document.getElementById('clientAddress').value = cliente.direccion || '';
+                        
+                        // Mostrar la información del cliente
+                        document.getElementById('clientInfo').style.display = 'grid';
+                        document.getElementById('nextToProducts').style.display = 'inline-flex';
+                        
+                        showNotification(t.clientFound, 'success');
+                    } else {
+                        clearClientFields();
+                        showNotification(t.clientNotFound, 'error');
+                    }
+                } else if (response.status === 404) {
+                    // Cliente no encontrado
+                    clearClientFields();
+                    showNotification(t.clientNotFound, 'error');
+                } else {
+                    // Error del servidor
+                    clearClientFields();
+                    showNotification(currentLang === 'es' ? 'Error del servidor' : 'Server error', 'error');
+                }
+            } catch (error) {
+                console.error('Error al buscar cliente:', error);
                 clearClientFields();
-                showNotification(t.clientNotFound, 'error');
+                showNotification(currentLang === 'es' ? 'Error de conexión' : 'Connection error', 'error');
+            } finally {
+                // Restaurar botón
+                const searchBtn = document.querySelector('#clientSection .btn-primary');
+                searchBtn.innerHTML = originalText;
+                searchBtn.disabled = false;
             }
         }
 
@@ -1463,6 +1489,15 @@
 
         document.getElementById('productQuantity').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') addProduct();
+        });
+
+        // Validar solo números en cédula
+        document.getElementById('clientDocument').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, ''); // Solo números
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            this.value = value;
         });
 
         // Initialize

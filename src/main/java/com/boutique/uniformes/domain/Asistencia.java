@@ -42,4 +42,38 @@ public class Asistencia {
     public enum EstadoAsistencia {
         PRESENTE, AUSENTE, TARDANZA, PERMISO
     }
+    
+    // Agregar estos métodos:
+public LocalDate getFecha() {
+    return this.fecha;
+}
+
+public void setFecha(LocalDate fecha) {
+    this.fecha = fecha;
+}
+
+public Empleado getEmpleado() {
+    return this.empleado;
+}
+
+public void setEmpleado(Empleado empleado) {
+    this.empleado = empleado;
+}
+
+public LocalTime getHoraSalida() {
+    return this.horaSalida;
+}
+
+public void setHoraSalida(LocalTime horaSalida) {
+    this.horaSalida = horaSalida;
+}
+
+public void setHoraEntrada(LocalTime horaEntrada) {
+    this.horaEntrada = horaEntrada;
+}
+
+public void setEstado(EstadoAsistencia estado) {
+    this.estado = estado;
+}
+
 }

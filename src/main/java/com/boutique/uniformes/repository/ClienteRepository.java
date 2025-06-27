@@ -20,6 +20,7 @@ import java.util.Optional;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     
+ 
     Optional<Cliente> findByDocumento(String documento);
     
     List<Cliente> findByActivoTrue();
@@ -40,4 +41,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     
     @Query("SELECT c FROM Cliente c JOIN c.ventas v GROUP BY c ORDER BY COUNT(v) DESC")
     List<Cliente> findClientesConMasCompras(Pageable pageable);
+    
+ 
+
+
 }

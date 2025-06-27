@@ -31,8 +31,11 @@ public class Cliente {
     private String apellido;
     
     @NotBlank(message = "El documento es obligatorio")
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "documento")
     private String documento;
+    
+  
+
     
     @Email(message = "Debe ser un email válido")
     private String email;
@@ -56,4 +59,17 @@ public class Cliente {
     public String getNombreCompleto() {
         return nombre + " " + apellido;
     }
+   
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getDocumento() { return documento; }
+    public void setDocumento(String documento) { this.documento = documento; }
+    
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
+    
+    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+    
 }

@@ -41,13 +41,7 @@ public class ClienteServiceImpl implements ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + id));
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Cliente obtenerClientePorDocumento(String documento) {
-        return clienteRepository.findByDocumento(documento)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con documento: " + documento));
-    }
-
+    
     @Override
     @Transactional(readOnly = true)
     public List<Cliente> obtenerClientesActivos() {
@@ -87,9 +81,18 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteRepository.countByActivoTrue();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public boolean existeClientePorDocumento(String documento) {
-        return clienteRepository.existsByDocumento(documento);
-    }
+   
+    
+@Override
+@Transactional(readOnly = true)
+public Cliente obtenerClientePorDocumento(String documento) {
+    return clienteRepository.findByDocumento(documento)
+        .orElseThrow(() -> new RuntimeException("Cliente no encontrado con documento: " + documento));
+}
+
+@Override
+@Transactional(readOnly = true)
+public boolean existeClientePorDocumento(String documento) {
+    return clienteRepository.existsByDocumento(documento);
+}
 }
