@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.boutique.uniformes.service;
-
 
 import com.boutique.uniformes.domain.Usuario;
 import com.boutique.uniformes.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,47 +16,61 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public Usuario registrarUsuario(Usuario usuario) {
-        if (existeUsuarioPorUsername(usuario.getUsername())) {
-            throw new RuntimeException("Ya existe un usuario con ese nombre de usuario");
-        }
-        if (existeUsuarioPorEmail(usuario.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con ese email");
-        }
-        
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setFechaCreacion(LocalDateTime.now());
-        usuario.setActivo(true);
-        
-        return usuarioRepository.save(usuario);
+    // Usar @Lazy para romper la dependencia circular
+    @Autowired
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, 
+                             @Lazy PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public Usuario guardarUsuario(Usuario usuario) {
-        if (usuario.getId() == null) {
-            return registrarUsuario(usuario);
-        }
-        
-        Usuario usuarioExistente = obtenerUsuarioPorId(usuario.getId());
-        usuarioExistente.setNombre(usuario.getNombre());
-        usuarioExistente.setApellido(usuario.getApellido());
-        usuarioExistente.setEmail(usuario.getEmail());
-        usuarioExistente.setRol(usuario.getRol());
-        
-        if (!usuario.getPassword().equals(usuarioExistente.getPassword())) {
-            usuarioExistente.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        }
-        
-        return usuarioRepository.save(usuarioExistente);
+   @Override
+public Usuario guardarUsuario(Usuario usuario) {
+    if (usuario.getId() == null) {
+        return registrarUsuario(usuario);
     }
+
+    Usuario usuarioExistente = obtenerUsuarioPorId(usuario.getId());
+    usuarioExistente.setNombre(usuario.getNombre());
+    usuarioExistente.setApellido(usuario.getApellido());
+    usuarioExistente.setEmail(usuario.getEmail());
+    usuarioExistente.setRol(usuario.getRol());
+
+    // Solo actualizar password si no es OAuth2 y si cambió
+    if (!"OAUTH2_USER".equals(usuario.getPassword()) && 
+        !usuario.getPassword().equals(usuarioExistente.getPassword())) {
+        usuarioExistente.setPassword(passwordEncoder.encode(usuario.getPassword()));
+    }
+
+    return usuarioRepository.save(usuarioExistente);
+}
+
+@Override
+public Usuario registrarUsuario(Usuario usuario) {
+    if (existeUsuarioPorUsername(usuario.getUsername())) {
+        throw new RuntimeException("Ya existe un usuario con ese nombre de usuario");
+    }
+    if (existeUsuarioPorEmail(usuario.getEmail())) {
+        throw new RuntimeException("Ya existe un usuario con ese email");
+    }
+
+    // Solo encriptar si no es un usuario OAuth2
+    if (!"OAUTH2_USER".equals(usuario.getPassword())) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+    }
+    
+    usuario.setFechaCreacion(LocalDateTime.now());
+    usuario.setActivo(true);
+    return usuarioRepository.save(usuario);
+}
+
 
     @Override
     @Transactional(readOnly = true)

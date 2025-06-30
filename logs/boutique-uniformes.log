@@ -1,74 +1,75 @@
-2025-06-27 08:07:04 [restartedMain] INFO  com.boutique.uniformes.Application - Starting Application using Java 21.0.7 with PID 33116 (C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes started by juanc in C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda)
-2025-06-27 08:07:04 [restartedMain] DEBUG com.boutique.uniformes.Application - Running with Spring Boot v3.4.5, Spring v6.2.6
-2025-06-27 08:07:04 [restartedMain] INFO  com.boutique.uniformes.Application - The following 1 profile is active: "development"
-2025-06-27 08:07:05 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2025-06-27 08:07:05 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\config\WebConfig.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\AsistenciaController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\AuthController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\ClienteController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\EmpleadoController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\GlobalControllerAdvice.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\HomeController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\ProveedorController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\UniformeController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\VentaController.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\AsistenciaDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\DetalleVentaDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\EmpleadoDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\ProveedorDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\UsuarioDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\VentaDaoImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\AsistenciaRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\ClienteRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\DetalleVentaRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\EmpleadoRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\ProveedorRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\UniformeRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\UsuarioRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\VentaRepository.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\CustomAuthenticationSuccessHandler.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\SecurityUtils.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\SeguridadConfig.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\UserDetailsServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\AsistenciaServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ClienteServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\EmpleadoServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ProveedorServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UniformeServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UsuarioServiceImpl.class]
-2025-06-27 08:07:05 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\VentaServiceImpl.class]
-2025-06-27 08:07:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.b.a.AutoConfigurationPackages - @EnableAutoConfiguration was declared on a class in the package 'com.boutique.uniformes'. Automatic @Repository and @Entity scanning is enabled.
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\AsistenciaDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\DetalleVentaDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\EmpleadoDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\ProveedorDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\UsuarioDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\VentaDaoImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\UserDetailsServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\AsistenciaServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ClienteServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\EmpleadoServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ProveedorServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UniformeServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UsuarioServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\VentaServiceImpl.class]
-2025-06-27 08:07:07 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 130 ms. Found 8 JPA repository interfaces.
-2025-06-27 08:07:08 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2025-06-27 08:07:08 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-06-27 08:07:08 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
-2025-06-27 08:07:08 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-06-27 08:07:08 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3648 ms
-2025-06-27 08:07:09 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-27 08:07:09 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.13.Final
-2025-06-27 08:07:09 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2025-06-27 08:07:09 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-27 08:07:09 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-06-27 08:07:10 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1956d5e6
-2025-06-27 08:07:10 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2025-06-27 08:07:10 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-06-27 08:07:10 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+2025-06-28 11:12:38 [restartedMain] INFO  com.boutique.uniformes.Application - Starting Application using Java 21.0.7 with PID 5360 (C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes started by juanc in C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda)
+2025-06-28 11:12:38 [restartedMain] DEBUG com.boutique.uniformes.Application - Running with Spring Boot v3.4.5, Spring v6.2.6
+2025-06-28 11:12:38 [restartedMain] INFO  com.boutique.uniformes.Application - The following 1 profile is active: "development"
+2025-06-28 11:12:38 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-06-28 11:12:38 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\config\WebConfig.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\AsistenciaController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\AuthController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\ClienteController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\EmpleadoController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\GlobalControllerAdvice.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\HomeController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\ProveedorController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\UniformeController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\controller\VentaController.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\AsistenciaDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\DetalleVentaDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\EmpleadoDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\ProveedorDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\UsuarioDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\VentaDaoImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\AsistenciaRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\ClienteRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\DetalleVentaRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\EmpleadoRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\ProveedorRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\UniformeRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\UsuarioRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Ignored because not a concrete top-level class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\repository\VentaRepository.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\CustomAuthenticationSuccessHandler.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\CustomOAuth2UserService.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\SecurityUtils.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\SeguridadConfig.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\UserDetailsServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\AsistenciaServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ClienteServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\EmpleadoServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ProveedorServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UniformeServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UsuarioServiceImpl.class]
+2025-06-28 11:12:38 [restartedMain] DEBUG o.s.c.a.ClassPathBeanDefinitionScanner - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\VentaServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.b.a.AutoConfigurationPackages - @EnableAutoConfiguration was declared on a class in the package 'com.boutique.uniformes'. Automatic @Repository and @Entity scanning is enabled.
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\AsistenciaDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\DetalleVentaDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\EmpleadoDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\ProveedorDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\UsuarioDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\dao\impl\VentaDaoImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\security\UserDetailsServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\AsistenciaServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ClienteServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\EmpleadoServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\ProveedorServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UniformeServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\UsuarioServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] DEBUG o.s.c.a.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\juanc\Documents\NetBeansProjects\ProyectoTienda\target\classes\com\boutique\uniformes\service\VentaServiceImpl.class]
+2025-06-28 11:12:40 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 130 ms. Found 8 JPA repository interfaces.
+2025-06-28 11:12:41 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-06-28 11:12:41 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-06-28 11:12:41 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-06-28 11:12:41 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-06-28 11:12:41 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3357 ms
+2025-06-28 11:12:42 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-28 11:12:42 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.13.Final
+2025-06-28 11:12:42 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-06-28 11:12:43 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-28 11:12:43 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-28 11:12:43 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@71883920
+2025-06-28 11:12:43 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-28 11:12:43 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-28 11:12:43 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 8.0.41
@@ -76,17 +77,17 @@
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2025-06-27 08:07:11 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-27 08:07:11 [restartedMain] INFO  o.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@6dc6978b] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
-2025-06-27 08:07:11 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-27 08:07:12 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-06-27 08:07:14 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
-2025-06-27 08:07:14 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 82 mappings in 'requestMappingHandlerMapping'
-2025-06-27 08:07:15 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
-2025-06-27 08:07:15 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
-2025-06-27 08:07:16 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
-2025-06-27 08:07:16 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2025-06-27 08:07:16 [restartedMain] DEBUG o.s.b.a.l.ConditionEvaluationReportLogger - 
+2025-06-28 11:12:44 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-28 11:12:44 [restartedMain] INFO  o.hibernate.orm.connections.access - HHH10001501: Connection obtained from JdbcConnectionAccess [org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess@29a69c31] for (non-JTA) DDL execution was not in auto-commit mode; the Connection 'local transaction' will be committed and the Connection will be set into auto-commit mode.
+2025-06-28 11:12:45 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-28 11:12:45 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-28 11:12:47 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-06-28 11:12:48 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 82 mappings in 'requestMappingHandlerMapping'
+2025-06-28 11:12:48 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2025-06-28 11:12:49 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-06-28 11:12:49 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-06-28 11:12:49 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-06-28 11:12:49 [restartedMain] DEBUG o.s.b.a.l.ConditionEvaluationReportLogger - 
 
 
 ============================
@@ -511,6 +512,25 @@ Positive matches:
    NamedParameterJdbcTemplateConfiguration matched:
       - @ConditionalOnSingleCandidate (types: org.springframework.jdbc.core.JdbcTemplate; SearchStrategy: all) found a single bean 'jdbcTemplate'; @ConditionalOnMissingBean (types: org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations; SearchStrategy: all) did not find any beans (OnBeanCondition)
 
+   OAuth2ClientAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.security.config.annotation.web.configuration.EnableWebSecurity', 'org.springframework.security.oauth2.client.registration.ClientRegistration' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+
+   OAuth2ClientRegistrationRepositoryConfiguration matched:
+      - OAuth2 Clients Configured Condition found registered clients 776552165067-303pqpfvnapo95huu15sk18bbo02s4ha.apps.googleusercontent.com (ClientsConfiguredCondition)
+
+   OAuth2ClientRegistrationRepositoryConfiguration#clientRegistrationRepository matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.registration.ClientRegistrationRepository; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   OAuth2WebSecurityConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.security.oauth2.client.registration.ClientRegistrationRepository; SearchStrategy: all) found bean 'clientRegistrationRepository' (OnBeanCondition)
+
+   OAuth2WebSecurityConfiguration#authorizedClientRepository matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   OAuth2WebSecurityConfiguration#authorizedClientService matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.OAuth2AuthorizedClientService; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
    ObservationAutoConfiguration matched:
       - @ConditionalOnClass found required class 'io.micrometer.observation.ObservationRegistry' (OnClassCondition)
 
@@ -752,6 +772,9 @@ Positive matches:
       - @ConditionalOnWebApplication (required) found 'session' scope (OnWebApplicationCondition)
       - @ConditionalOnExpression (#{${springdoc.api-docs.enabled:true} and ${springdoc.enable-spring-security:true}}) resulted in true (OnExpressionCondition)
       - @ConditionalOnBean (types: org.springdoc.core.configuration.SpringDocConfiguration; SearchStrategy: all) found bean 'org.springdoc.core.configuration.SpringDocConfiguration' (OnBeanCondition)
+
+   SpringDocSecurityConfiguration.SpringDocSecurityOAuth2ClientConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient' (OnClassCondition)
 
    SpringDocSecurityConfiguration.SpringSecurityLoginEndpointConfiguration matched:
       - @ConditionalOnClass found required class 'jakarta.servlet.Filter' (OnClassCondition)
@@ -1841,15 +1864,15 @@ Negative matches:
 
    OAuth2AuthorizationServerJwtAutoConfiguration:
       Did not match:
-         - @ConditionalOnClass did not find required class 'com.nimbusds.jose.jwk.source.JWKSource' (OnClassCondition)
-
-   OAuth2ClientAutoConfiguration:
-      Did not match:
-         - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.client.registration.ClientRegistration' (OnClassCondition)
+         - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.server.authorization.OAuth2Authorization' (OnClassCondition)
 
    OAuth2ResourceServerAutoConfiguration:
       Did not match:
          - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken' (OnClassCondition)
+
+   OAuth2WebSecurityConfiguration.OAuth2SecurityFilterChainConfiguration:
+      Did not match:
+         - AllNestedConditions 1 matched 1 did not; NestedCondition on DefaultWebSecurityCondition.Beans @ConditionalOnMissingBean (types: org.springframework.security.web.SecurityFilterChain; SearchStrategy: all) found beans of type 'org.springframework.security.web.SecurityFilterChain' securityFilterChain; NestedCondition on DefaultWebSecurityCondition.Classes @ConditionalOnClass found required classes 'org.springframework.security.web.SecurityFilterChain', 'org.springframework.security.config.annotation.web.builders.HttpSecurity' (DefaultWebSecurityCondition)
 
    ObservationAutoConfiguration.MeterObservationHandlerConfiguration.TracingAndMetricsObservationHandlerConfiguration:
       Did not match:
@@ -2037,7 +2060,7 @@ Negative matches:
          - AnyNestedCondition 0 matched 2 did not; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.RSocketEnabledOrReactiveWebApplication.ReactiveWebApplicationCondition did not find reactive web application classes; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.RSocketEnabledOrReactiveWebApplication.RSocketSecurityEnabledCondition @ConditionalOnBean (types: org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler; SearchStrategy: all) did not find any beans of type org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler (ReactiveUserDetailsServiceAutoConfiguration.RSocketEnabledOrReactiveWebApplication)
       Matched:
          - @ConditionalOnClass found required class 'org.springframework.security.authentication.ReactiveAuthenticationManager' (OnClassCondition)
-         - AnyNestedCondition 3 matched 0 did not; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) matched; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) matched; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.ReactiveOpaqueTokenIntrospector' (ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+         - AnyNestedCondition 2 matched 1 did not; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) matched; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) matched; NestedCondition on ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass found unwanted class 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository' (ReactiveUserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
 
    ReactiveWebServerFactoryAutoConfiguration:
       Did not match:
@@ -2219,10 +2242,6 @@ Negative matches:
       Did not match:
          - @ConditionalOnClass did not find required class 'kotlinx.coroutines.flow.Flow' (OnClassCondition)
 
-   SpringDocSecurityConfiguration.SpringDocSecurityOAuth2ClientConfiguration:
-      Did not match:
-         - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient' (OnClassCondition)
-
    SpringDocSecurityConfiguration.SpringDocSecurityOAuth2Configuration:
       Did not match:
          - @ConditionalOnClass did not find required class 'org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService' (OnClassCondition)
@@ -2331,7 +2350,7 @@ Negative matches:
       Matched:
          - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
          - found 'session' scope (OnWebApplicationCondition)
-         - AnyNestedCondition 3 matched 0 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) matched; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) matched; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass did not find unwanted classes 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository', 'org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector', 'org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
+         - AnyNestedCondition 2 matched 1 did not; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.PasswordConfigured @ConditionalOnProperty (spring.security.user.password) matched; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.NameConfigured @ConditionalOnProperty (spring.security.user.name) matched; NestedCondition on UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured.MissingAlternative @ConditionalOnMissingClass found unwanted class 'org.springframework.security.oauth2.client.registration.ClientRegistrationRepository' (UserDetailsServiceAutoConfiguration.MissingAlternativeOrUserPropertiesConfigured)
 
    WavefrontAutoConfiguration:
       Did not match:
@@ -2463,4 +2482,87 @@ Unconditional classes:
 
 
 
-2025-06-27 08:07:16 [restartedMain] INFO  com.boutique.uniformes.Application - Started Application in 12.174 seconds (process running for 12.921)
+2025-06-28 11:12:49 [restartedMain] INFO  com.boutique.uniformes.Application - Started Application in 11.903 seconds (process running for 12.577)
+2025-06-28 11:13:05 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-28 11:13:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected SessionLocaleResolver
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@790f74d
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@f01ca0c
+2025-06-28 11:13:05 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-06-28 11:13:05 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-06-28 11:13:05 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login", parameters={}
+2025-06-28 11:13:05 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:13:06 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:13:06 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/images/favicon.ico", parameters={}
+2025-06-28 11:13:06 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-06-28 11:13:06 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/error", parameters={}
+2025-06-28 11:13:06 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-06-28 11:13:06 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-06-28 11:13:42 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login?oauth2_error=true", parameters={masked}
+2025-06-28 11:13:42 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:13:42 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG c.b.u.s.UserDetailsServiceImpl - Intentando autenticar usuario: Huam
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* SELECT
+        u 
+    FROM
+        Usuario u 
+    WHERE
+        u.username = :username 
+        OR u.email = :email */ select
+            u1_0.id,
+            u1_0.activo,
+            u1_0.apellido,
+            u1_0.email,
+            u1_0.fecha_creacion,
+            u1_0.nombre,
+            u1_0.password,
+            u1_0.rol,
+            u1_0.ultimo_acceso,
+            u1_0.username 
+        from
+            usuarios u1_0 
+        where
+            u1_0.username=? 
+            or u1_0.email=?
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG c.b.u.s.UserDetailsServiceImpl - Usuario autenticado exitosamente: Huam
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG c.b.u.s.CustomAuthenticationSuccessHandler - Login tradicional exitoso para: Huam
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.activo,
+        u1_0.apellido,
+        u1_0.email,
+        u1_0.fecha_creacion,
+        u1_0.nombre,
+        u1_0.password,
+        u1_0.rol,
+        u1_0.ultimo_acceso,
+        u1_0.username 
+    from
+        usuarios u1_0 
+    where
+        u1_0.id=?
+2025-06-28 11:14:34 [http-nio-8080-exec-6] DEBUG c.b.u.s.CustomAuthenticationSuccessHandler - Redirigiendo usuario Huam a: /dashboard?welcome=admin
+2025-06-28 11:14:34 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - GET "/dashboard?welcome=admin", parameters={masked}
+2025-06-28 11:14:34 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.HomeController#dashboard(Model)
+2025-06-28 11:14:34 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:14:34 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/favicon.ico", parameters={}
+2025-06-28 11:14:34 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-06-28 11:14:34 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/error", parameters={}
+2025-06-28 11:14:34 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-06-28 11:14:34 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-06-28 11:15:51 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login?oauth2_error=true", parameters={masked}
+2025-06-28 11:15:51 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:15:51 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:16:02 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login", parameters={}
+2025-06-28 11:16:02 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:16:02 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:16:20 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login", parameters={}
+2025-06-28 11:16:20 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:16:20 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-06-28 11:16:32 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/login?oauth2_error=true", parameters={masked}
+2025-06-28 11:16:32 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.boutique.uniformes.controller.AuthController#login(String, String, String, String, Model)
+2025-06-28 11:16:32 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK

@@ -24,6 +24,7 @@ public class AuthController {
     public String login(@RequestParam(value = "error", required = false) String error,
                        @RequestParam(value = "logout", required = false) String logout,
                        @RequestParam(value = "expired", required = false) String expired,
+                       @RequestParam(value = "oauth2_error", required = false) String oauth2Error,
                        Model model) {
         
         if (error != null) {
@@ -35,12 +36,15 @@ public class AuthController {
         if (expired != null) {
             model.addAttribute("warning", "Su sesión ha expirado");
         }
+        if (oauth2Error != null) {
+            model.addAttribute("error", "Error en la autenticación con Google. Verifique su configuración.");
+        }
         
         return "auth/login";
     }
 
     @GetMapping("/registro")
-    @Transactional  // ← Añade esta anotación
+    @Transactional
     public String mostrarRegistro(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "auth/registro";
@@ -48,10 +52,9 @@ public class AuthController {
 
     @PostMapping("/registro")
     public String registrarUsuario(@Valid @ModelAttribute("usuario") Usuario usuario,
-                                  BindingResult result,
-                                  RedirectAttributes redirectAttributes,
-                                  Model model) {
-        
+                                 BindingResult result,
+                                 RedirectAttributes redirectAttributes,
+                                 Model model) {
         if (result.hasErrors()) {
             return "auth/registro";
         }

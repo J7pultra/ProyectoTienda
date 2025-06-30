@@ -62,14 +62,11 @@ public class Usuario implements UserDetails {
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
 
-    public void setUltimoAcceso(LocalDateTime now) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public enum Rol {
         ADMIN, EMPLEADO, VENDEDOR
     }
 
+    // Métodos de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
@@ -99,54 +96,84 @@ public class Usuario implements UserDetails {
     public String getUsername() {
         return this.username;
     }
-    
+
     @Override
-public String getPassword() {
-    return this.password;
-}
+    public String getPassword() {
+        return this.password;
+    }
 
+    // Getters y Setters adicionales
+    public Long getId() {
+        return this.id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-// También agregar:
-public Long getId() {
-    return this.id;
-}
+    public Boolean getActivo() {
+        return this.activo;
+    }
 
-public Boolean getActivo() {
-    return this.activo;
-}
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 
-public String getEmail() {
-    return this.email;
-}
+    public String getEmail() {
+        return this.email;
+    }
 
-public String getNombre() {
-    return this.nombre;
-}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-public String getApellido() {
-    return this.apellido;
-}
+    public String getNombre() {
+        return this.nombre;
+    }
 
-public Rol getRol() {
-    return this.rol;
-}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-public LocalDateTime getFechaCreacion() {
-    return this.fechaCreacion;
-}
+    public String getApellido() {
+        return this.apellido;
+    }
 
-// Setters
-public void setPassword(String password) {
-    this.password = password;
-}
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-public void setFechaCreacion(LocalDateTime fechaCreacion) {
-    this.fechaCreacion = fechaCreacion;
-}
+    public Rol getRol() {
+        return this.rol;
+    }
 
-public void setActivo(Boolean activo) {
-    this.activo = activo;
-}
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return this.fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public LocalDateTime getUltimoAcceso() {
+        return this.ultimoAcceso;
+    }
+
+    public void setUltimoAcceso(LocalDateTime ultimoAcceso) {
+        this.ultimoAcceso = ultimoAcceso;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
     
 }
