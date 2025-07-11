@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title th:text="#{auth.login} + ' - Boutique Uniformes'">Login - Boutique Uniformes</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+        <style>
+            /* ========================================
+               BOUTIQUE UNIFORMES - LOGIN COMPACTO
+               ======================================== */
+
+            :root {
+                /* Light Mode Colors */
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                --glass-bg: rgba(255, 255, 255, 0.25);
+                --glass-border: rgba(255, 255, 255, 0.3);
+                --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                --text-primary: #1e293b;
+                --text-secondary: #64748b;
+                --text-light: rgba(30, 41, 59, 0.9);
+                --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --bg-secondary: rgba(248, 250, 252, 0.95);
+            }
+
+            [data-theme="dark"] {
+                /* Dark Mode Colors */
+                --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+                --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+                --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+                --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+                --info-gradient: linear-gradient(135deg, #00d4ff 0%, #06ffa5 100%);
+                --glass-bg: rgba(0, 0, 0, 0.3);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+                --text-primary: #ffffff;
+                --text-secondary: #cbd5e1;
+                --text-light: rgba(255, 255, 255, 0.95);
+                --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                --bg-secondary: rgba(15, 15, 35, 0.95);
+            }
+
+            :root {
+                --border-radius: 14px;
+                --border-radius-sm: 10px;
+                --border-radius-lg: 20px;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background: var(--bg-primary);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 15px;
+                overflow-x: hidden;
+                position: relative;
+                transition: var(--transition);
+            }
+
+            /* FONDO ANIMADO MEJORADO - SIN MAREO */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background:
+                    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+                animation: backgroundGentleMove 25s ease-in-out infinite;
+                pointer-events: none;
+                z-index: -3;
+            }
+
+            [data-theme="dark"] body::before {
+                background:
+                    radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.2) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.2) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(6, 255, 165, 0.15) 0%, transparent 50%);
+            }
+
+            @keyframes backgroundGentleMove {
+                0%, 100% {
+                    transform: scale(1) rotate(0deg);
+                    opacity: 0.8;
+                }
+                50% {
+                    transform: scale(1.05) rotate(1deg);
+                    opacity: 1;
+                }
+            }
+
+            /* GRID SUTIL */
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%234f46e5" stroke-width="0.2" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                animation: gridSlowMove 30s linear infinite;
+                pointer-events: none;
+                z-index: -2;
+            }
+
+            [data-theme="dark"] body::after {
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23ff006e" stroke-width="0.2" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            }
+
+            @keyframes gridSlowMove {
+                0% {
+                    transform: translateX(0) translateY(0);
+                }
+                100% {
+                    transform: translateX(20px) translateY(20px);
+                }
+            }
+
+            /* PUNTOS FLOTANTES ANIMADOS */
+            .floating-dots {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .dot {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(79, 70, 229, 0.15);
+                animation: dotFloat 12s ease-in-out infinite;
+            }
+
+            [data-theme="dark"] .dot {
+                background: rgba(255, 0, 110, 0.12);
+            }
+
+            .dot:nth-child(1) {
+                width: 8px;
+                height: 8px;
+                top: 10%;
+                left: 15%;
+                animation-delay: 0s;
+                animation-duration: 15s;
+            }
+
+            .dot:nth-child(2) {
+                width: 12px;
+                height: 12px;
+                top: 70%;
+                left: 85%;
+                animation-delay: 3s;
+                animation-duration: 18s;
+            }
+
+            .dot:nth-child(3) {
+                width: 6px;
+                height: 6px;
+                top: 30%;
+                left: 75%;
+                animation-delay: 6s;
+                animation-duration: 12s;
+            }
+
+            .dot:nth-child(4) {
+                width: 10px;
+                height: 10px;
+                top: 80%;
+                left: 25%;
+                animation-delay: 9s;
+                animation-duration: 20s;
+            }
+
+            .dot:nth-child(5) {
+                width: 4px;
+                height: 4px;
+                top: 50%;
+                left: 10%;
+                animation-delay: 12s;
+                animation-duration: 14s;
+            }
+
+            .dot:nth-child(6) {
+                width: 14px;
+                height: 14px;
+                top: 20%;
+                left: 60%;
+                animation-delay: 2s;
+                animation-duration: 16s;
+            }
+
+            .dot:nth-child(7) {
+                width: 7px;
+                height: 7px;
+                top: 60%;
+                left: 50%;
+                animation-delay: 5s;
+                animation-duration: 13s;
+            }
+
+            .dot:nth-child(8) {
+                width: 9px;
+                height: 9px;
+                top: 90%;
+                left: 70%;
+                animation-delay: 8s;
+                animation-duration: 17s;
+            }
+
+            @keyframes dotFloat {
+                0%, 100% {
+                    transform: translateY(0px) translateX(0px) scale(1);
+                    opacity: 0.3;
+                }
+                25% {
+                    transform: translateY(-30px) translateX(20px) scale(1.2);
+                    opacity: 0.6;
+                }
+                50% {
+                    transform: translateY(-60px) translateX(-10px) scale(0.8);
+                    opacity: 0.4;
+                }
+                75% {
+                    transform: translateY(-30px) translateX(30px) scale(1.1);
+                    opacity: 0.7;
+                }
+            }
+
+            /* LÍNEAS CONECTORAS SUTILES */
+            .connecting-lines {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            .line {
+                position: absolute;
+                background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+                animation: lineMove 20s ease-in-out infinite;
+            }
+
+            [data-theme="dark"] .line {
+                background: linear-gradient(90deg, transparent, rgba(255, 0, 110, 0.08), transparent);
+            }
+
+            .line:nth-child(1) {
+                width: 200px;
+                height: 1px;
+                top: 25%;
+                left: -200px;
+                animation-delay: 0s;
+            }
+
+            .line:nth-child(2) {
+                width: 150px;
+                height: 1px;
+                top: 60%;
+                left: -150px;
+                animation-delay: 5s;
+            }
+
+            .line:nth-child(3) {
+                width: 180px;
+                height: 1px;
+                top: 80%;
+                left: -180px;
+                animation-delay: 10s;
+            }
+
+            @keyframes lineMove {
+                0% {
+                    transform: translateX(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.5;
+                }
+                90% {
+                    opacity: 0.5;
+                }
+                100% {
+                    transform: translateX(calc(100vw + 200px));
+                    opacity: 0;
+                }
+            }
+
+            /* Top controls */
+            .top-controls {
+                position: fixed;
+                top: 15px;
+                right: 15px;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            /* Language button */
+            .language-button {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 18px;
+                padding: 0.5rem 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: var(--text-light);
+                cursor: pointer;
+                transition: var(--transition);
+                font-weight: 500;
+                font-size: 0.8rem;
+                min-width: 100px;
+                position: relative;
+                overflow: hidden;
+                animation: buttonFloat 3s ease-in-out infinite;
+            }
+
+            @keyframes buttonFloat {
+                0%, 100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-3px);
+                }
+            }
+
+            .language-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+                transition: left 0.5s;
+            }
+
+            .language-button:hover::before {
+                left: 100%;
+            }
+
+            .language-button:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+                border-color: var(--glass-border);
+            }
+
+            /* Theme toggle */
+            .theme-toggle {
+                position: relative;
+                width: 50px;
+                height: 26px;
+                background: var(--glass-bg);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--glass-border);
+                border-radius: 13px;
+                cursor: pointer;
+                transition: var(--transition);
+                animation: buttonFloat 3s ease-in-out infinite 0.5s;
+            }
+
+            .theme-toggle::before {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 20px;
+                height: 20px;
+                background: var(--secondary-gradient);
+                border-radius: 50%;
+                transition: var(--transition);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            [data-theme="dark"] .theme-toggle::before {
+                transform: translateX(24px);
+                background: var(--warning-gradient);
+            }
+
+            .theme-icon {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 0.7rem;
+                color: var(--text-light);
+                transition: var(--transition);
+            }
+
+            .theme-icon.sun {
+                right: 6px;
+                opacity: 1;
+            }
+
+            .theme-icon.moon {
+                left: 6px;
+                opacity: 0;
+            }
+
+            [data-theme="dark"] .theme-icon.sun {
+                opacity: 0;
+            }
+
+            [data-theme="dark"] .theme-icon.moon {
+                opacity: 1;
+            }
+
+            /* Login container COMPACTO */
+            .login-container {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--glass-shadow);
+                overflow: hidden;
+                max-width: 700px;
+                width: 100%;
+                min-height: 400px;
+                animation: containerSlideIn 1s ease-out;
+                position: relative;
+            }
+
+            @keyframes containerSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(50px) scale(0.9);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .login-left {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                color: var(--text-light);
+                padding: 1.8rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                border-right: 1px solid var(--glass-border);
+            }
+
+            .login-left::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200%;
+                height: 200%;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%234f46e5" stroke-width="0.5" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                animation: patternFloat 25s ease-in-out infinite;
+            }
+
+            @keyframes patternFloat {
+                0%, 100% {
+                    transform: translateY(0px) rotate(0deg);
+                }
+                50% {
+                    transform: translateY(-30px) rotate(3deg);
+                }
+            }
+
+            .login-brand {
+                position: relative;
+                z-index: 2;
+                animation: brandFadeIn 1.2s ease-out 0.3s both;
+            }
+
+            @keyframes brandFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .brand-icon {
+                width: 55px;
+                height: 55px;
+                background: var(--secondary-gradient);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                color: white;
+                margin-bottom: 0.8rem;
+                animation: iconPulse 4s ease-in-out infinite;
+                position: relative;
+                overflow: hidden;
+            }
+
+            @keyframes iconPulse {
+                0%, 100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+                }
+                50% {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+                }
+            }
+
+            .brand-icon::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: iconShine 3s ease-in-out infinite;
+            }
+
+            @keyframes iconShine {
+                0% {
+                    transform: translateX(-100%) translateY(-100%) rotate(30deg);
+                }
+                100% {
+                    transform: translateX(100%) translateY(100%) rotate(30deg);
+                }
+            }
+
+            .login-right {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                padding: 1.8rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                position: relative;
+                animation: formSlideIn 1s ease-out 0.5s both;
+            }
+
+            @keyframes formSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            /* FORMULARIOS COMPACTOS */
+            .form-group {
+                margin-bottom: 0.8rem;
+                position: relative;
+                animation: inputSlideUp 0.8s ease-out both;
+            }
+
+            .form-group:nth-child(1) {
+                animation-delay: 0.7s;
+            }
+            .form-group:nth-child(2) {
+                animation-delay: 0.8s;
+            }
+            .form-group:nth-child(3) {
+                animation-delay: 0.9s;
+            }
+
+            @keyframes inputSlideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .form-control {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-sm);
+                padding: 0.7rem 0.7rem 0.7rem 2.3rem;
+                font-size: 0.85rem;
+                transition: var(--transition);
+                color: var(--text-light);
+                font-weight: 500;
+                width: 100%;
+                height: calc(2.5rem + 2px);
+            }
+
+            [data-theme="dark"] .form-control {
+                background: rgba(0, 0, 0, 0.2);
+                color: rgba(255, 255, 255, 0.95);
+            }
+
+            .form-control::placeholder {
+                color: var(--text-secondary);
+                opacity: 0.8;
+            }
+
+            .form-control:focus {
+                border-color: #4f46e5;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+                background: rgba(255, 255, 255, 0.2);
+                outline: none;
+                transform: translateY(-2px);
+            }
+
+            [data-theme="dark"] .form-control:focus {
+                background: rgba(0, 0, 0, 0.3);
+                box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.1);
+            }
+
+            .form-control:valid {
+                border-color: #10b981;
+                animation: inputSuccess 0.5s ease-out;
+            }
+
+            @keyframes inputSuccess {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.02);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            .form-control:invalid:not(:placeholder-shown) {
+                border-color: #ef4444;
+                animation: inputError 0.5s ease-out;
+            }
+
+            @keyframes inputError {
+                0%, 100% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(-5px);
+                }
+                75% {
+                    transform: translateX(5px);
+                }
+            }
+
+            /* ICONOS ANIMADOS */
+            .input-icon {
+                position: absolute;
+                left: 0.7rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+                z-index: 2;
+                pointer-events: none;
+                transition: var(--transition);
+            }
+
+            .form-control:focus + .input-icon {
+                color: #4f46e5;
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            [data-theme="dark"] .form-control:focus + .input-icon {
+                color: #ff006e;
+            }
+
+            /* BOTÓN GOOGLE ÚNICO - COMPACTO */
+            .social-login {
+                margin-top: 0.5rem;
+                animation: socialSlideIn 1s ease-out 1s both;
+            }
+
+            @keyframes socialSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .btn-google {
+                background: #ffffff;
+                border: 1px solid #dadce0;
+                border-radius: var(--border-radius-sm);
+                padding: 0.7rem 1.2rem;
+                font-weight: 500;
+                font-size: 0.85rem;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                color: #3c4043;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.6rem;
+                text-decoration: none;
+                animation: googleBounce 2s ease-in-out infinite;
+            }
+
+            @keyframes googleBounce {
+                0%, 100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-2px);
+                }
+            }
+
+            [data-theme="dark"] .btn-google {
+                background: rgba(255, 255, 255, 0.95);
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+
+            .btn-google::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(66, 133, 244, 0.1), transparent);
+                transition: left 0.5s;
+            }
+
+            .btn-google:hover::before {
+                left: 100%;
+            }
+
+            .btn-google:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 8px 25px rgba(66, 133, 244, 0.2);
+                color: #3c4043;
+                border-color: #4285f4;
+                animation-play-state: paused;
+            }
+
+            .google-logo {
+                width: 16px;
+                height: 16px;
+                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%234285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="%2334A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="%23FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="%23EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 0.8rem 0;
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--glass-border);
+            }
+
+            .divider span {
+                padding: 0 0.8rem;
+            }
+
+            .btn-login {
+                background: var(--secondary-gradient);
+                border: none;
+                border-radius: var(--border-radius-sm);
+                padding: 0.7rem 1.2rem;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                color: white;
+                animation: buttonSlideIn 1s ease-out 1.1s both;
+            }
+
+            @keyframes buttonSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .btn-login::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .btn-login:hover::before {
+                left: 100%;
+            }
+
+            .btn-login:hover {
+                transform: translateY(-3px) scale(1.02);
+                box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+                color: white;
+            }
+
+            .alert {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-sm);
+                padding: 0.7rem 0.9rem;
+                margin-bottom: 0.8rem;
+                border-left: 4px solid;
+                color: var(--text-light);
+                animation: alertSlideIn 0.5s ease-out;
+            }
+
+            @keyframes alertSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .alert-danger {
+                border-left-color: #ef4444;
+            }
+            .alert-success {
+                border-left-color: #10b981;
+            }
+            .alert-warning {
+                border-left-color: #f59e0b;
+            }
+
+            .register-link {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.75rem;
+                transition: var(--transition);
+                font-weight: 500;
+            }
+
+            .register-link:hover {
+                color: var(--text-light);
+                text-decoration: underline;
+                transform: translateX(3px);
+            }
+
+            .form-check-input {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid var(--glass-border);
+                transition: var(--transition);
+            }
+
+            .form-check-input:checked {
+                background: var(--secondary-gradient);
+                border-color: var(--secondary-gradient);
+                animation: checkboxSuccess 0.3s ease-out;
+            }
+
+            @keyframes checkboxSuccess {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.2);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            .form-check-label {
+                color: var(--text-secondary);
+                font-weight: 500;
+                font-size: 0.75rem;
+            }
+
+            .loading-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            .spinner-border {
+                width: 2rem;
+                height: 2rem;
+                border: 0.25em solid currentColor;
+                border-right-color: transparent;
+                border-radius: 50%;
+                animation: spinnerRotate 0.75s linear infinite;
+                color: var(--text-light);
+            }
+
+            @keyframes spinnerRotate {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Dropdowns animados */
+            .language-dropdown {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-sm);
+                box-shadow: var(--glass-shadow);
+                min-width: 140px;
+                z-index: 10000;
+                display: none;
+                overflow: hidden;
+                animation: dropdownSlideIn 0.3s ease-out;
+            }
+
+            @keyframes dropdownSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-15px) scale(0.9);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .language-dropdown.show {
+                display: block;
+            }
+
+            .language-option {
+                padding: 0.6rem 0.8rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                transition: var(--transition-fast);
+                font-weight: 500;
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            .language-option:hover {
+                background: rgba(79, 70, 229, 0.1);
+                transform: translateX(5px);
+            }
+
+            /* Text colors MEJORADOS PARA MODO OSCURO */
+            .brand-title {
+                color: var(--text-light);
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                font-size: 1.3rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .brand-subtitle {
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .brand-description {
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+                line-height: 1.4;
+                margin-bottom: 0.8rem;
+            }
+
+            .feature-text {
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+            }
+
+            .login-title {
+                color: var(--text-light);
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                font-size: 1.2rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .login-subtitle {
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .footer-text {
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+            }
+
+            /* ARREGLO ESPECÍFICO PARA MODO OSCURO */
+            [data-theme="dark"] .footer-text,
+            [data-theme="dark"] .register-link {
+                color: rgba(255, 255, 255, 0.8);
+            }
+
+            [data-theme="dark"] .register-link:hover {
+                color: rgba(255, 255, 255, 0.95);
+            }
+
+            .feature-icon {
+                color: #10b981;
+                animation: iconGlow 2s ease-in-out infinite;
+            }
+
+            @keyframes iconGlow {
+                0%, 100% {
+                    filter: brightness(1);
+                }
+                50% {
+                    filter: brightness(1.3);
+                }
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .login-container {
+                    margin: 10px;
+                    border-radius: 15px;
+                    min-height: auto;
+                    max-width: 100%;
+                }
+
+                .login-left,
+                .login-right {
+                    padding: 1.3rem;
+                }
+
+                .brand-icon {
+                    width: 45px;
+                    height: 45px;
+                    font-size: 1.2rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .login-left,
+                .login-right {
+                    padding: 1rem;
+                }
+
+                .form-control {
+                    padding: 0.6rem 0.6rem 0.6rem 2rem;
+                    height: calc(2.2rem + 2px);
+                }
+
+                .btn-login, .btn-google {
+                    padding: 0.6rem 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body data-theme="light">
+        <!-- Puntos flotantes animados -->
+        <div class="floating-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <!-- Líneas conectoras -->
+        <div class="connecting-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <div class="language-button" onclick="toggleLanguageDropdown()" id="btnLang">
+                    <i class="fas fa-globe globe-icon"></i>
+                    <span class="language-text" id="languageText">Idioma</span>
+                    <i class="fas fa-chevron-down chevron-icon"></i>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-sun theme-icon sun"></i>
+                <i class="fas fa-moon theme-icon moon"></i>
+            </div>
+        </div>
+
+        <!-- Language Dropdown -->
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+                <i class="fas fa-flag"></i>
+                <span>Español</span>
+            </div>
+            <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+                <i class="fas fa-flag"></i>
+                <span>English</span>
+            </div>
+        </div>
+
+        <div class="login-container">
+            <div class="row g-0 h-100">
+                <!-- Panel izquierdo -->
+                <div class="col-lg-6 login-left">
+                    <div class="login-brand">
+                        <div class="brand-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h2 class="fw-bold brand-title">Boutique Uniformes</h2>
+                        <p class="brand-subtitle" id="welcomeText">
+                            Bienvenido de vuelta
+                        </p>
+                        <p class="brand-description" id="descriptionText">
+                            Accede a tu cuenta para gestionar tu boutique de uniformes de manera eficiente.
+                        </p>
+
+                        <!-- Características -->
+                        <div>
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="fas fa-check-circle me-2 feature-icon"></i>
+                                <span class="feature-text" id="feature1Text">Gestión de inventario</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="fas fa-check-circle me-2 feature-icon"></i>
+                                <span class="feature-text" id="feature2Text">Control de ventas</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2 feature-icon"></i>
+                                <span class="feature-text" id="feature3Text">Reportes avanzados</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel derecho - Formulario -->
+                <div class="col-lg-6 login-right position-relative">
+                    <!-- Loading overlay -->
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <h3 class="fw-bold login-title" id="loginTitle">Iniciar Sesión</h3>
+                        <p class="login-subtitle" id="loginSubtitle">
+                            Ingresa tus credenciales para acceder
+                        </p>
+                    </div>
+
+                    <!-- Mensajes de alerta -->
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}">Error</span>
+                    </div>
+
+                    <div th:if="${success}" class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}">Éxito</span>
+                    </div>
+
+                    <div th:if="${warning}" class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span th:text="${warning}">Advertencia</span>
+                    </div>
+
+                    <!-- Formulario de login -->
+                    <form th:action="@{/login}" method="post" id="loginForm" class="needs-validation" novalidate>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Usuario o Email" required>
+                            <i class="fas fa-user input-icon"></i>
+                            <div class="invalid-feedback">
+                                <span id="userRequiredText">El usuario es requerido</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Contraseña" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <div class="invalid-feedback">
+                                <span id="passwordRequiredText">La contraseña es requerida</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                    <label class="form-check-label" for="remember">
+                                        <span id="rememberText">Recordarme</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-login text-white w-100 mb-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span id="loginButtonText">Iniciar Sesión</span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span id="dividerText">O</span>
+                    </div>
+
+                    <!-- BOTÓN GOOGLE ÚNICO -->
+                    <div class="social-login">
+                        <a href="/oauth2/authorization/google" class="btn-google">
+                            <div class="google-logo"></div>
+                            <span id="googleLoginText">Continuar con Google</span>
+                        </a>
+                    </div>
+
+                    <!-- Enlace de registro -->
+                    <div class="text-center mt-2">
+                        <p class="mb-0">
+                            <span class="footer-text" id="noAccountText">¿No tienes cuenta?</span>
+                            <a th:href="@{/registro}" class="register-link ms-1" id="registerLinkText">
+                                Regístrate aquí
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+                // DICCIONARIO DE TRADUCCIONES
+                const translations = {
+                    es: {
+                        languageText: 'Idioma',
+                        welcomeText: 'Bienvenido de vuelta',
+                        descriptionText: 'Accede a tu cuenta para gestionar tu boutique de uniformes de manera eficiente.',
+                        feature1Text: 'Gestión de inventario',
+                        feature2Text: 'Control de ventas',
+                        feature3Text: 'Reportes avanzados',
+                        loginTitle: 'Iniciar Sesión',
+                        loginSubtitle: 'Ingresa tus credenciales para acceder',
+                        googleLoginText: 'Continuar con Google',
+                        dividerText: 'O',
+                        usernamePlaceholder: 'Usuario o Email',
+                        passwordPlaceholder: 'Contraseña',
+                        userRequiredText: 'El usuario es requerido',
+                        passwordRequiredText: 'La contraseña es requerida',
+                        rememberText: 'Recordarme',
+                        loginButtonText: 'Iniciar Sesión',
+                        noAccountText: '¿No tienes cuenta?',
+                        registerLinkText: 'Regístrate aquí',
+                        darkModeActivated: 'Modo oscuro activado',
+                        lightModeActivated: 'Modo claro activado',
+                        languageChangedSpanish: 'Idioma cambiado a Español'
+                    },
+                    en: {
+                        languageText: 'Language',
+                        welcomeText: 'Welcome back',
+                        descriptionText: 'Access your account to manage your uniform boutique efficiently.',
+                        feature1Text: 'Inventory management',
+                        feature2Text: 'Sales control',
+                        feature3Text: 'Advanced reports',
+                        loginTitle: 'Sign In',
+                        loginSubtitle: 'Enter your credentials to access',
+                        googleLoginText: 'Continue with Google',
+                        dividerText: 'OR',
+                        usernamePlaceholder: 'Username or Email',
+                        passwordPlaceholder: 'Password',
+                        userRequiredText: 'Username is required',
+                        passwordRequiredText: 'Password is required',
+                        rememberText: 'Remember me',
+                        loginButtonText: 'Sign In',
+                        noAccountText: "Don't have an account?",
+                        registerLinkText: 'Register here',
+                        darkModeActivated: 'Dark mode activated',
+                        lightModeActivated: 'Light mode activated',
+                        languageChangedEnglish: 'Language changed to English'
+                    }
+                };
+
+                // FUNCIÓN PARA CAMBIAR IDIOMA
+                function changeLanguage(lang) {
+                    const t = translations[lang];
+
+                    // Actualizar todos los textos
+                    document.getElementById('languageText').textContent = t.languageText;
+                    document.getElementById('welcomeText').textContent = t.welcomeText;
+                    document.getElementById('descriptionText').textContent = t.descriptionText;
+                    document.getElementById('feature1Text').textContent = t.feature1Text;
+                    document.getElementById('feature2Text').textContent = t.feature2Text;
+                    document.getElementById('feature3Text').textContent = t.feature3Text;
+                    document.getElementById('loginTitle').textContent = t.loginTitle;
+                    document.getElementById('loginSubtitle').textContent = t.loginSubtitle;
+                    document.getElementById('googleLoginText').textContent = t.googleLoginText;
+                    document.getElementById('dividerText').textContent = t.dividerText;
+                    document.getElementById('userRequiredText').textContent = t.userRequiredText;
+                    document.getElementById('passwordRequiredText').textContent = t.passwordRequiredText;
+                    document.getElementById('rememberText').textContent = t.rememberText;
+                    document.getElementById('loginButtonText').textContent = t.loginButtonText;
+                    document.getElementById('noAccountText').textContent = t.noAccountText;
+                    document.getElementById('registerLinkText').textContent = t.registerLinkText;
+
+                    // Actualizar placeholders
+                    document.getElementById('username').placeholder = t.usernamePlaceholder;
+                    document.getElementById('password').placeholder = t.passwordPlaceholder;
+
+                    // Actualizar opciones activas en el dropdown
+                    const languageOptions = document.querySelectorAll('.language-option');
+                    languageOptions.forEach(option => {
+                        option.classList.remove('active');
+                        if (option.getAttribute('data-lang') === lang) {
+                            option.classList.add('active');
+                        }
+                    });
+
+                    // Guardar preferencia
+                    localStorage.setItem('language', lang);
+
+                    // Cerrar dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    const languageBtn = document.getElementById('btnLang');
+                    dropdown.classList.remove('show');
+                    languageBtn.classList.remove('active');
+
+                    // Mostrar notificación
+                    const message = lang === 'es' ? t.languageChangedSpanish : t.languageChangedEnglish;
+                    showNotification(message, 'success');
+                }
+
+                // Theme toggle
+                function toggleTheme() {
+                    const body = document.body;
+                    const currentTheme = body.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    const currentLang = getCurrentLanguage();
+                    const t = translations[currentLang];
+
+                    body.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+
+                    // Show notification
+                    const message = newTheme === 'dark' ? t.darkModeActivated : t.lightModeActivated;
+                    showNotification(message, 'success');
+                }
+
+                // Language functions
+                function toggleLanguageDropdown() {
+                    const btn = document.getElementById('btnLang');
+                    const dropdown = document.getElementById('languageDropdown');
+
+                    // Calcular posición del botón
+                    const rect = btn.getBoundingClientRect();
+                    dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+                    dropdown.style.left = (rect.left + window.scrollX) + 'px';
+
+                    // Toggle dropdown y animación del chevron
+                    dropdown.classList.toggle('show');
+                    btn.classList.toggle('active');
+                }
+
+                function getCurrentLanguage() {
+                    return localStorage.getItem('language') || 'es';
+                }
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function (event) {
+                    const languageSelector = document.querySelector('.language-selector');
+                    const languageDropdown = document.getElementById('languageDropdown');
+                    const languageBtn = document.getElementById('btnLang');
+
+                    // Close language dropdown
+                    if (!languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+                        languageDropdown.classList.remove('show');
+                        languageBtn.classList.remove('active');
+                    }
+                });
+
+                // Notification system
+                function showNotification(message, type = 'info') {
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 10001;
+                    min-width: 300px;
+                    padding: 1rem 1.5rem;
+                    background: var(--glass-bg);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid var(--glass-border);
+                    border-radius: var(--border-radius);
+                    box-shadow: var(--glass-shadow);
+                    color: var(--text-light);
+                    font-weight: 500;
+                    animation: notificationSlideIn 0.5s ease-out;
+                    text-align: center;
+                `;
+
+                    notification.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+
+                    document.body.appendChild(notification);
+
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.style.animation = 'notificationSlideOut 0.5s ease-in forwards';
+                            setTimeout(() => notification.remove(), 500);
+                        }
+                    }, 3000);
+                }
+
+                // Validación del formulario
+                (function () {
+                    'use strict';
+
+                    const form = document.getElementById('loginForm');
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            // Mostrar primer campo inválido
+                            const firstInvalid = form.querySelector(':invalid');
+                            if (firstInvalid) {
+                                firstInvalid.focus();
+                            }
+                        } else {
+                            // Mostrar loading
+                            loadingOverlay.style.display = 'flex';
+                        }
+
+                        form.classList.add('was-validated');
+                    });
+
+                    // Ocultar loading si hay error
+                    if (document.querySelector('.alert-danger')) {
+                        loadingOverlay.style.display = 'none';
+                    }
+
+                    // Auto-hide alerts
+                    setTimeout(function () {
+                        const alerts = document.querySelectorAll('.alert');
+                        alerts.forEach(alert => {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 300);
+                        });
+                    }, 5000);
+                })();
+
+                // Initialize on load
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Load saved theme and language
+                    const savedTheme = localStorage.getItem('theme') || 'light';
+                    const savedLang = localStorage.getItem('language') || 'es';
+
+                    document.body.setAttribute('data-theme', savedTheme);
+                    changeLanguage(savedLang);
+                });
+
+                // Add CSS for notification animations
+                const style = document.createElement('style');
+                style.textContent = `
+                @keyframes notificationSlideIn {
+                    from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+                    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
+                @keyframes notificationSlideOut {
+                    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    to { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+                }
+            `;
+                document.head.appendChild(style);
+        </script>
+    </body>
+</html>

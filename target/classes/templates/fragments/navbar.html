@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Navbar principal -->
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm">
+        <div class="container-fluid">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/dashboard}">
+                <div class="brand-icon me-2">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="fw-bold">Boutique</span>
+                    <span class="fw-light">Uniformes</span>
+                </div>
+            </a>
+            
+            <!-- Toggle button para móvil -->
+            <button class="navbar-toggler border-0 shadow-none" type="button" 
+                    data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" 
+                    aria-controls="sidebarOffcanvas" aria-expanded="false" 
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar items para desktop -->
+            <div class="navbar-nav ms-auto d-none d-lg-flex flex-row align-items-center">
+                
+                <!-- Búsqueda rápida -->
+                <div class="nav-item me-3">
+                    <div class="search-container">
+                        <input type="text" class="form-control search-input" 
+                               placeholder="Buscar..." id="globalSearch">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                
+                <!-- Notificaciones -->
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link position-relative notification-bell" href="#" 
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell fs-5"></i>
+                        <!-- Badge de notificaciones -->
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" 
+                              th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}" 
+                              th:text="${uniformesBajoStock}">
+                            0
+                        </span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success notification-badge" 
+                              th:unless="${uniformesBajoStock != null and uniformesBajoStock > 0}">
+                            ✓
+                        </span>
+                    </a>
+                    
+                    <!-- Dropdown de notificaciones -->
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg border-0">
+                        <div class="notification-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-bell me-2"></i>
+                                <span th:text="#{nav.notificaciones}">Notificaciones</span>
+                            </h6>
+                            <span class="badge bg-primary rounded-pill" 
+                                  th:text="${uniformesBajoStock != null ? uniformesBajoStock : 0}">0</span>
+                        </div>
+                        
+                        <div class="notification-body">
+                            <!-- Notificación de stock bajo -->
+                            <div th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}" 
+                                 class="notification-item">
+                                <a th:href="@{/uniformes?bajoStock=true}" class="text-decoration-none">
+                                    <div class="d-flex align-items-start">
+                                        <div class="notification-icon bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title" th:text="#{alert.productos.stock.bajo}">
+                                                Stock Bajo
+                                            </div>
+                                            <div class="notification-text">
+                                                <span th:text="${uniformesBajoStock}">0</span> 
+                                                productos necesitan reabastecimiento
+                                            </div>
+                                            <div class="notification-time">
+                                                <i class="fas fa-clock me-1"></i>
+                                                <span th:text="${#temporals.format(#temporals.createNow(), 'HH:mm')}">Ahora</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Notificación de ventas del día -->
+                            <div th:if="${ventasHoy != null and ventasHoy > 0}" class="notification-item">
+                                <a th:href="@{/ventas}" class="text-decoration-none">
+                                    <div class="d-flex align-items-start">
+                                        <div class="notification-icon bg-success">
+                                            <i class="fas fa-chart-line text-white"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Ventas del Día</div>
+                                            <div class="notification-text">
+                                                <span th:text="${ventasHoy}">0</span> ventas realizadas hoy
+                                            </div>
+                                            <div class="notification-time">
+                                                <i class="fas fa-clock me-1"></i>
+                                                <span th:text="${#temporals.format(#temporals.createNow(), 'HH:mm')}">Hoy</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <!-- Estado sin notificaciones -->
+                            <div th:unless="${(uniformesBajoStock != null and uniformesBajoStock > 0) or (ventasHoy != null and ventasHoy > 0)}" 
+                                 class="notification-empty">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-check-circle text-success fs-2 mb-2"></i>
+                                    <div class="text-muted">
+                                        <span th:text="#{alert.sistema.funcionando}">Sistema funcionando correctamente</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="notification-footer">
+                            <a th:href="@{/notificaciones}" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-eye me-1"></i>
+                                Ver todas las notificaciones
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accesos rápidos -->
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-plus-circle fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 quick-actions-dropdown">
+                        <li class="dropdown-header">
+                            <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                            <a class="dropdown-item" th:href="@{/ventas/nueva}">
+                                <i class="fas fa-shopping-cart me-2 text-success"></i>
+                                <span th:text="#{quick.nueva.venta}">Nueva Venta</span>
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a class="dropdown-item" th:href="@{/clientes/nuevo}">
+                                <i class="fas fa-user-plus me-2 text-primary"></i>
+                                <span th:text="#{quick.nuevo.cliente}">Nuevo Cliente</span>
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a class="dropdown-item" th:href="@{/uniformes/nuevo}">
+                                <i class="fas fa-tshirt me-2 text-info"></i>
+                                <span th:text="#{quick.agregar.producto}">Agregar Producto</span>
+                            </a>
+                        </li>
+                        
+                        <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                            <a class="dropdown-item" th:href="@{/asistencias/nueva}">
+                                <i class="fas fa-clock me-2 text-warning"></i>
+                                <span th:text="#{quick.registrar.asistencia}">Registrar Asistencia</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Selector de idioma -->
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center language-selector" 
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe me-2"></i>
+                        <span class="d-none d-xl-inline">
+                            <span th:if="${#locale.language == 'es'}" th:text="#{lang.espanol}">Español</span>
+                            <span th:if="${#locale.language == 'en'}" th:text="#{lang.ingles}">English</span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 language-dropdown">
+                        <li class="dropdown-header">
+                            <i class="fas fa-language me-2"></i>
+                            <span th:text="#{lang.cambiar}">Cambiar Idioma</span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" 
+                               th:href="@{${#httpServletRequest.requestURI}(lang='es')}"
+                               th:classappend="${#locale.language == 'es'} ? 'active' : ''">
+                                <img src="https://flagcdn.com/20x15/es.png" class="me-2" alt="ES">
+                                <span th:text="#{lang.espanol}">Español</span>
+                                <i th:if="${#locale.language == 'es'}" class="fas fa-check ms-auto text-success"></i>
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" 
+                               th:href="@{${#httpServletRequest.requestURI}(lang='en')}"
+                               th:classappend="${#locale.language == 'en'} ? 'active' : ''">
+                                <img src="https://flagcdn.com/20x15/us.png" class="me-2" alt="EN">
+                                <span th:text="#{lang.ingles}">English</span>
+                                <i th:if="${#locale.language == 'en'}" class="fas fa-check ms-auto text-success"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Información del sistema -->
+                <div class="nav-item me-3">
+                    <div class="system-info">
+                        <div class="system-time">
+                            <i class="fas fa-clock me-1"></i>
+                            <span id="current-time" th:text="${#temporals.format(#temporals.createNow(), 'HH:mm')}">00:00</span>
+                        </div>
+                        <div class="system-date small text-white-50">
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">01/01/2024</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Usuario dropdown -->
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center user-dropdown" 
+                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar me-2">
+                            <img th:if="${#authentication.principal.avatar}" 
+                                 th:src="@{'/images/avatars/' + #authentication.principal.avatar}" 
+                                 class="rounded-circle" width="32" height="32" alt="Avatar">
+                            <div th:unless="${#authentication.principal.avatar}" class="avatar-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="user-info d-none d-xl-block">
+                            <div class="user-name" sec:authentication="principal.nombre">Usuario</div>
+                            <div class="user-role" sec:authentication="principal.rol">Rol</div>
+                        </div>
+                        <i class="fas fa-chevron-down ms-2 d-none d-xl-inline"></i>
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 user-menu-dropdown">
+                        <!-- Header del usuario -->
+                        <li class="dropdown-header user-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar-large me-3">
+                                    <img th:if="${#authentication.principal.avatar}" 
+                                         th:src="@{'/images/avatars/' + #authentication.principal.avatar}" 
+                                         class="rounded-circle" width="40" height="40" alt="Avatar">
+                                    <div th:unless="${#authentication.principal.avatar}" class="avatar-placeholder-large">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" sec:authentication="principal.nombreCompleto">Usuario Completo</div>
+                                    <div class="small text-muted" sec:authentication="principal.email">email@ejemplo.com</div>
+                                    <div class="small">
+                                        <span class="badge bg-primary" sec:authentication="principal.rol">ROL</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <!-- Opciones del perfil -->
+                        <li>
+                            <a class="dropdown-item" th:href="@{/perfil}">
+                                <i class="fas fa-user-cog me-2"></i>
+                                <span th:text="#{auth.mi.perfil}">Mi Perfil</span>
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a class="dropdown-item" th:href="@{/configuracion}">
+                                <i class="fas fa-cog me-2"></i>
+                                Configuración
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="toggleTheme()">
+                                <i class="fas fa-moon me-2" id="theme-icon-menu"></i>
+                                <span id="theme-text-menu">Modo Oscuro</span>
+                            </a>
+                        </li>
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <!-- Información de sesión -->
+                        <li class="dropdown-item-text">
+                            <div class="small text-muted">
+                                <div>
+                                    <i class="fas fa-sign-in-alt me-1"></i>
+                                    Último acceso: 
+                                    <span th:text="${#temporals.format(#authentication.principal.ultimoAcceso, 'dd/MM/yyyy HH:mm')}">
+                                        Nunca
+                                    </span>
+                                </div>
+                                <div class="mt-1">
+                                    <i class="fas fa-shield-alt me-1"></i>
+                                    Sesión segura
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <!-- Cerrar sesión -->
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                                <button class="dropdown-item text-danger logout-btn" type="submit">
+                                    <i class="fas fa-sign-out-alt me-2"></i>
+                                    <span th:text="#{auth.logout}">Cerrar Sesión</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Items para móvil (solo iconos esenciales) -->
+            <div class="navbar-nav ms-auto d-flex d-lg-none flex-row align-items-center">
+                <!-- Notificaciones móvil -->
+                <div class="nav-item me-2">
+                    <a class="nav-link position-relative" th:href="@{/notificaciones}">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                              th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}" 
+                              th:text="${uniformesBajoStock}">
+                            0
+                        </span>
+                    </a>
+                </div>
+                
+                <!-- Usuario móvil -->
+                <div class="nav-item">
+                    <a class="nav-link" th:href="@{/perfil}">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Script específico del navbar -->
+    <script th:fragment="navbar-script">
+        // Actualizar reloj en tiempo real
+        function updateTime() {
+            const now = new Date();
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = now.toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Actualizar cada minuto
+        setInterval(updateTime, 60000);
+        
+        // Búsqueda global
+        document.getElementById('globalSearch')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = `/buscar?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+        
+        // Animación de notificaciones
+        document.querySelector('.notification-bell')?.addEventListener('click', function() {
+            this.classList.remove('notification-pulse');
+        });
+        
+        // Marcar notificaciones como leídas
+        document.querySelectorAll('.notification-item a').forEach(link => {
+            link.addEventListener('click', function() {
+                // Aquí puedes agregar lógica para marcar como leída
+                console.log('Notificación marcada como leída');
+            });
+        });
+    </script>
+</body>
+</html>

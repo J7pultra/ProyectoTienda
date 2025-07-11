@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Boutique Uniformes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - MODERN DASHBOARD
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-light: rgba(255, 255, 255, 0.9);
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+            --info-gradient: linear-gradient(135deg, #00d4ff 0%, #06ffa5 100%);
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-light: rgba(255, 255, 255, 0.95);
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(15, 15, 35, 0.95);
+        }
+
+        :root {
+            --sidebar-width: 320px;
+            --border-radius: 20px;
+            --border-radius-sm: 12px;
+            --border-radius-lg: 28px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] body::before {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 255, 165, 0.2) 0%, transparent 50%);
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Glassmorphism sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: logoShine 2s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        @keyframes logoShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav-section {
+            padding: 1.5rem 0;
+        }
+
+        .nav-title {
+            padding: 0 1.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-item {
+            margin: 0.25rem 1rem;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            font-weight: 500;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            left: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transform: translateX(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover .nav-icon,
+        .nav-link.active .nav-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        /* Top bar */
+        .top-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--glass-shadow);
+            animation: slideInDown 0.6s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Control buttons */
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* NUEVO BOTÓN DE IDIOMA ESTILO PÍLDORA */
+        .language-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .language-button:hover::before {
+            left: 100%;
+        }
+
+        .language-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .language-button .globe-icon {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .language-button .language-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .language-button .chevron-icon {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            transition: transform var(--transition);
+        }
+
+        .language-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        /* DROPDOWNS FIXED - SOLUCIÓN DEFINITIVA */
+        .language-dropdown, .user-dropdown {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--glass-shadow);
+            min-width: 160px;
+            z-index: 10000;
+            display: none;
+            overflow: hidden;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .language-dropdown.show, .user-dropdown.show {
+            display: block;
+        }
+
+        .language-option, .user-menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition-fast);
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .language-option:hover, .user-menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .language-option.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+        }
+
+        .language-option.active::after {
+            content: '✓';
+            margin-left: auto;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* User dropdown específico */
+        .user-dropdown {
+            min-width: 200px;
+        }
+
+        .user-info {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 auto 0.75rem;
+        }
+
+        .user-name {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .user-menu-item.logout {
+            border-top: 1px solid var(--glass-border);
+            color: #ff6b6b;
+        }
+
+        .user-menu-item.logout:hover {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(30px);
+            background: var(--warning-gradient);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .theme-icon.sun {
+            right: 8px;
+            opacity: 1;
+        }
+
+        .theme-icon.moon {
+            left: 8px;
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon.primary { background: var(--primary-gradient); }
+        .stat-icon.success { background: var(--success-gradient); }
+        .stat-icon.warning { background: var(--warning-gradient); }
+        .stat-icon.danger { background: var(--danger-gradient); }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-sm);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-change.positive {
+            color: #4ade80;
+        }
+
+        .stat-change.negative {
+            color: #f87171;
+        }
+
+        /* Activity section */
+        .activity-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .activity-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--glass-shadow);
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-sm);
+            margin: 0 -1rem;
+            padding: 1rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            color: var(--text-light);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .language-button {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+            </div>
+            <div class="logo-text">Boutique Uniformes</div>
+            <div class="logo-subtitle">Sistema de Gestión Premium</div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Principal" data-lang-en="Main">Principal</div>
+            <div class="nav-item">
+                <a href="/dashboard" class="nav-link active">
+                    <div class="nav-icon"><i class="fas fa-chart-pie"></i></div>
+                    <span data-lang-es="Dashboard" data-lang-en="Dashboard">Dashboard</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/analytics" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                    <span data-lang-es="Analytics" data-lang-en="Analytics">Analytics</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Ventas" data-lang-en="Sales">Ventas</div>
+            <div class="nav-item">
+                <a href="/ventas" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <span data-lang-es="Todas las Ventas" data-lang-en="All Sales">Todas las Ventas</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/ventas/nueva" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-plus-circle"></i></div>
+                    <span data-lang-es="Nueva Venta" data-lang-en="New Sale">Nueva Venta</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/facturas" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-file-invoice"></i></div>
+                    <span data-lang-es="Facturas" data-lang-en="Invoices">Facturas</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Gestión" data-lang-en="Management">Gestión</div>
+            <div class="nav-item">
+                <a href="/clientes" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-users"></i></div>
+                    <span data-lang-es="Clientes" data-lang-en="Customers">Clientes</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/uniformes" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-tshirt"></i></div>
+                    <span data-lang-es="Uniformes" data-lang-en="Uniforms">Uniformes</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/inventario" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-boxes"></i></div>
+                    <span data-lang-es="Inventario" data-lang-en="Inventory">Inventario</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/proveedores" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-truck"></i></div>
+                    <span data-lang-es="Proveedores" data-lang-en="Suppliers">Proveedores</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Personal" data-lang-en="Staff">Personal</div>
+            <div class="nav-item">
+                <a href="/empleados" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-user-tie"></i></div>
+                    <span data-lang-es="Empleados" data-lang-en="Employees">Empleados</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/asistencias" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-clock"></i></div>
+                    <span data-lang-es="Asistencias" data-lang-en="Attendance">Asistencias</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Sistema" data-lang-en="System">Sistema</div>
+            <div class="nav-item">
+                <a href="/reportes" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-chart-bar"></i></div>
+                    <span data-lang-es="Reportes" data-lang-en="Reports">Reportes</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/configuracion" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                    <span data-lang-es="Configuración" data-lang-en="Settings">Configuración</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title" data-lang-es="Compras" data-lang-en="Purchases">Compras</div>
+            <div class="nav-item">
+                <a href="/pedidos-proveedor" class="nav-link">
+                    <div class="nav-icon"><i class="fas fa-truck-loading"></i></div>
+                    <span data-lang-es="Pedidos a Proveedor" data-lang-en="Supplier Orders">Pedidos a Proveedor</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-header">
+                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 data-lang-es="Dashboard Principal" data-lang-en="Main Dashboard">Dashboard Principal</h1>
+                <p data-lang-es="Resumen ejecutivo y métricas clave del negocio" data-lang-en="Executive summary and key business metrics">Resumen ejecutivo y métricas clave del negocio</p>
+            </div>
+            
+            <div class="top-actions">
+                <!-- NUEVO BOTÓN DE IDIOMA ESTILO PÍLDORA -->
+                <div class="language-selector">
+                    <div class="language-button" onclick="toggleLanguageDropdown()" id="btnLang">
+                        <i class="fas fa-globe globe-icon"></i>
+                        <span class="language-text" data-lang-es="Idioma" data-lang-en="Language">Idioma</span>
+                        <i class="fas fa-chevron-down chevron-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-sun theme-icon sun"></i>
+                    <i class="fas fa-moon theme-icon moon"></i>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="user-menu">
+                    <div class="control-btn" onclick="toggleUserDropdown()" id="btnUser">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number" id="totalClientes" th:text="${totalClientes ?: 0}">127</div>
+                        <div class="stat-label" data-lang-es="Total Clientes" data-lang-en="Total Customers">Total Clientes</div>
+                    </div>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span data-lang-es="+12% vs mes anterior" data-lang-en="+12% vs last month">+12% vs mes anterior</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number" id="ventasHoy" th:text="${ventasHoy ?: 0}">15</div>
+                        <div class="stat-label" data-lang-es="Ventas Hoy" data-lang-en="Sales Today">Ventas Hoy</div>
+                    </div>
+                    <div class="stat-icon success">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span data-lang-es="+8% vs ayer" data-lang-en="+8% vs yesterday">+8% vs ayer</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number" id="totalUniformes" th:text="${totalUniformes ?: 0}">89</div>
+                        <div class="stat-label" data-lang-es="Productos" data-lang-en="Products">Productos</div>
+                    </div>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                </div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span data-lang-es="-3% stock bajo" data-lang-en="-3% low stock">-3% stock bajo</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number" id="totalEmpleados" th:text="${totalEmpleados ?: 0}">8</div>
+                        <div class="stat-label" data-lang-es="Empleados" data-lang-en="Employees">Empleados</div>
+                    </div>
+                    <div class="stat-icon danger">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span data-lang-es="100% asistencia" data-lang-en="100% attendance">100% asistencia</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Section -->
+        <div class="activity-section">
+            <div class="activity-card">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i>
+                    <span data-lang-es="Actividad Reciente" data-lang-en="Recent Activity">Actividad Reciente</span>
+                </h3>
+                
+                <div class="activity-item">
+                    <div class="activity-avatar">JD</div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Nueva venta registrada" data-lang-en="New sale registered">Nueva venta registrada</div>
+                        <div class="activity-time" data-lang-es="Hace 5 minutos" data-lang-en="5 minutes ago">Hace 5 minutos</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">MC</div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Cliente agregado" data-lang-en="Customer added">Cliente agregado</div>
+                        <div class="activity-time" data-lang-es="Hace 15 minutos" data-lang-en="15 minutes ago">Hace 15 minutos</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">AL</div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Stock actualizado" data-lang-en="Stock updated">Stock actualizado</div>
+                        <div class="activity-time" data-lang-es="Hace 1 hora" data-lang-en="1 hour ago">Hace 1 hora</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">RP</div>
+                    <div class="activity-content">
+                        <div class="activity-title" data-lang-es="Factura generada" data-lang-en="Invoice generated">Factura generada</div>
+                        <div class="activity-time" data-lang-es="Hace 2 horas" data-lang-en="2 hours ago">Hace 2 horas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/ventas/nueva" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="action-title" data-lang-es="Nueva Venta" data-lang-en="New Sale">Nueva Venta</div>
+                <div class="action-desc" data-lang-es="Registrar venta rápida" data-lang-en="Register quick sale">Registrar venta rápida</div>
+            </a>
+
+            <a href="/clientes/nuevo" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="action-title" data-lang-es="Nuevo Cliente" data-lang-en="New Customer">Nuevo Cliente</div>
+                <div class="action-desc" data-lang-es="Agregar cliente" data-lang-en="Add customer">Agregar cliente</div>
+            </a>
+
+            <a href="/uniformes/nuevo" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="action-title" data-lang-es="Nuevo Producto" data-lang-en="New Product">Nuevo Producto</div>
+                <div class="action-desc" data-lang-es="Agregar uniforme" data-lang-en="Add uniform">Agregar uniforme</div>
+            </a>
+
+            <a href="/reportes" class="action-btn">
+                <div class="action-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="action-title" data-lang-es="Ver Reportes" data-lang-en="View Reports">Ver Reportes</div>
+                <div class="action-desc" data-lang-es="Analytics detallados" data-lang-en="Detailed analytics">Analytics detallados</div>
+            </a>
+        </div>
+    </main>
+
+    <!-- DROPDOWNS FIXED POSITION -->
+    <!-- Language Dropdown -->
+    <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+            <i class="fas fa-flag"></i>
+            <span>Español</span>
+        </div>
+        <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+            <i class="fas fa-flag"></i>
+            <span>English</span>
+        </div>
+    </div>
+
+    <!-- User Dropdown -->
+    <div class="user-dropdown" id="userDropdown">
+        <div class="user-info">
+            <div class="user-avatar">JD</div>
+            <div class="user-name" th:text="${usuario?.nombre ?: 'Juan'} + ' ' + ${usuario?.apellido ?: 'Doe'}">Juan Doe</div>
+            <div class="user-role" th:text="${usuario?.rol ?: 'Administrador'}" data-lang-es="Administrador" data-lang-en="Administrator">Administrador</div>
+        </div>
+        <a href="/perfil" class="user-menu-item">
+            <i class="fas fa-user-circle"></i>
+            <span data-lang-es="Mi Perfil" data-lang-en="My Profile">Mi Perfil</span>
+        </a>
+        <a href="/configuracion" class="user-menu-item">
+            <i class="fas fa-cog"></i>
+            <span data-lang-es="Configuración" data-lang-en="Settings">Configuración</span>
+        </a>
+        <a href="/ayuda" class="user-menu-item">
+            <i class="fas fa-question-circle"></i>
+            <span data-lang-es="Ayuda" data-lang-en="Help">Ayuda</span>
+        </a>
+        <a href="/logout" class="user-menu-item logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span data-lang-es="Cerrar Sesión" data-lang-en="Logout">Cerrar Sesión</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // FUNCIONES PARA DROPDOWNS CON POSICIÓN FIJA
+        function toggleLanguageDropdown() {
+            const btn = document.getElementById('btnLang');
+            const dropdown = document.getElementById('languageDropdown');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            // Cerrar menú de usuario si está abierto
+            userDropdown.classList.remove('show');
+            
+            // Calcular posición del botón
+            const rect = btn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+            
+            // Toggle dropdown y animación del chevron
+            dropdown.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function toggleUserDropdown() {
+            const btn = document.getElementById('btnUser');
+            const dropdown = document.getElementById('userDropdown');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            // Cerrar menú de idioma si está abierto
+            languageDropdown.classList.remove('show');
+            languageBtn.classList.remove('active');
+            
+            // Calcular posición del botón
+            const rect = btn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX - 152) + 'px';
+            
+            // Toggle dropdown
+            dropdown.classList.toggle('show');
+        }
+
+        // Animated counters
+        function animateCounter(element, start, end, duration) {
+            let current = start;
+            const increment = (end - start) / (duration / 16);
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        // Initialize counters
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                animateCounter(document.getElementById('totalClientes'), 0, 127, 2000);
+                animateCounter(document.getElementById('ventasHoy'), 0, 15, 1500);
+                animateCounter(document.getElementById('totalUniformes'), 0, 89, 1800);
+                animateCounter(document.getElementById('totalEmpleados'), 0, 8, 1200);
+            }, 500);
+
+            // Load saved theme and language
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedLang = localStorage.getItem('language') || 'es';
+            
+            document.body.setAttribute('data-theme', savedTheme);
+            changeLanguage(savedLang);
+        });
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Show notification
+            showNotification(
+                newTheme === 'dark' ? 
+                (getCurrentLanguage() === 'es' ? 'Modo oscuro activado' : 'Dark mode activated') :
+                (getCurrentLanguage() === 'es' ? 'Modo claro activado' : 'Light mode activated'),
+                'success'
+            );
+        }
+
+        function changeLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-es][data-lang-en]');
+            elements.forEach(element => {
+                if (lang === 'es') {
+                    element.textContent = element.getAttribute('data-lang-es');
+                    if (element.placeholder !== undefined) {
+                        element.placeholder = element.getAttribute('data-lang-es');
+                    }
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                    if (element.placeholder !== undefined) {
+                        element.placeholder = element.getAttribute('data-lang-en');
+                    }
+                }
+            });
+            
+            // Actualizar opciones activas en el dropdown
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            localStorage.setItem('language', lang);
+            
+            // Close dropdown
+            const dropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            dropdown.classList.remove('show');
+            languageBtn.classList.remove('active');
+            
+            // Show notification
+            showNotification(
+                lang === 'es' ? 'Idioma cambiado a Español' : 'Language changed to English',
+                'success'
+            );
+        }
+
+        function getCurrentLanguage() {
+            return localStorage.getItem('language') || 'es';
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            const userMenu = document.querySelector('.user-menu');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            // Close language dropdown
+            if (!languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+
+            // Close user dropdown
+            if (!userMenu.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.remove('show');
+            }
+
+            // Close sidebar on mobile when clicking outside
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar.classList.contains('show') && 
+                !sidebar.contains(event.target) && 
+                !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        // Reposition dropdowns on window resize
+        window.addEventListener('resize', function() {
+            const languageDropdown = document.getElementById('languageDropdown');
+            const userDropdown = document.getElementById('userDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            if (languageDropdown.classList.contains('show')) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+            if (userDropdown.classList.contains('show')) {
+                userDropdown.classList.remove('show');
+            }
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10001;
+                min-width: 300px;
+                padding: 1rem 1.5rem;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius);
+                box-shadow: var(--glass-shadow);
+                color: var(--text-light);
+                font-weight: 500;
+                animation: slideInRight 0.5s ease-out;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span style="flex: 1;">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1.2rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.5s ease-in forwards';
+                    setTimeout(() => notification.remove(), 500);
+                }
+            }, 5000);
+        }
+
+        // Add CSS for notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes slideOutRight {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.3;
+            document.body.style.backgroundPosition = `center ${rate}px`;
+        });
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            console.log('Refreshing dashboard data...');
+        }, 30000);
+    </script>
+</body>
+</html>

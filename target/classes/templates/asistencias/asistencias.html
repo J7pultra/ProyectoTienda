@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencias - Boutique Uniformes</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - ASISTENCIAS MODERNO
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors - Exacto como Login */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: rgba(30, 41, 59, 0.9);
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+            --border-radius: 14px;
+            --border-radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors - Exacto como Login */
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+            --info-gradient: linear-gradient(135deg, #00d4ff 0%, #06ffa5 100%);
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --text-light: rgba(255, 255, 255, 0.95);
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(15, 15, 35, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        /* Fondo animado igual al login */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: backgroundMove 15s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        [data-theme="dark"] body::before {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 255, 165, 0.2) 0%, transparent 50%);
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Controles superiores exactos al login/dashboard */
+        .top-controls {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Language selector exacto al dashboard */
+        .language-selector {
+            position: relative;
+        }
+
+        .language-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .language-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .language-button.active {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .chevron-icon {
+            font-size: 0.75rem;
+            transition: var(--transition);
+            margin-left: auto;
+        }
+
+        .language-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Language dropdown exacto al dashboard */
+        .language-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-option {
+            padding: 12px 16px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .language-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .language-option:first-child {
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .language-option:last-child {
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        /* Theme toggle exacto al login */
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(24px);
+            background: var(--warning-gradient);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .theme-icon.sun {
+            right: 6px;
+            opacity: 1;
+        }
+
+        .theme-icon.moon {
+            left: 6px;
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+        }
+
+        /* Main container */
+        .main-container {
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 0 20px;
+        }
+
+        /* Glass containers */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--glass-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Form controls exactos al login */
+        .form-control-modern {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control-modern:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--secondary-gradient);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            outline: none;
+            color: var(--text-light);
+        }
+
+        .form-select-modern {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            color: var(--text-light);
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-select-modern:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--secondary-gradient);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            outline: none;
+            color: var(--text-light);
+        }
+
+        .form-label-modern {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Buttons exactos al login */
+        .btn-modern {
+            background: var(--secondary-gradient);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            cursor: pointer;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+            color: white;
+        }
+
+        .btn-success-modern {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-success-modern:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-info-modern {
+            background: var(--info-gradient);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-info-modern:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn-warning-modern {
+            background: var(--warning-gradient);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-warning-modern:hover {
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-danger-modern {
+            background: var(--danger-gradient);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger-modern:hover {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+        }
+
+        /* Table modern */
+        .table-modern {
+            background: transparent;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-modern thead {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .table-modern thead th {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border: none;
+        }
+
+        .table-modern tbody td {
+            padding: 1rem;
+            color: var(--text-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .table-modern tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.01);
+            transition: var(--transition);
+        }
+
+        /* Status badges */
+        .status-presente {
+            background: var(--success-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-ausente {
+            background: var(--danger-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-tardanza {
+            background: var(--warning-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-permiso {
+            background: var(--info-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Employee avatar */
+        .employee-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Modal exacto al login */
+        .modal-modern .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .modal-modern .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-modern .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-modern .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-modern .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-controls {
+                top: 15px;
+                right: 15px;
+                gap: 10px;
+            }
+
+            .main-container {
+                margin-top: 60px;
+                padding: 0 10px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .glass-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Top Controls exactos al login/dashboard -->
+    <div class="top-controls">
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <div class="language-button" onclick="toggleLanguageDropdown()" id="btnLang">
+                <i class="fas fa-globe"></i>
+                <span class="language-text">Idioma</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-sun theme-icon sun"></i>
+            <i class="fas fa-moon theme-icon moon"></i>
+        </div>
+    </div>
+
+    <!-- Language Dropdown -->
+    <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+            <i class="fas fa-flag"></i>
+            <span>Español</span>
+        </div>
+        <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+            <i class="fas fa-flag"></i>
+            <span>English</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="glass-container text-center">
+            <h1 class="page-title" id="pageTitle">Control de Asistencias</h1>
+            <p class="page-subtitle" id="pageSubtitle">Gestión profesional del personal de Boutique Uniformes</p>
+            <button class="btn-modern btn-success-modern" onclick="openAttendanceModal()">
+                <i class="fas fa-user-plus me-2"></i>
+                <span id="btnNewAttendance">Nueva Asistencia</span>
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="glass-container">
+            <h5 class="mb-3">
+                <i class="fas fa-filter me-2"></i>
+                <span id="filtersTitle">Filtros de Búsqueda</span>
+            </h5>
+            <form method="get" th:action="@{/asistencias}" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label-modern" id="labelEmployee">Empleado</label>
+                    <select name="empleadoId" class="form-select-modern">
+                        <option value="" id="optionAll">Todos los empleados</option>
+                        <option th:each="empleado : ${empleados}" 
+                                th:value="${empleado.id}" 
+                                th:text="${empleado.nombre} + ' ' + ${empleado.apellido}"
+                                th:selected="${empleado.id} == ${empleadoId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label-modern" id="labelStartDate">Fecha Inicio</label>
+                    <input type="date" 
+                           name="fechaInicio" 
+                           th:value="${fechaInicio}" 
+                           class="form-control-modern"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label-modern" id="labelEndDate">Fecha Fin</label>
+                    <input type="date" 
+                           name="fechaFin" 
+                           th:value="${fechaFin}" 
+                           class="form-control-modern"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label-modern">&nbsp;</label>
+                    <button type="submit" class="btn-modern btn-info-modern w-100">
+                        <i class="fas fa-search me-2"></i>
+                        <span id="btnFilter">Filtrar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>
+                    <i class="fas fa-table me-2"></i>
+                    <span id="attendanceListTitle">Lista de Asistencias</span>
+                </h5>
+                <button class="btn-modern btn-info-modern" onclick="exportData()">
+                    <i class="fas fa-download me-2"></i>
+                    <span id="btnExport">Exportar</span>
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table-modern table">
+                    <thead>
+                        <tr>
+                            <th id="thEmployee">Empleado</th>
+                            <th id="thDate">Fecha</th>
+                            <th id="thEntryTime">Entrada</th>
+                            <th id="thExitTime">Salida</th>
+                            <th id="thStatus">Estado</th>
+                            <th id="thObservations">Observaciones</th>
+                            <th id="thActions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="asistencia : ${asistencias}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="employee-avatar me-3">
+                                        <span th:text="${#strings.substring(asistencia.empleado.nombre, 0, 1) + #strings.substring(asistencia.empleado.apellido, 0, 1)}">AB</span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" th:text="${asistencia.empleado.nombre} + ' ' + ${asistencia.empleado.apellido}"></div>
+                                        <div class="text-muted small" th:text="${asistencia.empleado.documento}"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold" th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}"></div>
+                                <div class="text-muted small" th:text="${#temporals.format(asistencia.fecha, 'EEEE')}"></div>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.horaEntrada}" 
+                                      class="badge bg-success" 
+                                      th:text="${#temporals.format(asistencia.horaEntrada, 'HH:mm')}">08:00</span>
+                                <span th:unless="${asistencia.horaEntrada}" 
+                                      class="badge bg-secondary">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.horaSalida}" 
+                                      class="badge bg-info" 
+                                      th:text="${#temporals.format(asistencia.horaSalida, 'HH:mm')}">17:00</span>
+                                <span th:unless="${asistencia.horaSalida}" 
+                                      class="badge bg-warning">Pendiente</span>
+                            </td>
+                            <td>
+                                <span th:switch="${asistencia.estado}">
+                                    <span th:case="'PRESENTE'" class="status-presente">
+                                        <i class="fas fa-check me-1"></i>Presente
+                                    </span>
+                                    <span th:case="'AUSENTE'" class="status-ausente">
+                                        <i class="fas fa-times me-1"></i>Ausente
+                                    </span>
+                                    <span th:case="'TARDANZA'" class="status-tardanza">
+                                        <i class="fas fa-clock me-1"></i>Tardanza
+                                    </span>
+                                    <span th:case="'PERMISO'" class="status-permiso">
+                                        <i class="fas fa-calendar-check me-1"></i>Permiso
+                                    </span>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.observaciones}" 
+                                      th:text="${asistencia.observaciones}"></span>
+                                <span th:unless="${asistencia.observaciones}" 
+                                      class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <button class="action-btn btn-info-modern" 
+                                        onclick="viewAttendance(this)"
+                                        th:attr="data-id=${asistencia.id},
+                                               data-empleado=${asistencia.empleado.nombre + ' ' + asistencia.empleado.apellido},
+                                               data-fecha=${asistencia.fecha},
+                                               data-entrada=${asistencia.horaEntrada},
+                                               data-salida=${asistencia.horaSalida},
+                                               data-estado=${asistencia.estado},
+                                               data-obs=${asistencia.observaciones}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn btn-warning-modern" 
+                                        onclick="editAttendance(this)"
+                                        th:attr="data-id=${asistencia.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button th:if="${asistencia.horaEntrada and !asistencia.horaSalida}" 
+                                        class="action-btn btn-success-modern" 
+                                        onclick="markExit(this)"
+                                        th:attr="data-id=${asistencia.id}">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                                <button class="action-btn btn-danger-modern" 
+                                        onclick="deleteAttendance(this)"
+                                        th:attr="data-id=${asistencia.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade modal-modern" id="attendanceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Asistencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/asistencias/guardar}" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Empleado</label>
+                                    <select name="empleado.id" class="form-select-modern" required>
+                                        <option value="">Seleccione empleado</option>
+                                        <option th:each="empleado : ${empleados}" 
+                                                th:value="${empleado.id}" 
+                                                th:text="${empleado.nombre} + ' ' + ${empleado.apellido}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Fecha</label>
+                                    <input type="date" name="fecha" class="form-control-modern" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Hora Entrada</label>
+                                    <input type="time" name="horaEntrada" class="form-control-modern">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Hora Salida</label>
+                                    <input type="time" name="horaSalida" class="form-control-modern">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Estado</label>
+                                    <select name="estado" class="form-select-modern" required>
+                                        <option value="PRESENTE">Presente</option>
+                                        <option value="AUSENTE">Ausente</option>
+                                        <option value="TARDANZA">Tardanza</option>
+                                        <option value="PERMISO">Permiso</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern">Observaciones</label>
+                                    <textarea name="observaciones" class="form-control-modern" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-modern" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn-modern btn-success-modern">
+                            <i class="fas fa-save me-2"></i>Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript exacto al login/dashboard -->
+    <script>
+        // Translations exactas del login
+        const translations = {
+            es: {
+                pageTitle: 'Control de Asistencias',
+                pageSubtitle: 'Gestión profesional del personal de Boutique Uniformes',
+                btnNewAttendance: 'Nueva Asistencia',
+                filtersTitle: 'Filtros de Búsqueda',
+                labelEmployee: 'Empleado',
+                optionAll: 'Todos los empleados',
+                labelStartDate: 'Fecha Inicio',
+                labelEndDate: 'Fecha Fin',
+                btnFilter: 'Filtrar',
+                attendanceListTitle: 'Lista de Asistencias',
+                btnExport: 'Exportar',
+                thEmployee: 'Empleado',
+                thDate: 'Fecha',
+                thEntryTime: 'Entrada',
+                thExitTime: 'Salida',
+                thStatus: 'Estado',
+                thObservations: 'Observaciones',
+                thActions: 'Acciones',
+                languageChangedSpanish: 'Idioma cambiado a Español',
+                languageChangedEnglish: 'Idioma cambiado a Inglés',
+                darkModeActivated: 'Modo oscuro activado',
+                lightModeActivated: 'Modo claro activado'
+            },
+            en: {
+                pageTitle: 'Attendance Control',
+                pageSubtitle: 'Professional staff management for Boutique Uniformes',
+                btnNewAttendance: 'New Attendance',
+                filtersTitle: 'Search Filters',
+                labelEmployee: 'Employee',
+                optionAll: 'All employees',
+                labelStartDate: 'Start Date',
+                labelEndDate: 'End Date',
+                btnFilter: 'Filter',
+                attendanceListTitle: 'Attendance List',
+                btnExport: 'Export',
+                thEmployee: 'Employee',
+                thDate: 'Date',
+                thEntryTime: 'Entry',
+                thExitTime: 'Exit',
+                thStatus: 'Status',
+                thObservations: 'Observations',
+                thActions: 'Actions',
+                languageChangedSpanish: 'Language changed to Spanish',
+                languageChangedEnglish: 'Language changed to English',
+                darkModeActivated: 'Dark mode activated',
+                lightModeActivated: 'Light mode activated'
+            }
+        };
+
+        // Variables globales
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let currentLanguage = localStorage.getItem('language') || 'es';
+
+        // Inicialización
+        function initializeTheme() {
+            document.body.setAttribute('data-theme', currentTheme);
+            updateLanguage();
+        }
+
+        // Theme toggle exacto al login
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+
+            const t = translations[currentLanguage];
+            const message = currentTheme === 'dark' ? t.darkModeActivated : t.lightModeActivated;
+            showNotification(message, 'success');
+        }
+
+        // Language functions exactas al login
+        function toggleLanguageDropdown() {
+            const btn = document.getElementById('btnLang');
+            const dropdown = document.getElementById('languageDropdown');
+
+            const rect = btn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+
+            dropdown.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function changeLanguage(lang) {
+            if (lang === currentLanguage) return;
+
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+
+            const dropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            dropdown.classList.remove('show');
+            languageBtn.classList.remove('active');
+
+            updateLanguage();
+
+            const t = translations[currentLanguage];
+            const message = lang === 'es' ? t.languageChangedSpanish : t.languageChangedEnglish;
+            showNotification(message, 'success');
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+            
+            Object.keys(t).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = t[key];
+                }
+            });
+
+            const languageText = document.querySelector('.language-text');
+            if (languageText) {
+                languageText.textContent = currentLanguage === 'es' ? 'Idioma' : 'Language';
+            }
+        }
+
+        // Event listeners exactos al login
+        document.addEventListener('click', function (event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+
+            if (!languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+        });
+
+        // Notification system exacto al login
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10001;
+                min-width: 300px;
+                padding: 1rem 1.5rem;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius);
+                box-shadow: var(--glass-shadow);
+                color: var(--text-light);
+                font-weight: 500;
+                text-align: center;
+            `;
+
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Modal functions
+        function openAttendanceModal() {
+            const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            modal.show();
+        }
+
+        function viewAttendance(button) {
+            const empleado = button.getAttribute('data-empleado');
+            const fecha = button.getAttribute('data-fecha');
+            const estado = button.getAttribute('data-estado');
+            showNotification(`Viendo: ${empleado} - ${fecha} - ${estado}`, 'info');
+        }
+
+        function editAttendance(button) {
+            const id = button.getAttribute('data-id');
+            showNotification(`Editando asistencia ID: ${id}`, 'info');
+        }
+
+        function markExit(button) {
+            const id = button.getAttribute('data-id');
+            if (confirm('¿Marcar salida?')) {
+                showNotification('Salida marcada correctamente', 'success');
+            }
+        }
+
+        function deleteAttendance(button) {
+            const id = button.getAttribute('data-id');
+            if (confirm('¿Eliminar asistencia?')) {
+                showNotification('Asistencia eliminada', 'success');
+            }
+        }
+
+        function exportData() {
+            showNotification('Exportando datos...', 'info');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+        });
+    </script>
+</body>
+</html>

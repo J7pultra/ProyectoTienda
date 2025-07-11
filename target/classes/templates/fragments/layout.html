@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout (title, content)">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Sistema de gestión para boutique de uniformes">
+        <meta name="author" content="Boutique Uniformes">
+
+        <!-- Título dinámico -->
+        <title th:text="${title}">Boutique Uniformes</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
+              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <!-- DataTables CSS -->
+        <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+
+        <!-- SweetAlert2 -->
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css" rel="stylesheet">
+
+        <!-- CSS personalizado -->
+        <link th:href="@{/css/style.css}" rel="stylesheet">
+
+        <!-- CSS adicional por página -->
+    <th:block th:fragment="css"></th:block>
+</head>
+<body class="bg-light">
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <!-- Navbar Superior -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm">
+            <div class="container-fluid">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center" th:href="@{/dashboard}">
+                    <i class="fas fa-store me-2 fs-4"></i>
+                    <span class="fw-bold">Boutique Uniformes</span>
+                </a>
+
+                <!-- Toggle button para móvil -->
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" 
+                        data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar items -->
+                <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+                    <!-- Notificaciones -->
+                    <div class="nav-item dropdown me-3">
+                        <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                                  th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}" 
+                                  th:text="${uniformesBajoStock}">
+                                0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="width: 300px;">
+                            <li class="dropdown-header">
+                                <i class="fas fa-bell me-2"></i>Notificaciones
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li th:if="${uniformesBajoStock != null and uniformesBajoStock > 0}">
+                                <a class="dropdown-item" th:href="@{/uniformes?bajoStock=true}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="fw-semibold" th:text="#{alert.productos.stock.bajo}">Stock Bajo</div>
+                                            <div class="small text-muted">
+                                                <span th:text="${uniformesBajoStock}">0</span> productos con stock bajo
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li th:unless="${uniformesBajoStock != null and uniformesBajoStock > 0}">
+                                <div class="dropdown-item text-center text-muted">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    No hay notificaciones
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Selector de idioma -->
+                    <div class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-globe me-2"></i>
+                            <span th:if="${#locale.language == 'es'}" th:text="#{lang.espanol}">Español</span>
+                            <span th:if="${#locale.language == 'en'}" th:text="#{lang.ingles}">English</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" 
+                                   th:if="${#httpServletRequest != null}"
+                                   th:href="@{${#httpServletRequest.requestURI}(lang='es')}"
+                                   th:classappend="${#locale.language == 'es'} ? 'active' : ''">
+                                    <img src="https://flagcdn.com/16x12/es.png" class="me-2" alt="ES">
+                                    <span th:text="#{lang.espanol}">Español</span>
+                                    <i th:if="${#locale.language == 'es'}" class="fas fa-check ms-auto text-success"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" 
+                                   th:if="${#httpServletRequest != null}"
+                                   th:href="@{${#httpServletRequest.requestURI}(lang='en')}"
+                                   th:classappend="${#locale.language == 'en'} ? 'active' : ''">
+                                    <img src="https://flagcdn.com/16x12/us.png" class="me-2" alt="EN">
+                                    <span th:text="#{lang.ingles}">English</span>
+                                    <i th:if="${#locale.language == 'en'}" class="fas fa-check ms-auto text-success"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Usuario dropdown -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar-circle me-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="d-none d-md-block">
+                                <div class="fw-semibold" sec:authentication="name">Usuario</div>
+                                <div class="small text-light opacity-75" sec:authentication="principal.rol">Rol</div>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li class="dropdown-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold" sec:authentication="name">Usuario</div>
+                                        <div class="small text-muted" sec:authentication="principal.rol">Rol</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/perfil}">
+                                    <i class="fas fa-user-cog me-2"></i>
+                                    <span th:text="#{auth.mi.perfil}">Mi Perfil</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="toggleTheme()">
+                                    <i class="fas fa-moon me-2" id="theme-icon"></i>
+                                    <span id="theme-text">Modo Oscuro</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                                    <button class="dropdown-item text-danger" type="submit">
+                                        <i class="fas fa-sign-out-alt me-2"></i>
+                                        <span th:text="#{auth.logout}">Cerrar Sesión</span>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar para desktop -->
+        <nav class="sidebar d-none d-lg-block">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <h6 class="text-white-50 text-uppercase fw-bold mb-3">Menú Principal</h6>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li>
+                        <a th:href="@{/dashboard}" class="sidebar-link" 
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span th:text="#{nav.dashboard}">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/clientes}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/clientes')} ? 'active' : ''">
+                            <i class="fas fa-users"></i>
+                            <span th:text="#{nav.clientes}">Clientes</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/empleados}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/empleados')} ? 'active' : ''">
+                            <i class="fas fa-user-tie"></i>
+                            <span th:text="#{nav.empleados}">Empleados</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/uniformes}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/uniformes')} ? 'active' : ''">
+                            <i class="fas fa-tshirt"></i>
+                            <span th:text="#{nav.uniformes}">Uniformes</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                        <a th:href="@{/ventas}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/ventas')} ? 'active' : ''">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span th:text="#{nav.ventas}">Ventas</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/proveedores}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/proveedores')} ? 'active' : ''">
+                            <i class="fas fa-truck"></i>
+                            <span th:text="#{nav.proveedores}">Proveedores</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/asistencias}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/asistencias')} ? 'active' : ''">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="#{nav.asistencias}">Asistencias</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/usuarios}" class="sidebar-link"
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/usuarios')} ? 'active' : ''">
+                            <i class="fas fa-user-cog"></i>
+                            <span th:text="#{nav.usuarios}">Usuarios</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Información del sistema -->
+                <div class="sidebar-footer">
+                    <div class="text-center text-white-50 small">
+                        <div class="mb-2">
+                            <i class="fas fa-server me-1"></i>
+                            Sistema v1.0
+                        </div>
+                        <div>
+                            <i class="fas fa-calendar me-1"></i>
+                            <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar offcanvas para móvil -->
+        <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarOffcanvas">
+            <div class="offcanvas-header bg-primary text-white">
+                <h5 class="offcanvas-title">
+                    <i class="fas fa-store me-2"></i>
+                    Boutique Uniformes
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <ul class="list-unstyled">
+                    <li>
+                        <a th:href="@{/dashboard}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-tachometer-alt me-3"></i>
+                            <span th:text="#{nav.dashboard}">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/clientes}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-users me-3"></i>
+                            <span th:text="#{nav.clientes}">Clientes</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/empleados}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-user-tie me-3"></i>
+                            <span th:text="#{nav.empleados}">Empleados</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/uniformes}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-tshirt me-3"></i>
+                            <span th:text="#{nav.uniformes}">Uniformes</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
+                        <a th:href="@{/ventas}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-shopping-cart me-3"></i>
+                            <span th:text="#{nav.ventas}">Ventas</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/proveedores}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-truck me-3"></i>
+                            <span th:text="#{nav.proveedores}">Proveedores</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
+                        <a th:href="@{/asistencias}" class="d-flex align-items-center p-3 text-decoration-none text-dark border-bottom">
+                            <i class="fas fa-clock me-3"></i>
+                            <span th:text="#{nav.asistencias}">Asistencias</span>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/usuarios}" class="d-flex align-items-center p-3 text-decoration-none text-dark">
+                            <i class="fas fa-user-cog me-3"></i>
+                            <span th:text="#{nav.usuarios}">Usuarios</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb bg-white rounded shadow-sm p-3">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/dashboard}" class="text-decoration-none">
+                                <i class="fas fa-home me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <th:block th:fragment="breadcrumb">
+                            <!-- Breadcrumb específico de cada página -->
+                        </th:block>
+                    </ol>
+                </nav>
+
+                <!-- Mensajes de alerta -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${warning}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${info}" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span th:text="${info}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Contenido de la página -->
+                <div th:replace="${content}">
+                    <!-- El contenido específico de cada página se insertará aquí -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer bg-white border-top mt-auto">
+            <div class="container-fluid">
+                <div class="row align-items-center py-3">
+                    <div class="col-md-6">
+                        <div class="text-muted small">
+                            © 2024 Boutique Uniformes. Todos los derechos reservados.
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="text-muted small">
+                            <i class="fas fa-code me-1"></i>
+                            Desarrollado con Spring Boot & Thymeleaf
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- JavaScript personalizado -->
+    <script th:src="@{/js/app.js}"></script>
+
+    <!-- JavaScript adicional por página -->
+<th:block th:fragment="scripts"></th:block>
+
+<!-- Script para ocultar loading spinner -->
+<script>
+                                $(document).ready(function () {
+                                    // Ocultar spinner cuando la página esté completamente cargada
+                                    $('#loading-spinner').fadeOut(500);
+
+                                    // Auto-hide alerts después de 5 segundos
+                                    setTimeout(function () {
+                                        $('.alert').fadeOut(500);
+                                    }, 5000);
+                                });
+
+                                // Función para cambiar tema
+                                function toggleTheme() {
+                                    const body = document.body;
+                                    const themeIcon = document.getElementById('theme-icon');
+                                    const themeText = document.getElementById('theme-text');
+
+                                    if (body.getAttribute('data-bs-theme') === 'dark') {
+                                        body.removeAttribute('data-bs-theme');
+                                        themeIcon.className = 'fas fa-moon me-2';
+                                        themeText.textContent = 'Modo Oscuro';
+                                        localStorage.setItem('theme', 'light');
+                                    } else {
+                                        body.setAttribute('data-bs-theme', 'dark');
+                                        themeIcon.className = 'fas fa-sun me-2';
+                                        themeText.textContent = 'Modo Claro';
+                                        localStorage.setItem('theme', 'dark');
+                                    }
+                                }
+
+                                // Cargar tema guardado
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const savedTheme = localStorage.getItem('theme');
+                                    if (savedTheme === 'dark') {
+                                        document.body.setAttribute('data-bs-theme', 'dark');
+                                        document.getElementById('theme-icon').className = 'fas fa-sun me-2';
+                                        document.getElementById('theme-text').textContent = 'Modo Claro';
+                                    }
+                                });
+</script>
+</body>
+</html>

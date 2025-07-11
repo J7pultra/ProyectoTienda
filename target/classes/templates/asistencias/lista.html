@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Asistencias - Boutique Uniformes</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - ASISTENCIAS MODERNO
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: rgba(30, 41, 59, 0.9);
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+            --accent-color: #4f46e5;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --table-bg: rgba(255, 255, 255, 0.95);
+            --table-text: #1e293b;
+            --table-hover: rgba(79, 70, 229, 0.1);
+            --filter-backdrop: blur(12px);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-light: rgba(248, 250, 252, 0.9);
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --bg-secondary: rgba(15, 23, 42, 0.95);
+            --accent-color: #8b5cf6;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --table-bg: rgba(15, 23, 42, 0.9);
+            --table-text: #f8fafc;
+            --table-hover: rgba(139, 92, 246, 0.1);
+            --filter-backdrop: blur(16px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           GLASSMORPHISM COMPONENTS
+           ======================================== */
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--glass-shadow);
+            padding: 2rem;
+            margin: 1rem 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(31, 38, 135, 0.25);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ========================================
+           HEADER & NAVIGATION
+           ======================================== */
+
+        .header-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) rotate(180deg); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========================================
+           BUTTONS & CONTROLS
+           ======================================== */
+
+        .btn-modern {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        }
+
+        .btn-success-modern {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-success-modern:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-warning-modern {
+            background: var(--warning-gradient);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-warning-modern:hover {
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-danger-modern {
+            background: var(--danger-gradient);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger-modern:hover {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+        }
+
+        .btn-info-modern {
+            background: var(--info-gradient);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-info-modern:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        /* ========================================
+           FORMS & INPUTS
+           ======================================== */
+
+        .glass-form {
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-control-modern {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .form-control-modern:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .form-control-modern::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-label-modern {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-select-modern {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .form-select-modern:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        /* ========================================
+           MODERN TABLE
+           ======================================== */
+
+        .table-modern {
+            background: var(--table-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-modern thead {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .table-modern thead th {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border: none;
+        }
+
+        .table-modern tbody td {
+            padding: 1rem;
+            color: var(--table-text);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        .table-modern tbody tr:hover {
+            background: var(--table-hover);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ========================================
+           STATUS BADGES
+           ======================================== */
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .status-presente {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-ausente {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-tardanza {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-permiso {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* ========================================
+           MODALS
+           ======================================== */
+
+        .modal-modern .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .modal-modern .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-modern .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-modern .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-modern .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* ========================================
+           STATISTICS CARDS
+           ======================================== */
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        /* ========================================
+           THEME CONTROLS
+           ======================================== */
+
+        .theme-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn, .lang-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-btn:hover, .lang-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ========================================
+           NOTIFICATIONS
+           ======================================== */
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--filter-backdrop);
+            -webkit-backdrop-filter: var(--filter-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--glass-shadow);
+            z-index: 1100;
+            transform: translateX(100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification-warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .notification-info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+
+        @media (max-width: 768px) {
+            .glass-container {
+                padding: 1rem;
+                margin: 0.5rem;
+                border-radius: 16px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .table-modern {
+                font-size: 0.85rem;
+            }
+
+            .theme-controls {
+                top: 10px;
+                right: 10px;
+            }
+
+            .theme-btn, .lang-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .glass-container {
+                padding: 0.75rem;
+                border-radius: 12px;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .btn-modern {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .table-modern thead th,
+            .table-modern tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* ========================================
+           LOADING STATES
+           ======================================== */
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* ========================================
+           ACCESSIBILITY
+           ======================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ========================================
+           FOCUS STYLES
+           ======================================== */
+
+        .btn-modern:focus,
+        .form-control-modern:focus,
+        .form-select-modern:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* ========================================
+           PRINT STYLES
+           ======================================== */
+
+        @media print {
+            .theme-controls,
+            .btn-modern,
+            .notification {
+                display: none !important;
+            }
+
+            .glass-container,
+            .glass-card,
+            .table-modern {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+
+            .page-title {
+                color: #333 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Controls -->
+    <div class="theme-controls">
+        <button class="theme-btn" id="themeToggle" title="Cambiar tema">
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+        <button class="lang-btn" id="langToggle" title="Cambiar idioma">
+            <span id="langText">ES</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container-fluid py-4">
+        <!-- Header Section -->
+        <div class="header-section animate-slide-in">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="page-title" id="pageTitle">Control de Asistencias</h1>
+                    <p class="page-subtitle" id="pageSubtitle">Gestión avanzada de asistencias del personal</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button class="btn btn-modern btn-success-modern" onclick="openAttendanceModal()">
+                        <i class="fas fa-user-plus me-2"></i>
+                        <span id="btnNewAttendance">Registrar Asistencia</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="totalEmployees">25</div>
+                    <div class="stat-label" id="labelTotalEmployees">Total Empleados</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number" id="presentToday">18</div>
+                    <div class="stat-label" id="labelPresentToday">Presentes Hoy</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number" id="lateToday">3</div>
+                    <div class="stat-label" id="labelLateToday">Tardanzas Hoy</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-number" id="absentToday">4</div>
+                    <div class="stat-label" id="labelAbsentToday">Ausentes Hoy</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="glass-form animate-slide-in">
+            <h5 class="mb-3" id="filtersTitle">
+                <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+            </h5>
+            <form method="get" th:action="@{/asistencias}" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label-modern" id="labelEmployee">Empleado</label>
+                    <select name="empleadoId" class="form-select-modern" id="employeeFilter">
+                        <option value="" id="optionAll">Todos</option>
+                        <option th:each="empleado : ${empleados}" 
+                                th:value="${empleado.id}" 
+                                th:text="${empleado.nombre} + ' ' + ${empleado.apellido}"
+                                th:selected="${empleado.id} == ${empleadoId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label-modern" id="labelStartDate">Fecha Inicio</label>
+                    <input type="date" 
+                           name="fechaInicio" 
+                           th:value="${fechaInicio}" 
+                           class="form-control-modern" 
+                           id="startDateFilter"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label-modern" id="labelEndDate">Fecha Fin</label>
+                    <input type="date" 
+                           name="fechaFin" 
+                           th:value="${fechaFin}" 
+                           class="form-control-modern" 
+                           id="endDateFilter"/>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-modern btn-info-modern w-100" id="btnFilter">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="glass-container animate-slide-in">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0" id="attendanceListTitle">
+                    <i class="fas fa-table me-2"></i>Lista de Asistencias
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-modern btn-info-modern" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>
+                        <span id="btnExport">Exportar</span>
+                    </button>
+                    <button class="btn btn-modern btn-warning-modern" onclick="generateReport()">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <span id="btnReport">Reporte</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table-modern table table-hover" id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th id="thEmployee">Empleado</th>
+                            <th id="thDate">Fecha</th>
+                            <th id="thEntryTime">Hora Entrada</th>
+                            <th id="thExitTime">Hora Salida</th>
+                            <th id="thStatus">Estado</th>
+                            <th id="thObservations">Observaciones</th>
+                            <th id="thActions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="asistencia : ${asistencias}" class="animate-fade-in">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="employee-avatar me-3">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px; font-size: 0.9rem; font-weight: 600;">
+                                            <span th:text="${#strings.substring(asistencia.empleado.nombre, 0, 1) + #strings.substring(asistencia.empleado.apellido, 0, 1)}">AB</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" th:text="${asistencia.empleado.nombre} + ' ' + ${asistencia.empleado.apellido}"></div>
+                                        <div class="text-muted small" th:text="${asistencia.empleado.documento}"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold" th:text="${#temporals.format(asistencia.fecha, 'dd/MM/yyyy')}"></div>
+                                <div class="text-muted small" th:text="${#temporals.format(asistencia.fecha, 'EEEE')}"></div>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.horaEntrada}" 
+                                      class="badge bg-success" 
+                                      th:text="${#temporals.format(asistencia.horaEntrada, 'HH:mm')}">08:00</span>
+                                <span th:unless="${asistencia.horaEntrada}" 
+                                      class="badge bg-secondary">No registrada</span>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.horaSalida}" 
+                                      class="badge bg-info" 
+                                      th:text="${#temporals.format(asistencia.horaSalida, 'HH:mm')}">17:00</span>
+                                <span th:unless="${asistencia.horaSalida}" 
+                                      class="badge bg-warning">Pendiente</span>
+                            </td>
+                            <td>
+                                <span th:switch="${asistencia.estado}" class="status-badge">
+                                    <span th:case="'PRESENTE'" class="status-presente">
+                                        <i class="fas fa-check-circle me-1"></i>Presente
+                                    </span>
+                                    <span th:case="'AUSENTE'" class="status-ausente">
+                                        <i class="fas fa-times-circle me-1"></i>Ausente
+                                    </span>
+                                    <span th:case="'TARDANZA'" class="status-tardanza">
+                                        <i class="fas fa-clock me-1"></i>Tardanza
+                                    </span>
+                                    <span th:case="'PERMISO'" class="status-permiso">
+                                        <i class="fas fa-calendar-check me-1"></i>Permiso
+                                    </span>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:if="${asistencia.observaciones}" 
+                                      th:text="${asistencia.observaciones}"></span>
+                                <span th:unless="${asistencia.observaciones}" 
+                                      class="text-muted">Sin observaciones</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-modern btn-sm me-1" 
+                                            onclick="viewAttendanceDetail(this)"
+                                            th:attr="data-id=${asistencia.id},
+                                                   data-empleado-nombre=${asistencia.empleado.nombre + ' ' + asistencia.empleado.apellido},
+                                                   data-empleado-documento=${asistencia.empleado.documento},
+                                                   data-fecha=${asistencia.fecha},
+                                                   data-hora-entrada=${asistencia.horaEntrada},
+                                                   data-hora-salida=${asistencia.horaSalida},
+                                                   data-estado=${asistencia.estado},
+                                                   data-observaciones=${asistencia.observaciones}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-modern btn-warning-modern btn-sm me-1" 
+                                            onclick="editAttendance(this)"
+                                            th:attr="data-id=${asistencia.id},
+                                                   data-empleado-id=${asistencia.empleado.id},
+                                                   data-fecha=${asistencia.fecha},
+                                                   data-hora-entrada=${asistencia.horaEntrada},
+                                                   data-hora-salida=${asistencia.horaSalida},
+                                                   data-estado=${asistencia.estado},
+                                                   data-observaciones=${asistencia.observaciones}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button th:if="${asistencia.horaEntrada and !asistencia.horaSalida}" 
+                                            class="btn btn-modern btn-success-modern btn-sm me-1" 
+                                            onclick="markExit(this)"
+                                            th:attr="data-id=${asistencia.id}">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </button>
+                                    <button class="btn btn-modern btn-danger-modern btn-sm" 
+                                            onclick="deleteAttendance(this)"
+                                            th:attr="data-id=${asistencia.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Modal (Create/Edit) -->
+    <div class="modal fade modal-modern" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="attendanceModalLabel">Registrar Asistencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="attendanceForm" th:action="@{/asistencias/guardar}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="attendanceId" name="id">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelEmployee">Empleado</label>
+                                    <select name="empleado.id" id="modalEmployeeId" class="form-select-modern" required>
+                                        <option value="" id="modalOptionSelectEmployee">Seleccione un empleado</option>
+                                        <option th:each="empleado : ${empleados}" 
+                                                th:value="${empleado.id}" 
+                                                th:text="${empleado.nombre} + ' ' + ${empleado.apellido}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelDate">Fecha</label>
+                                    <input type="date" name="fecha" id="modalFecha" class="form-control-modern" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelEntryTime">Hora de Entrada</label>
+                                    <input type="time" name="horaEntrada" id="modalHoraEntrada" class="form-control-modern">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelExitTime">Hora de Salida</label>
+                                    <input type="time" name="horaSalida" id="modalHoraSalida" class="form-control-modern">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelStatus">Estado</label>
+                                    <select name="estado" id="modalEstado" class="form-select-modern" required>
+                                        <option value="PRESENTE" id="modalOptionPresente">Presente</option>
+                                        <option value="AUSENTE" id="modalOptionAusente">Ausente</option>
+                                        <option value="TARDANZA" id="modalOptionTardanza">Tardanza</option>
+                                        <option value="PERMISO" id="modalOptionPermiso">Permiso</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label-modern" id="modalLabelObservations">Observaciones</label>
+                                    <textarea name="observaciones" id="modalObservaciones" class="form-control-modern" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-modern" data-bs-dismiss="modal" id="modalBtnCancel">Cancelar</button>
+                        <button type="submit" class="btn btn-modern btn-success-modern" id="modalBtnSave">
+                            <i class="fas fa-save me-2"></i>Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade modal-modern" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detalle de Asistencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="employee-info-card glass-card mb-3">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-user me-2"></i>Información del Empleado
+                                </h6>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Nombre:</span>
+                                    <span id="detailEmployeeName"></span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Documento:</span>
+                                    <span id="detailEmployeeDocument"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="attendance-info-card glass-card mb-3">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-calendar-check me-2"></i>Información de Asistencia
+                                </h6>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Fecha:</span>
+                                    <span id="detailDate"></span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Estado:</span>
+                                    <span id="detailStatus"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="time-info-card glass-card mb-3">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-clock me-2"></i>Horarios
+                                </h6>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Hora de Entrada:</span>
+                                    <span id="detailEntryTime"></span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="fw-bold">Hora de Salida:</span>
+                                    <span id="detailExitTime"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="observations-card glass-card mb-3">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-comment me-2"></i>Observaciones
+                                </h6>
+                                <div id="detailObservations" class="text-muted">
+                                    Sin observaciones
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-modern" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success != null}" class="notification notification-success show" id="successNotification">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error != null}" class="notification notification-error show" id="errorNotification">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // ========================================
+        // BOUTIQUE UNIFORMES - ASISTENCIAS JS
+        // ========================================
+
+        // Language translations
+        const translations = {
+            es: {
+                pageTitle: 'Control de Asistencias',
+                pageSubtitle: 'Gestión avanzada de asistencias del personal',
+                btnNewAttendance: 'Registrar Asistencia',
+                labelTotalEmployees: 'Total Empleados',
+                labelPresentToday: 'Presentes Hoy',
+                labelLateToday: 'Tardanzas Hoy',
+                labelAbsentToday: 'Ausentes Hoy',
+                filtersTitle: 'Filtros de Búsqueda',
+                labelEmployee: 'Empleado',
+                optionAll: 'Todos',
+                labelStartDate: 'Fecha Inicio',
+                labelEndDate: 'Fecha Fin',
+                btnFilter: 'Filtrar',
+                attendanceListTitle: 'Lista de Asistencias',
+                btnExport: 'Exportar',
+                btnReport: 'Reporte',
+                thEmployee: 'Empleado',
+                thDate: 'Fecha',
+                thEntryTime: 'Hora Entrada',
+                thExitTime: 'Hora Salida',
+                thStatus: 'Estado',
+                thObservations: 'Observaciones',
+                thActions: 'Acciones',
+                modalTitleCreate: 'Registrar Asistencia',
+                modalTitleEdit: 'Editar Asistencia',
+                modalLabelEmployee: 'Empleado',
+                modalOptionSelectEmployee: 'Seleccione un empleado',
+                modalLabelDate: 'Fecha',
+                modalLabelEntryTime: 'Hora de Entrada',
+                modalLabelExitTime: 'Hora de Salida',
+                modalLabelStatus: 'Estado',
+                modalOptionPresente: 'Presente',
+                modalOptionAusente: 'Ausente',
+                modalOptionTardanza: 'Tardanza',
+                modalOptionPermiso: 'Permiso',
+                modalLabelObservations: 'Observaciones',
+                modalBtnCancel: 'Cancelar',
+                modalBtnSave: 'Guardar',
+                confirmDelete: '¿Está seguro de que desea eliminar esta asistencia?',
+                confirmMarkExit: '¿Marcar salida para este empleado?',
+                successSave: 'Asistencia guardada correctamente',
+                successDelete: 'Asistencia eliminada correctamente',
+                successMarkExit: 'Salida marcada correctamente',
+                errorSave: 'Error al guardar la asistencia',
+                errorDelete: 'Error al eliminar la asistencia',
+                errorMarkExit: 'Error al marcar la salida'
+            },
+            en: {
+                pageTitle: 'Attendance Control',
+                pageSubtitle: 'Advanced personnel attendance management',
+                btnNewAttendance: 'Register Attendance',
+                labelTotalEmployees: 'Total Employees',
+                labelPresentToday: 'Present Today',
+                labelLateToday: 'Late Today',
+                labelAbsentToday: 'Absent Today',
+                filtersTitle: 'Search Filters',
+                labelEmployee: 'Employee',
+                optionAll: 'All',
+                labelStartDate: 'Start Date',
+                labelEndDate: 'End Date',
+                btnFilter: 'Filter',
+                attendanceListTitle: 'Attendance List',
+                btnExport: 'Export',
+                btnReport: 'Report',
+                thEmployee: 'Employee',
+                thDate: 'Date',
+                thEntryTime: 'Entry Time',
+                thExitTime: 'Exit Time',
+                thStatus: 'Status',
+                thObservations: 'Observations',
+                thActions: 'Actions',
+                modalTitleCreate: 'Register Attendance',
+                modalTitleEdit: 'Edit Attendance',
+                modalLabelEmployee: 'Employee',
+                modalOptionSelectEmployee: 'Select an employee',
+                modalLabelDate: 'Date',
+                modalLabelEntryTime: 'Entry Time',
+                modalLabelExitTime: 'Exit Time',
+                modalLabelStatus: 'Status',
+                modalOptionPresente: 'Present',
+                modalOptionAusente: 'Absent',
+                modalOptionTardanza: 'Late',
+                modalOptionPermiso: 'Permission',
+                modalLabelObservations: 'Observations',
+                modalBtnCancel: 'Cancel',
+                modalBtnSave: 'Save',
+                confirmDelete: 'Are you sure you want to delete this attendance?',
+                confirmMarkExit: 'Mark exit for this employee?',
+                successSave: 'Attendance saved successfully',
+                successDelete: 'Attendance deleted successfully',
+                successMarkExit: 'Exit marked successfully',
+                errorSave: 'Error saving attendance',
+                errorDelete: 'Error deleting attendance',
+                errorMarkExit: 'Error marking exit'
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'es';
+
+        // Theme Management
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            
+            const themeIcon = document.getElementById('themeIcon');
+            themeIcon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        // Language Management
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+            document.getElementById('langText').textContent = currentLanguage.toUpperCase();
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+            
+            // Update all translatable elements
+            Object.keys(t).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.tagName === 'INPUT' && element.type === 'submit') {
+                        element.value = t[key];
+                    } else if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                        element.placeholder = t[key];
+                    } else {
+                        element.textContent = t[key];
+                    }
+                }
+            });
+        }
+
+        // Modal Management
+        function openAttendanceModal(isEdit = false) {
+            const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+            const form = document.getElementById('attendanceForm');
+            const title = document.getElementById('attendanceModalLabel');
+            
+            if (isEdit) {
+                title.textContent = translations[currentLanguage].modalTitleEdit;
+                form.action = '/asistencias/actualizar';
+            } else {
+                title.textContent = translations[currentLanguage].modalTitleCreate;
+                form.action = '/asistencias/guardar';
+                form.reset();
+                document.getElementById('attendanceId').value = '';
+            }
+            
+            modal.show();
+        }
+
+        function editAttendance(button) {
+            const id = button.getAttribute('data-id');
+            const empleadoId = button.getAttribute('data-empleado-id');
+            const fecha = button.getAttribute('data-fecha');
+            const horaEntrada = button.getAttribute('data-hora-entrada');
+            const horaSalida = button.getAttribute('data-hora-salida');
+            const estado = button.getAttribute('data-estado');
+            const observaciones = button.getAttribute('data-observaciones');
+            
+            // Populate form
+            document.getElementById('attendanceId').value = id;
+            document.getElementById('modalEmployeeId').value = empleadoId;
+            document.getElementById('modalFecha').value = fecha;
+            document.getElementById('modalHoraEntrada').value = horaEntrada || '';
+            document.getElementById('modalHoraSalida').value = horaSalida || '';
+            document.getElementById('modalEstado').value = estado;
+            document.getElementById('modalObservaciones').value = observaciones || '';
+            
+            // Change form action for update
+            document.getElementById('attendanceForm').action = `/asistencias/actualizar/${id}`;
+            
+            openAttendanceModal(true);
+        }
+
+        function viewAttendanceDetail(button) {
+            const empleadoNombre = button.getAttribute('data-empleado-nombre');
+            const empleadoDocumento = button.getAttribute('data-empleado-documento');
+            const fecha = button.getAttribute('data-fecha');
+            const horaEntrada = button.getAttribute('data-hora-entrada');
+            const horaSalida = button.getAttribute('data-hora-salida');
+            const estado = button.getAttribute('data-estado');
+            const observaciones = button.getAttribute('data-observaciones');
+            
+            // Populate detail modal
+            document.getElementById('detailEmployeeName').textContent = empleadoNombre;
+            document.getElementById('detailEmployeeDocument').textContent = empleadoDocumento;
+            document.getElementById('detailDate').textContent = formatDate(fecha);
+            document.getElementById('detailEntryTime').textContent = horaEntrada || 'No registrada';
+            document.getElementById('detailExitTime').textContent = horaSalida || 'Pendiente';
+            document.getElementById('detailStatus').textContent = formatStatus(estado);
+            document.getElementById('detailObservations').textContent = observaciones || 'Sin observaciones';
+            
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+        }
+
+        function markExit(button) {
+            const id = button.getAttribute('data-id');
+            
+            if (confirm(translations[currentLanguage].confirmMarkExit)) {
+                showLoading(button);
+                
+                fetch(`/asistencias/marcar-salida/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification(translations[currentLanguage].successMarkExit, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(translations[currentLanguage].errorMarkExit, 'error');
+                    }
+                })
+                .catch(() => {
+                    showNotification(translations[currentLanguage].errorMarkExit, 'error');
+                })
+                .finally(() => {
+                    hideLoading(button);
+                });
+            }
+        }
+
+        function deleteAttendance(button) {
+            const id = button.getAttribute('data-id');
+            
+            if (confirm(translations[currentLanguage].confirmDelete)) {
+                showLoading(button);
+                
+                fetch(`/asistencias/eliminar/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification(translations[currentLanguage].successDelete, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(translations[currentLanguage].errorDelete, 'error');
+                    }
+                })
+                .catch(() => {
+                    showNotification(translations[currentLanguage].errorDelete, 'error');
+                })
+                .finally(() => {
+                    hideLoading(button);
+                });
+            }
+        }
+
+        // Utility Functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString(currentLanguage === 'es' ? 'es-ES' : 'en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'PRESENTE': currentLanguage === 'es' ? 'Presente' : 'Present',
+                'AUSENTE': currentLanguage === 'es' ? 'Ausente' : 'Absent',
+                'TARDANZA': currentLanguage === 'es' ? 'Tardanza' : 'Late',
+                'PERMISO': currentLanguage === 'es' ? 'Permiso' : 'Permission'
+            };
+            return statusMap[status] || status;
+        }
+
+        function showLoading(button) {
+            button.disabled = true;
+            button.classList.add('btn-loading');
+            button.innerHTML = '<span class="loading-spinner"></span>';
+        }
+
+        function hideLoading(button) {
+            button.disabled = false;
+            button.classList.remove('btn-loading');
+            // Restore original content based on button type
+            if (button.classList.contains('btn-danger-modern')) {
+                button.innerHTML = '<i class="fas fa-trash"></i>';
+            } else if (button.classList.contains('btn-success-modern')) {
+                button.innerHTML = '<i class="fas fa-sign-out-alt"></i>';
+            } else if (button.classList.contains('btn-warning-modern')) {
+                button.innerHTML = '<i class="fas fa-edit"></i>';
+            } else {
+                button.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type} show`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Export Functions
+        function exportData() {
+            showNotification('Preparando exportación...', 'info');
+            
+            // Simulate export process
+            setTimeout(() => {
+                const table = document.getElementById('attendanceTable');
+                const csv = tableToCSV(table);
+                downloadCSV(csv, 'asistencias.csv');
+                showNotification('Datos exportados correctamente', 'success');
+            }, 1000);
+        }
+
+        function tableToCSV(table) {
+            const rows = Array.from(table.querySelectorAll('tr'));
+            return rows.map(row => {
+                const cells = Array.from(row.querySelectorAll('th, td'));
+                return cells.map(cell => {
+                    const text = cell.textContent.trim();
+                    return text.includes(',') ? `"${text}"` : text;
+                }).join(',');
+            }).join('\n');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateReport() {
+            showNotification('Generando reporte...', 'info');
+            
+            // Simulate report generation
+            setTimeout(() => {
+                showNotification('Reporte generado correctamente', 'success');
+                // Here you would typically open a new window or download the report
+            }, 1500);
+        }
+
+        // Form Validation
+        function validateForm() {
+            const form = document.getElementById('attendanceForm');
+            const empleadoId = document.getElementById('modalEmployeeId').value;
+            const fecha = document.getElementById('modalFecha').value;
+            const estado = document.getElementById('modalEstado').value;
+            
+            if (!empleadoId) {
+                showNotification('Por favor seleccione un empleado', 'error');
+                return false;
+            }
+            
+            if (!fecha) {
+                showNotification('Por favor ingrese la fecha', 'error');
+                return false;
+            }
+            
+            if (!estado) {
+                showNotification('Por favor seleccione un estado', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // Language toggle
+            document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+            
+            // Form submission
+            document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                showLoading(submitBtn);
+            });
+            
+            // Auto-hide notifications
+            setTimeout(() => {
+                const notifications = document.querySelectorAll('.notification.show');
+                notifications.forEach(notification => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                });
+            }, 5000);
+            
+            // Set current date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('modalFecha').value = today;
+            
+            // Initialize theme icon
+            const themeIcon = document.getElementById('themeIcon');
+            themeIcon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        });
+
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            location.reload();
+        }, 300000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Nueva Factura - Boutique Uniformes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - FACTURA INTUITIVA
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #1e293b;
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+            --glass-bg: rgba(0, 0, 0, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-light: rgba(255, 255, 255, 0.95);
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --card-bg: #1a1a2e;
+            --border-color: #374151;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 20px 0;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.1) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        [data-theme="dark"] body::before {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.1) 0%, transparent 50%);
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(1deg); }
+        }
+
+        /* Top controls */
+        .top-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .language-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .language-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(25px);
+        }
+
+        /* Main container */
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header elegante */
+        .invoice-header {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .company-details h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-details p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .invoice-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .invoice-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .invoice-date {
+            opacity: 0.9;
+        }
+
+        /* Workflow steps */
+        .workflow-steps {
+            background: var(--card-bg);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .steps-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step.active {
+            background: var(--secondary-gradient);
+            color: white;
+            border-color: var(--secondary-gradient);
+            transform: scale(1.05);
+        }
+
+        .step.completed {
+            background: var(--success-gradient);
+            color: white;
+            border-color: var(--success-gradient);
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .step.active .step-number,
+        .step.completed .step-number {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Content sections */
+        .invoice-content {
+            padding: 2rem;
+        }
+
+        .content-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .content-section:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Form styling */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-gradient);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-control:read-only {
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Search section */
+        .search-section {
+            display: flex;
+            align-items: end;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+        }
+
+        /* Products table */
+        .products-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-header {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-table th {
+            background: var(--glass-bg);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .products-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .products-table tbody tr:hover {
+            background: var(--glass-bg);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Totals section */
+        .totals-section {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .total-row:last-child {
+            border-bottom: none;
+            background: var(--success-gradient);
+            color: white;
+            padding: 1rem;
+            margin: 0 -1.5rem -1.5rem;
+            border-radius: 0 0 15px 15px;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .total-label {
+            font-weight: 500;
+        }
+
+        .total-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .invoice-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .invoice-header,
+            .invoice-content {
+                padding: 1.5rem;
+            }
+
+            .steps-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .step {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            
+            .top-controls, .no-print {
+                display: none !important;
+            }
+            
+            .invoice-container {
+                box-shadow: none !important;
+                border: none !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
+        }
+
+        /* Dropdowns */
+        .language-dropdown {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+            z-index: 10000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .language-dropdown.show {
+            display: block;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .language-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .language-option:hover {
+            background: var(--glass-bg);
+        }
+
+        .language-option.active {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Top Controls -->
+    <div class="top-controls no-print">
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <div class="language-button" onclick="toggleLanguageDropdown()" id="btnLang">
+                <i class="fas fa-globe"></i>
+                <span id="languageText">Idioma</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" onclick="toggleTheme()"></div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="invoice-container">
+            <!-- Header -->
+            <div class="invoice-header">
+                <div class="header-content">
+                    <div class="company-info">
+                        <div class="company-logo">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="company-details">
+                            <h1>Boutique Uniformes</h1>
+                            <p id="companySubtitle">Uniformes Escolares y Empresariales</p>
+                        </div>
+                    </div>
+                    <div class="invoice-meta">
+                        <div>
+                            <div class="invoice-number" id="invoiceNumber">FAC-000001</div>
+                            <div class="invoice-date">
+                                <i class="fas fa-calendar me-2"></i>
+                                <span id="invoiceDate"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Steps -->
+            <div class="workflow-steps no-print">
+                <div class="steps-container">
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <span id="step1Text">Cliente</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <span id="step2Text">Productos</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <span id="step3Text">Finalizar</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="invoice-content">
+                <!-- Sección Cliente -->
+                <div class="content-section" id="clientSection">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="section-title" id="clientSectionTitle">Información del Cliente</div>
+                    </div>
+                    
+                    <div class="search-section">
+                        <div class="search-input">
+                            <label class="form-label" id="clientDocumentLabel">Cédula del Cliente</label>
+                            <input type="text" class="form-control" id="clientDocument" 
+                                   placeholder="Ingrese la cédula" maxlength="10">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="searchClient()">
+                            <i class="fas fa-search"></i>
+                            <span id="searchClientBtn">Buscar</span>
+                        </button>
+                    </div>
+                    
+                    <div class="form-row" id="clientInfo" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label" id="clientNameLabel">Nombre Completo</label>
+                            <input type="text" class="form-control" id="clientName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="clientEmailLabel">Email</label>
+                            <input type="email" class="form-control" id="clientEmail" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="clientPhoneLabel">Teléfono</label>
+                            <input type="text" class="form-control" id="clientPhone" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="clientAddressLabel">Dirección</label>
+                            <input type="text" class="form-control" id="clientAddress" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn btn-success" onclick="nextStep(2)" id="nextToProducts" style="display: none;">
+                            <span id="nextToProductsText">Continuar a Productos</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sección Productos -->
+                <div class="content-section" id="productSection" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="section-title" id="productSectionTitle">Agregar Productos</div>
+                    </div>
+                    
+                    <div class="search-section">
+                        <div class="search-input">
+                            <label class="form-label" id="productCodeLabel">Código del Producto</label>
+                            <input type="text" class="form-control" id="productCode" 
+                                   placeholder="Ingrese el código">
+                        </div>
+                        <button type="button" class="btn btn-outline" onclick="openProductModal()">
+                            <i class="fas fa-search"></i>
+                            <span id="searchProductBtn">Buscar</span>
+                        </button>
+                    </div>
+                    
+                    <div class="form-row" id="productInfo" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label" id="productNameLabel">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="productName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="productPriceLabel">Precio Unitario</label>
+                            <input type="number" class="form-control" id="productPrice" readonly step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="productQuantityLabel">Cantidad</label>
+                            <input type="number" class="form-control" id="productQuantity" 
+                                   placeholder="1" min="1" max="999">
+                        </div>
+                        <div class="form-group d-flex align-items-end">
+                            <button type="button" class="btn btn-success w-100" onclick="addProduct()">
+                                <i class="fas fa-plus"></i>
+                                <span id="addProductBtn">Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Productos -->
+                <div class="products-section" id="productsTable" style="display: none;">
+                    <div class="table-header">
+                        <i class="fas fa-list"></i>
+                        <span id="productsTableTitle">Productos Agregados</span>
+                    </div>
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;" id="itemHeader">Item</th>
+                                <th style="width: 40%;" id="descriptionHeader">Descripción</th>
+                                <th style="width: 15%;" id="quantityHeader">Cantidad</th>
+                                <th style="width: 15%;" id="priceHeader">Precio</th>
+                                <th style="width: 15%;" id="subtotalHeader">Subtotal</th>
+                                <th style="width: 5%;" id="actionsHeader">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr id="emptyRow">
+                                <td colspan="6" class="empty-state">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <div id="emptyMessage">No hay productos agregados</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totales -->
+                <div class="row justify-content-end" id="totalsSection" style="display: none;">
+                    <div class="col-md-6">
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <span class="total-label" id="subtotalLabel">Subtotal:</span>
+                                <span class="total-value" id="subtotalValue">$0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="total-label" id="ivaLabel">IVA (15%):</span>
+                                <span class="total-value" id="ivaValue">$0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="total-label" id="totalLabel">TOTAL:</span>
+                                <span class="total-value" id="totalValue">$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-success" onclick="nextStep(3)" id="nextToFinalize">
+                                <span id="nextToFinalizeText">Finalizar Factura</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="action-buttons no-print" id="finalActions" style="display: none;">
+                    <button type="button" class="btn btn-success" onclick="saveInvoice()">
+                        <i class="fas fa-save"></i>
+                        <span id="saveBtn">Guardar Factura</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="printInvoice()">
+                        <i class="fas fa-print"></i>
+                        <span id="printBtn">Imprimir</span>
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="clearInvoice()">
+                        <i class="fas fa-refresh"></i>
+                        <span id="newInvoiceBtn">Nueva Factura</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de búsqueda de productos -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="productModalTitle">Buscar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="productSearch" 
+                               placeholder="Buscar por nombre o código...">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productSearchResults">
+                                <!-- Productos se cargan aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Dropdown -->
+    <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+            <i class="fas fa-flag"></i>
+            <span>Español</span>
+        </div>
+        <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+            <i class="fas fa-flag"></i>
+            <span>English</span>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // DICCIONARIO DE TRADUCCIONES
+        const translations = {
+            es: {
+                languageText: 'Idioma',
+                companySubtitle: 'Uniformes Escolares y Empresariales',
+                step1Text: 'Cliente',
+                step2Text: 'Productos',
+                step3Text: 'Finalizar',
+                clientSectionTitle: 'Información del Cliente',
+                productSectionTitle: 'Agregar Productos',
+                clientDocumentLabel: 'Cédula del Cliente',
+                clientNameLabel: 'Nombre Completo',
+                clientEmailLabel: 'Email',
+                clientPhoneLabel: 'Teléfono',
+                clientAddressLabel: 'Dirección',
+                productCodeLabel: 'Código del Producto',
+                productNameLabel: 'Nombre del Producto',
+                productPriceLabel: 'Precio Unitario',
+                productQuantityLabel: 'Cantidad',
+                searchClientBtn: 'Buscar',
+                searchProductBtn: 'Buscar',
+                nextToProductsText: 'Continuar a Productos',
+                nextToFinalizeText: 'Finalizar Factura',
+                addProductBtn: 'Agregar',
+                productsTableTitle: 'Productos Agregados',
+                itemHeader: 'Item',
+                descriptionHeader: 'Descripción',
+                quantityHeader: 'Cantidad',
+                priceHeader: 'Precio',
+                subtotalHeader: 'Subtotal',
+                actionsHeader: 'Acciones',
+                emptyMessage: 'No hay productos agregados',
+                subtotalLabel: 'Subtotal:',
+                ivaLabel: 'IVA (15%):',
+                totalLabel: 'TOTAL:',
+                saveBtn: 'Guardar Factura',
+                printBtn: 'Imprimir',
+                newInvoiceBtn: 'Nueva Factura',
+                productModalTitle: 'Buscar Producto',
+                clientNotFound: 'Cliente no encontrado',
+                productNotFound: 'Producto no encontrado',
+                clientFound: 'Cliente encontrado',
+                productAdded: 'Producto agregado',
+                invoiceSaved: 'Factura guardada exitosamente',
+                darkModeActivated: 'Modo oscuro activado',
+                lightModeActivated: 'Modo claro activado'
+            },
+            en: {
+                languageText: 'Language',
+                companySubtitle: 'School and Corporate Uniforms',
+                step1Text: 'Customer',
+                step2Text: 'Products',
+                step3Text: 'Finalize',
+                clientSectionTitle: 'Customer Information',
+                productSectionTitle: 'Add Products',
+                clientDocumentLabel: 'Customer ID',
+                clientNameLabel: 'Full Name',
+                clientEmailLabel: 'Email',
+                clientPhoneLabel: 'Phone',
+                clientAddressLabel: 'Address',
+                productCodeLabel: 'Product Code',
+                productNameLabel: 'Product Name',
+                productPriceLabel: 'Unit Price',
+                productQuantityLabel: 'Quantity',
+                searchClientBtn: 'Search',
+                searchProductBtn: 'Search',
+                nextToProductsText: 'Continue to Products',
+                nextToFinalizeText: 'Finalize Invoice',
+                addProductBtn: 'Add',
+                productsTableTitle: 'Added Products',
+                itemHeader: 'Item',
+                descriptionHeader: 'Description',
+                quantityHeader: 'Quantity',
+                priceHeader: 'Price',
+                subtotalHeader: 'Subtotal',
+                actionsHeader: 'Actions',
+                emptyMessage: 'No products added',
+                subtotalLabel: 'Subtotal:',
+                ivaLabel: 'VAT (15%):',
+                totalLabel: 'TOTAL:',
+                saveBtn: 'Save Invoice',
+                printBtn: 'Print',
+                newInvoiceBtn: 'New Invoice',
+                productModalTitle: 'Search Product',
+                clientNotFound: 'Customer not found',
+                productNotFound: 'Product not found',
+                clientFound: 'Customer found',
+                productAdded: 'Product added',
+                invoiceSaved: 'Invoice saved successfully',
+                darkModeActivated: 'Dark mode activated',
+                lightModeActivated: 'Light mode activated'
+            }
+        };
+
+        // Variables globales
+        let invoiceProducts = [];
+        let currentClient = null;
+        let currentStep = 1;
+        let invoiceCounter = 1;
+
+        // FUNCIÓN PARA CAMBIAR IDIOMA
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            
+            // Actualizar todos los textos
+            Object.keys(t).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = t[key];
+                }
+            });
+            
+            // Actualizar placeholders
+            document.getElementById('clientDocument').placeholder = lang === 'es' ? 'Ingrese la cédula' : 'Enter customer ID';
+            document.getElementById('productCode').placeholder = lang === 'es' ? 'Ingrese el código' : 'Enter product code';
+            document.getElementById('productQuantity').placeholder = lang === 'es' ? '1' : '1';
+            document.getElementById('productSearch').placeholder = lang === 'es' ? 'Buscar por nombre o código...' : 'Search by name or code...';
+            
+            // Actualizar opciones activas en el dropdown
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            localStorage.setItem('language', lang);
+            
+            // Cerrar dropdown
+            document.getElementById('languageDropdown').classList.remove('show');
+            
+            showNotification(lang === 'es' ? 'Idioma cambiado a Español' : 'Language changed to English', 'success');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const currentLang = getCurrentLanguage();
+            const t = translations[currentLang];
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const message = newTheme === 'dark' ? t.darkModeActivated : t.lightModeActivated;
+            showNotification(message, 'success');
+        }
+
+        function toggleLanguageDropdown() {
+            document.getElementById('languageDropdown').classList.toggle('show');
+        }
+
+        function getCurrentLanguage() {
+            return localStorage.getItem('language') || 'es';
+        }
+
+        // FUNCIONES DE WORKFLOW
+
+        function nextStep(step) {
+            currentStep = step;
+            updateSteps();
+            
+            if (step === 2) {
+                document.getElementById('productSection').style.display = 'block';
+                document.getElementById('productCode').focus();
+            } else if (step === 3) {
+                document.getElementById('finalActions').style.display = 'flex';
+            }
+        }
+
+        function updateSteps() {
+            for (let i = 1; i <= 3; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                stepElement.classList.remove('active', 'completed');
+                
+                if (i < currentStep) {
+                    stepElement.classList.add('completed');
+                } else if (i === currentStep) {
+                    stepElement.classList.add('active');
+                }
+            }
+        }
+
+        // FUNCIONES DE FACTURACIÓN
+
+        async function searchClient() {
+            const documento = document.getElementById('clientDocument').value.trim();
+            const currentLang = getCurrentLanguage();
+            const t = translations[currentLang];
+            
+            if (!documento) {
+                showNotification(currentLang === 'es' ? 'Ingrese la cédula del cliente' : 'Enter customer ID', 'warning');
+                return;
+            }
+
+            // Validar formato de cédula ecuatoriana (10 dígitos)
+            if (!/^\d{10}$/.test(documento)) {
+                showNotification(currentLang === 'es' ? 'La cédula debe tener 10 dígitos' : 'ID must have 10 digits', 'warning');
+                return;
+            }
+
+            try {
+                // Mostrar loading
+                const searchBtn = document.querySelector('#clientSection .btn-primary');
+                const originalText = searchBtn.innerHTML;
+                searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Buscando...</span>';
+                searchBtn.disabled = true;
+
+                // Llamada a tu API usando el endpoint de tu ClienteController
+                const response = await fetch(`/api/clientes/buscar-por-documento?documento=${documento}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const cliente = await response.json();
+                    
+                    if (cliente && cliente.id) {
+                        // Cliente encontrado
+                        currentClient = cliente;
+                        
+                        // Llenar los campos con los datos del cliente
+                        document.getElementById('clientName').value = cliente.nombreCompleto || `${cliente.nombre} ${cliente.apellido}`;
+                        document.getElementById('clientEmail').value = cliente.email || '';
+                        document.getElementById('clientPhone').value = cliente.telefono || '';
+                        document.getElementById('clientAddress').value = cliente.direccion || '';
+                        
+                        // Mostrar la información del cliente
+                        document.getElementById('clientInfo').style.display = 'grid';
+                        document.getElementById('nextToProducts').style.display = 'inline-flex';
+                        
+                        showNotification(t.clientFound, 'success');
+                    } else {
+                        clearClientFields();
+                        showNotification(t.clientNotFound, 'error');
+                    }
+                } else if (response.status === 404) {
+                    // Cliente no encontrado
+                    clearClientFields();
+                    showNotification(t.clientNotFound, 'error');
+                } else {
+                    // Error del servidor
+                    clearClientFields();
+                    showNotification(currentLang === 'es' ? 'Error del servidor' : 'Server error', 'error');
+                }
+            } catch (error) {
+                console.error('Error al buscar cliente:', error);
+                clearClientFields();
+                showNotification(currentLang === 'es' ? 'Error de conexión' : 'Connection error', 'error');
+            } finally {
+                // Restaurar botón
+                const searchBtn = document.querySelector('#clientSection .btn-primary');
+                searchBtn.innerHTML = originalText;
+                searchBtn.disabled = false;
+            }
+        }
+
+        function clearClientFields() {
+            currentClient = null;
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientEmail').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('clientAddress').value = '';
+            document.getElementById('clientInfo').style.display = 'none';
+            document.getElementById('nextToProducts').style.display = 'none';
+        }
+
+        // Buscar producto por código
+        document.getElementById('productCode').addEventListener('blur', async function() {
+            const code = this.value.trim();
+            if (!code) return;
+
+            const mockProducts = {
+                'UNI001': {
+                    codigo: 'UNI001',
+                    nombre: 'Camisa Escolar Blanca',
+                    precio: 25.50,
+                    stock: 50
+                },
+                'UNI002': {
+                    codigo: 'UNI002',
+                    nombre: 'Pantalón Escolar Azul',
+                    precio: 35.00,
+                    stock: 30
+                },
+                'UNI003': {
+                    codigo: 'UNI003',
+                    nombre: 'Falda Escolar Gris',
+                    precio: 28.75,
+                    stock: 25
+                }
+            };
+
+            const product = mockProducts[code.toUpperCase()];
+            
+            if (product) {
+                document.getElementById('productName').value = product.nombre;
+                document.getElementById('productPrice').value = product.precio;
+                document.getElementById('productQuantity').max = product.stock;
+                document.getElementById('productQuantity').value = 1;
+                document.getElementById('productInfo').style.display = 'grid';
+            } else {
+                clearProductFields();
+                const currentLang = getCurrentLanguage();
+                const t = translations[currentLang];
+                showNotification(t.productNotFound, 'warning');
+            }
+        });
+
+        function clearProductFields() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').value = '';
+            document.getElementById('productInfo').style.display = 'none';
+        }
+
+        function addProduct() {
+            const code = document.getElementById('productCode').value.trim();
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const currentLang = getCurrentLanguage();
+            const t = translations[currentLang];
+
+            if (!code || !name || !price || !quantity) {
+                showNotification(currentLang === 'es' ? 'Complete todos los campos' : 'Complete all fields', 'warning');
+                return;
+            }
+
+            const product = {
+                code: code,
+                name: name,
+                price: price,
+                quantity: quantity,
+                subtotal: price * quantity
+            };
+            
+            invoiceProducts.push(product);
+            updateProductsTable();
+            clearProductFields();
+            document.getElementById('productCode').value = '';
+            document.getElementById('productCode').focus();
+            
+            showNotification(t.productAdded, 'success');
+        }
+
+        function updateProductsTable() {
+            const tbody = document.getElementById('productsTableBody');
+            const emptyRow = document.getElementById('emptyRow');
+            
+            if (invoiceProducts.length === 0) {
+                emptyRow.style.display = 'table-row';
+                document.getElementById('productsTable').style.display = 'none';
+                document.getElementById('totalsSection').style.display = 'none';
+                return;
+            }
+
+            emptyRow.style.display = 'none';
+            document.getElementById('productsTable').style.display = 'block';
+            document.getElementById('totalsSection').style.display = 'block';
+            
+            // Limpiar tabla excepto la fila vacía
+            Array.from(tbody.children).forEach(row => {
+                if (row.id !== 'emptyRow') {
+                    row.remove();
+                }
+            });
+
+            invoiceProducts.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center fw-bold">${index + 1}</td>
+                    <td>
+                        <div class="fw-bold">${product.name}</div>
+                        <small class="text-muted">Código: ${product.code}</small>
+                    </td>
+                    <td class="text-center">${product.quantity}</td>
+                    <td class="text-end">$${product.price.toFixed(2)}</td>
+                    <td class="text-end fw-bold">$${product.subtotal.toFixed(2)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline btn-sm" onclick="removeProduct(${index})" style="color: var(--danger-gradient); border-color: var(--danger-gradient);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateTotals();
+        }
+
+        function removeProduct(index) {
+            invoiceProducts.splice(index, 1);
+            updateProductsTable();
+        }
+
+        function updateTotals() {
+            const subtotal = invoiceProducts.reduce((sum, product) => sum + product.subtotal, 0);
+            const iva = subtotal * 0.15;
+            const total = subtotal + iva;
+
+            document.getElementById('subtotalValue').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('ivaValue').textContent = `$${iva.toFixed(2)}`;
+            document.getElementById('totalValue').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function openProductModal() {
+            const modal = new bootstrap.Modal(document.getElementById('productModal'));
+            loadProducts();
+            modal.show();
+        }
+
+        function loadProducts() {
+            const mockProducts = [
+                { id: 1, codigo: 'UNI001', nombre: 'Camisa Escolar Blanca', precio: 25.50, stock: 50 },
+                { id: 2, codigo: 'UNI002', nombre: 'Pantalón Escolar Azul', precio: 35.00, stock: 30 },
+                { id: 3, codigo: 'UNI003', nombre: 'Falda Escolar Gris', precio: 28.75, stock: 25 }
+            ];
+
+            const tbody = document.getElementById('productSearchResults');
+            tbody.innerHTML = '';
+
+            mockProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.codigo}</td>
+                    <td>${product.nombre}</td>
+                    <td>$${product.precio.toFixed(2)}</td>
+                    <td>${product.stock}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="selectProduct(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                            Seleccionar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function selectProduct(product) {
+            document.getElementById('productCode').value = product.codigo;
+            document.getElementById('productName').value = product.nombre;
+            document.getElementById('productPrice').value = product.precio;
+            document.getElementById('productQuantity').value = 1;
+            document.getElementById('productQuantity').max = product.stock;
+            document.getElementById('productInfo').style.display = 'grid';
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+            modal.hide();
+        }
+
+        function saveInvoice() {
+            const currentLang = getCurrentLanguage();
+            const t = translations[currentLang];
+
+            if (!currentClient || invoiceProducts.length === 0) {
+                showNotification(currentLang === 'es' ? 'Complete todos los datos' : 'Complete all data', 'warning');
+                return;
+            }
+
+            // Aquí harías la llamada a tu API
+            console.log('Guardando factura...', { client: currentClient, products: invoiceProducts });
+            showNotification(t.invoiceSaved, 'success');
+            
+            invoiceCounter++;
+            document.getElementById('invoiceNumber').textContent = `FAC-${String(invoiceCounter).padStart(6, '0')}`;
+        }
+
+        function printInvoice() {
+            if (invoiceProducts.length === 0) {
+                const currentLang = getCurrentLanguage();
+                showNotification(currentLang === 'es' ? 'No hay productos para imprimir' : 'No products to print', 'warning');
+                return;
+            }
+            window.print();
+        }
+
+        function clearInvoice() {
+            const currentLang = getCurrentLanguage();
+            
+            if (confirm(currentLang === 'es' ? '¿Crear nueva factura?' : 'Create new invoice?')) {
+                location.reload();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10001;
+                min-width: 300px;
+                padding: 1rem 1.5rem;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                color: var(--text-primary);
+                font-weight: 500;
+                animation: slideInDown 0.3s ease-out;
+                text-align: center;
+            `;
+            
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation-triangle' : 'info'}-circle" style="color: ${colors[type]};"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutUp 0.3s ease-in forwards';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 3000);
+        }
+
+        // Event listeners
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.language-selector') && !event.target.closest('.language-dropdown')) {
+                document.getElementById('languageDropdown').classList.remove('show');
+            }
+        });
+
+        document.getElementById('clientDocument').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchClient();
+        });
+
+        document.getElementById('productCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') this.blur();
+        });
+
+        document.getElementById('productQuantity').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addProduct();
+        });
+
+        // Validar solo números en cédula
+        document.getElementById('clientDocument').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, ''); // Solo números
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            this.value = value;
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedLang = localStorage.getItem('language') || 'es';
+            
+            document.body.setAttribute('data-theme', savedTheme);
+            changeLanguage(savedLang);
+
+            // Set current date
+            const now = new Date();
+            const dateString = now.toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('invoiceDate').textContent = dateString;
+
+            document.getElementById('invoiceNumber').textContent = `FAC-${String(invoiceCounter).padStart(6, '0')}`;
+            document.getElementById('clientDocument').focus();
+        });
+
+        // CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInDown {
+                from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+            @keyframes slideOutUp {
+                from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

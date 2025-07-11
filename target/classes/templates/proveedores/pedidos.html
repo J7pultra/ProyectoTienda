@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos a Proveedores - Boutique Uniformes</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           BOUTIQUE UNIFORMES - PEDIDOS PROVEEDORES
+           ======================================== */
+
+        :root {
+            /* Light Mode Colors - SAME AS LOGIN */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: rgba(30, 41, 59, 0.9);
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors - SAME AS LOGIN */
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --secondary-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --warning-gradient: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            --danger-gradient: linear-gradient(135deg, #ff006e 0%, #ff4081 100%);
+            --info-gradient: linear-gradient(135deg, #00d4ff 0%, #06ffa5 100%);
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --text-light: rgba(255, 255, 255, 0.95);
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(15, 15, 35, 0.95);
+        }
+
+        :root {
+            --border-radius: 14px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: var(--transition);
+            padding: 15px;
+        }
+
+        /* FONDO ANIMADO MISMO DEL LOGIN */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+            animation: backgroundGentleMove 25s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        [data-theme="dark"] body::before {
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 110, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 255, 165, 0.15) 0%, transparent 50%);
+        }
+
+        @keyframes backgroundGentleMove {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.05) rotate(1deg);
+                opacity: 1;
+            }
+        }
+
+        /* GRID SUTIL MISMO DEL LOGIN */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%234f46e5" stroke-width="0.2" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: gridSlowMove 30s linear infinite;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        [data-theme="dark"] body::after {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23ff006e" stroke-width="0.2" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        @keyframes gridSlowMove {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                transform: translateX(20px) translateY(20px);
+            }
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            color: var(--text-light);
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .header-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Language and Theme Controls */
+        .language-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 0.6rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.85rem;
+            min-width: 100px;
+        }
+
+        .language-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .language-button .globe-icon {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .language-button .language-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .language-button .chevron-icon {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            transition: transform var(--transition);
+        }
+
+        .language-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(24px);
+            background: var(--warning-gradient);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .theme-icon.sun {
+            right: 6px;
+            opacity: 1;
+        }
+
+        .theme-icon.moon {
+            left: 6px;
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+        }
+
+        /* Dropdowns */
+        .language-dropdown {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--glass-shadow);
+            min-width: 160px;
+            z-index: 10000;
+            display: none;
+            overflow: hidden;
+            animation: dropdownSlide 0.3s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition-fast);
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .language-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .language-option.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+        }
+
+        .language-option.active::after {
+            content: '✓';
+            margin-left: auto;
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Pedido Card - COMPACTO */
+        .pedido-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            padding: 1.5rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Grid - COMPACTO */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: #4f46e5;
+            font-size: 1rem;
+        }
+
+        [data-theme="dark"] .section-title i {
+            color: #ff006e;
+        }
+
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-light);
+            font-weight: 400;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="dark"] .form-control:focus {
+            border-color: #ff006e;
+            box-shadow: 0 0 0 2px rgba(255, 0, 110, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 12px 10px;
+            padding-right: 2rem;
+        }
+
+        /* Items Table - COMPACTO */
+        .items-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .items-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .add-item-btn {
+            background: var(--success-gradient);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .add-item-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .items-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .items-table thead {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .items-table th {
+            padding: 0.75rem 0.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+        }
+
+        .items-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .items-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .item-input {
+            width: 100%;
+            padding: 0.4rem 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-light);
+            text-align: center;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+
+        .item-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="dark"] .item-input:focus {
+            border-color: #ff006e;
+        }
+
+        .delete-item-btn {
+            background: var(--danger-gradient);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .delete-item-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Totales - COMPACTO */
+        .totales-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+        }
+
+        .totales-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .condiciones-pago {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
+            padding: 0.75rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .condiciones-title {
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .condiciones-textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-light);
+            resize: vertical;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+
+        .condiciones-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="dark"] .condiciones-textarea:focus {
+            border-color: #ff006e;
+        }
+
+        .totales-display {
+            min-width: 250px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .total-row.final {
+            border-top: 2px solid var(--glass-border);
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        [data-theme="dark"] .total-row.final {
+            color: #ff006e;
+        }
+
+        /* Tax Row - NUEVO */
+        .tax-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .tax-input {
+            width: 80px;
+            padding: 0.3rem 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            color: var(--text-light);
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .tax-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        [data-theme="dark"] .tax-input:focus {
+            border-color: #ff006e;
+        }
+
+        /* Actions - COMPACTO */
+        .actions-section {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 130px;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--info-gradient);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive - MEJORADO */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .totales-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .actions-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .main-container {
+                padding: 0.75rem;
+            }
+
+            .items-table {
+                font-size: 0.8rem;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 0.4rem 0.2rem;
+            }
+
+            .pedido-card {
+                padding: 1rem;
+            }
+
+            .header-actions {
+                flex-direction: row;
+                gap: 0.75rem;
+            }
+
+            .language-button {
+                min-width: 90px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/proveedores" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="header-title">
+                <h1 data-lang-es="Pedidos a Proveedores" data-lang-en="Supplier Orders">Pedidos a Proveedores</h1>
+                <p data-lang-es="Gestión de órdenes de compra" data-lang-en="Purchase order management">Gestión de órdenes de compra</p>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <div class="language-button" id="btnLang" onclick="toggleLanguageDropdown()">
+                    <i class="fas fa-globe globe-icon"></i>
+                    <span class="language-text" data-lang-es="Idioma" data-lang-en="Language">Idioma</span>
+                    <i class="fas fa-chevron-down chevron-icon"></i>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-sun theme-icon sun"></i>
+                <i class="fas fa-moon theme-icon moon"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="pedido-card">
+            <!-- Form Grid -->
+            <div class="form-grid">
+                <!-- Detalles del Proveedor -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-truck"></i>
+                        <span data-lang-es="Proveedor" data-lang-en="Supplier">Proveedor</span>
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Cédula del Proveedor" data-lang-en="Supplier ID">Cédula del Proveedor</label>
+                        <input type="text" class="form-control" id="cedulaProveedor" placeholder="Ej: 123456789" onblur="buscarProveedor()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Nombre" data-lang-en="Name">Nombre</label>
+                        <input type="text" class="form-control" id="nombreProveedor" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="emailProveedor" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Teléfono" data-lang-en="Phone">Teléfono</label>
+                        <input type="tel" class="form-control" id="telefonoProveedor" readonly>
+                    </div>
+                </div>
+
+                <!-- Detalles del Pedido -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-invoice"></i>
+                        <span data-lang-es="Pedido" data-lang-en="Order">Pedido</span>
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Número de Pedido" data-lang-en="Order Number">Número de Pedido</label>
+                        <input type="text" class="form-control" id="numeroPedido" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Fecha" data-lang-en="Date">Fecha</label>
+                        <input type="date" class="form-control" id="fechaPedido">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Fecha de Entrega" data-lang-en="Delivery Date">Fecha de Entrega</label>
+                        <input type="date" class="form-control" id="fechaEntrega">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-lang-es="Prioridad" data-lang-en="Priority">Prioridad</label>
+                        <select class="form-control form-select" id="prioridad">
+                            <option value="baja" data-lang-es="Baja" data-lang-en="Low">Baja</option>
+                            <option value="media" data-lang-es="Media" data-lang-en="Medium" selected>Media</option>
+                            <option value="alta" data-lang-es="Alta" data-lang-en="High">Alta</option>
+                            <option value="urgente" data-lang-es="Urgente" data-lang-en="Urgent">Urgente</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="items-section">
+                <div class="items-title">
+                    <span data-lang-es="Items del Pedido" data-lang-en="Order Items">Items del Pedido</span>
+                    <button class="add-item-btn" onclick="addItem()">
+                        <i class="fas fa-plus"></i>
+                        <span data-lang-es="Agregar" data-lang-en="Add">Agregar</span>
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;" data-lang-es="#" data-lang-en="#">#</th>
+                                <th data-lang-es="Descripción" data-lang-en="Description">Descripción</th>
+                                <th style="width: 100px;" data-lang-es="Cantidad" data-lang-en="Qty">Cantidad</th>
+                                <th style="width: 120px;" data-lang-es="Precio Unit." data-lang-en="Unit Price">Precio Unit.</th>
+                                <th style="width: 120px;" data-lang-es="Total" data-lang-en="Total">Total</th>
+                                <th style="width: 60px;" data-lang-es="Del" data-lang-en="Del">Del</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="item-input" placeholder="Descripción" value="Tela para uniformes"></td>
+                                <td><input type="number" class="item-input" placeholder="0" value="25" min="1" onchange="calculateRowTotal(this)"></td>
+                                <td><input type="number" class="item-input" placeholder="0.00" value="12.50" min="0" step="0.01" onchange="calculateRowTotal(this)"></td>
+                                <td class="row-total">312.50</td>
+                                <td>
+                                    <button class="delete-item-btn" onclick="removeItem(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Totales Section -->
+            <div class="totales-section">
+                <div class="totales-grid">
+                    <div class="condiciones-pago">
+                        <div class="condiciones-title" data-lang-es="Condiciones de Pago" data-lang-en="Payment Terms">Condiciones de Pago</div>
+                        <textarea class="condiciones-textarea" placeholder="Ingrese condiciones..." data-lang-es="Crédito 30 días" data-lang-en="30 days credit">Crédito 30 días</textarea>
+                    </div>
+
+                    <div class="totales-display">
+                        <div class="total-row">
+                            <span data-lang-es="SUBTOTAL" data-lang-en="SUBTOTAL">SUBTOTAL</span>
+                            <span id="subtotal">312.50</span>
+                        </div>
+                        <div class="tax-row">
+                            <span data-lang-es="IVA (%)" data-lang-en="TAX (%)">IVA (%)</span>
+                            <input type="number" class="tax-input" id="taxPercent" placeholder="0" min="0" max="100" step="0.01" onchange="calculateTotals()">
+                        </div>
+                        <div class="total-row" id="taxRow" style="display: none;">
+                            <span data-lang-es="IVA" data-lang-en="TAX">IVA</span>
+                            <span id="taxAmount">0.00</span>
+                        </div>
+                        <div class="total-row final">
+                            <span data-lang-es="TOTAL" data-lang-en="TOTAL">TOTAL</span>
+                            <span id="total">312.50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions-section">
+                <button class="action-btn btn-primary" onclick="guardarPedido()">
+                    <i class="fas fa-save"></i>
+                    <span data-lang-es="Guardar" data-lang-en="Save">Guardar</span>
+                </button>
+                <button class="action-btn btn-secondary" onclick="enviarPedido()">
+                    <i class="fas fa-paper-plane"></i>
+                    <span data-lang-es="Enviar" data-lang-en="Send">Enviar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Dropdown -->
+    <div class="language-dropdown" id="languageDropdown">
+        <div class="language-option" onclick="changeLanguage('es')" data-lang="es">
+            <i class="fas fa-flag"></i>
+            <span>Español</span>
+        </div>
+        <div class="language-option" onclick="changeLanguage('en')" data-lang="en">
+            <i class="fas fa-flag"></i>
+            <span>English</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar tema y idioma guardado
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedLang = localStorage.getItem('language') || 'es';
+            
+            document.body.setAttribute('data-theme', savedTheme);
+            changeLanguage(savedLang);
+
+            // Configurar fecha actual
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaPedido').value = today;
+
+            // Configurar fecha de entrega (10 días después)
+            const deliveryDate = new Date();
+            deliveryDate.setDate(deliveryDate.getDate() + 10);
+            document.getElementById('fechaEntrega').value = deliveryDate.toISOString().split('T')[0];
+
+            // Generar número de pedido único
+            generatePedidoNumber();
+
+            // Calcular totales iniciales
+            calculateTotals();
+        });
+
+        // Funciones para dropdowns
+        function toggleLanguageDropdown() {
+            const btn = document.getElementById('btnLang');
+            const dropdown = document.getElementById('languageDropdown');
+            
+            // Calcular posición del botón
+            const rect = btn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+            
+            // Toggle dropdown y animación del chevron
+            dropdown.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function changeLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-es][data-lang-en]');
+            elements.forEach(element => {
+                if (lang === 'es') {
+                    element.textContent = element.getAttribute('data-lang-es');
+                    if (element.placeholder !== undefined) {
+                        element.placeholder = element.getAttribute('data-lang-es');
+                    }
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                    if (element.placeholder !== undefined) {
+                        element.placeholder = element.getAttribute('data-lang-en');
+                    }
+                }
+            });
+            
+            // Actualizar opciones activas en el dropdown
+            const languageOptions = document.querySelectorAll('.language-option');
+            languageOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-lang') === lang) {
+                    option.classList.add('active');
+                }
+            });
+            
+            localStorage.setItem('language', lang);
+            
+            // Cerrar dropdown
+            const dropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            dropdown.classList.remove('show');
+            languageBtn.classList.remove('active');
+            
+            // Mostrar notificación
+            showNotification(
+                lang === 'es' ? 'Idioma cambiado a Español' : 'Language changed to English',
+                'success'
+            );
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Mostrar notificación
+            showNotification(
+                newTheme === 'dark' ? 
+                (getCurrentLanguage() === 'es' ? 'Modo oscuro activado' : 'Dark mode activated') :
+                (getCurrentLanguage() === 'es' ? 'Modo claro activado' : 'Light mode activated'),
+                'success'
+            );
+        }
+
+        function getCurrentLanguage() {
+            return localStorage.getItem('language') || 'es';
+        }
+
+        // Función para buscar proveedor por cédula - CONECTADO AL BACKEND
+        function buscarProveedor() {
+            const cedula = document.getElementById('cedulaProveedor').value.trim();
+            
+            if (!cedula) {
+                limpiarDatosProveedor();
+                return;
+            }
+
+            // Llamada AJAX al backend
+            fetch(`/api/proveedores/buscar/${cedula}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 404) {
+                        throw new Error('Proveedor no encontrado');
+                    } else {
+                        throw new Error('Error en el servidor');
+                    }
+                })
+                .then(proveedor => {
+                    document.getElementById('nombreProveedor').value = proveedor.nombre;
+                    document.getElementById('emailProveedor').value = proveedor.email || '';
+                    document.getElementById('telefonoProveedor').value = proveedor.telefono || '';
+                    
+                    showNotification(
+                        getCurrentLanguage() === 'es' ? 'Proveedor encontrado' : 'Supplier found',
+                        'success'
+                    );
+                })
+                .catch(error => {
+                    limpiarDatosProveedor();
+                    showNotification(
+                        getCurrentLanguage() === 'es' ? 'Proveedor no encontrado' : 'Supplier not found',
+                        'error'
+                    );
+                });
+        }
+
+        function limpiarDatosProveedor() {
+            document.getElementById('nombreProveedor').value = '';
+            document.getElementById('emailProveedor').value = '';
+            document.getElementById('telefonoProveedor').value = '';
+        }
+
+        // Función para generar número de pedido único - CONECTADO AL BACKEND
+        function generatePedidoNumber() {
+            fetch('/api/proveedores/generar-numero-pedido')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('numeroPedido').value = data.numeroPedido;
+                })
+                .catch(error => {
+                    console.error('Error al generar número de pedido:', error);
+                    // Fallback: generar número local
+                    const date = new Date();
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                    
+                    const pedidoNumber = `PED-${year}${month}${day}-${random}`;
+                    document.getElementById('numeroPedido').value = pedidoNumber;
+                });
+        }
+
+        // Función para agregar item
+        function addItem() {
+            const tbody = document.getElementById('itemsTableBody');
+            const rowCount = tbody.rows.length + 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" class="item-input" placeholder="Descripción"></td>
+                <td><input type="number" class="item-input" placeholder="0" min="1" onchange="calculateRowTotal(this)"></td>
+                <td><input type="number" class="item-input" placeholder="0.00" min="0" step="0.01" onchange="calculateRowTotal(this)"></td>
+                <td class="row-total">0.00</td>
+                <td>
+                    <button class="delete-item-btn" onclick="removeItem(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            tbody.appendChild(newRow);
+            updateItemNumbers();
+            calculateTotals();
+        }
+
+        // Función para eliminar item
+        function removeItem(button) {
+            const tbody = document.getElementById('itemsTableBody');
+            if (tbody.rows.length <= 1) {
+                showNotification(
+                    getCurrentLanguage() === 'es' ? 'Debe mantener al menos un item' : 'Must keep at least one item',
+                    'warning'
+                );
+                return;
+            }
+            
+            const row = button.closest('tr');
+            row.remove();
+            updateItemNumbers();
+            calculateTotals();
+        }
+
+        // Función para actualizar números de items
+        function updateItemNumbers() {
+            const tbody = document.getElementById('itemsTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+        }
+
+        // Función para calcular total de fila
+        function calculateRowTotal(input) {
+            const row = input.closest('tr');
+            const cantidad = parseFloat(row.cells[2].querySelector('input').value) || 0;
+            const precio = parseFloat(row.cells[3].querySelector('input').value) || 0;
+            const total = cantidad * precio;
+            
+            row.cells[4].textContent = total.toFixed(2);
+            calculateTotals();
+        }
+
+        // Función para calcular totales generales - MEJORADA con IVA opcional
+        function calculateTotals() {
+            const tbody = document.getElementById('itemsTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            let subtotal = 0;
+            
+            rows.forEach(row => {
+                const total = parseFloat(row.cells[4].textContent) || 0;
+                subtotal += total;
+            });
+            
+            // Obtener porcentaje de impuesto
+            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const taxAmount = taxPercent > 0 ? (subtotal * taxPercent / 100) : 0;
+            const total = subtotal + taxAmount;
+            
+            // Actualizar display
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            
+            // Mostrar/ocultar fila de impuesto
+            const taxRow = document.getElementById('taxRow');
+            if (taxPercent > 0) {
+                taxRow.style.display = 'flex';
+                document.getElementById('taxAmount').textContent = taxAmount.toFixed(2);
+            } else {
+                taxRow.style.display = 'none';
+            }
+            
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        // Función para guardar pedido - CONECTADO AL BACKEND
+        function guardarPedido() {
+            const cedula = document.getElementById('cedulaProveedor').value.trim();
+            const nombre = document.getElementById('nombreProveedor').value.trim();
+            
+            if (!cedula || !nombre) {
+                showNotification(
+                    getCurrentLanguage() === 'es' ? 'Por favor ingrese y busque un proveedor válido' : 'Please enter and search for a valid supplier',
+                    'error'
+                );
+                return;
+            }
+
+            const tbody = document.getElementById('itemsTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            let items = [];
+            let hasValidItems = false;
+            
+            rows.forEach(row => {
+                const descripcion = row.cells[1].querySelector('input').value.trim();
+                const cantidad = parseInt(row.cells[2].querySelector('input').value) || 0;
+                const precio = parseFloat(row.cells[3].querySelector('input').value) || 0;
+                
+                if (descripcion && cantidad > 0 && precio > 0) {
+                    hasValidItems = true;
+                    items.push({
+                        descripcion: descripcion,
+                        cantidad: cantidad,
+                        precioUnitario: precio,
+                        total: cantidad * precio
+                    });
+                }
+            });
+            
+            if (!hasValidItems) {
+                showNotification(
+                    getCurrentLanguage() === 'es' ? 'Por favor agregue al menos un item válido' : 'Please add at least one valid item',
+                    'error'
+                );
+                return;
+            }
+
+            // Construir objeto pedido
+            const pedidoData = {
+                cedulaProveedor: cedula,
+                nombreProveedor: nombre,
+                emailProveedor: document.getElementById('emailProveedor').value,
+                telefonoProveedor: document.getElementById('telefonoProveedor').value,
+                numeroPedido: document.getElementById('numeroPedido').value,
+                fechaPedido: document.getElementById('fechaPedido').value,
+                fechaEntrega: document.getElementById('fechaEntrega').value,
+                prioridad: document.getElementById('prioridad').value,
+                items: items,
+                condicionesPago: document.querySelector('.condiciones-textarea').value,
+                subtotal: parseFloat(document.getElementById('subtotal').textContent),
+                impuestoPorcentaje: parseFloat(document.getElementById('taxPercent').value) || 0,
+                impuestoMonto: parseFloat(document.getElementById('taxAmount').textContent) || 0,
+                total: parseFloat(document.getElementById('total').textContent),
+                estado: 'PENDIENTE'
+            };
+
+            // Enviar al backend
+            fetch('/api/proveedores/pedidos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pedidoData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(
+                        getCurrentLanguage() === 'es' ? 'Pedido guardado exitosamente' : 'Order saved successfully',
+                        'success'
+                    );
+                    
+                    // Opcionalmente, redirigir o limpiar formulario
+                    setTimeout(() => {
+                        window.location.href = '/proveedores/pedidos/lista';
+                    }, 2000);
+                } else {
+                    showNotification(
+                        data.message || (getCurrentLanguage() === 'es' ? 'Error al guardar pedido' : 'Error saving order'),
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification(
+                    getCurrentLanguage() === 'es' ? 'Error de conexión al guardar pedido' : 'Connection error saving order',
+                    'error'
+                );
+            });
+        }
+
+        // Función para enviar pedido - CONECTADO AL BACKEND
+        function enviarPedido() {
+            const cedula = document.getElementById('cedulaProveedor').value.trim();
+            const nombre = document.getElementById('nombreProveedor').value.trim();
+            
+            if (!cedula || !nombre) {
+                showNotification(
+                    getCurrentLanguage() === 'es' ? 'Por favor ingrese y busque un proveedor válido' : 'Please enter and search for a valid supplier',
+                    'error'
+                );
+                return;
+            }
+
+            // Primero guardar, luego enviar
+            guardarPedido();
+        }
+
+        // Cerrar dropdowns al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            // Cerrar dropdown de idioma
+            if (!languageSelector.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+        });
+
+        // Reposicionar dropdowns al cambiar tamaño de ventana
+        window.addEventListener('resize', function() {
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageBtn = document.getElementById('btnLang');
+            
+            if (languageDropdown.classList.contains('show')) {
+                languageDropdown.classList.remove('show');
+                languageBtn.classList.remove('active');
+            }
+        });
+
+        // Sistema de notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10001;
+                min-width: 300px;
+                padding: 1rem 1.5rem;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius);
+                box-shadow: var(--glass-shadow);
+                color: var(--text-light);
+                font-weight: 500;
+                animation: slideInRight 0.5s ease-out;
+            `;
+            
+            const iconMap = {
+                'success': 'check',
+                'error': 'times',
+                'warning': 'exclamation-triangle',
+                'info': 'info'
+            };
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-${iconMap[type] || 'info'}-circle"></i>
+                    <span style="flex: 1;">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1.2rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.5s ease-in forwards';
+                    setTimeout(() => notification.remove(), 500);
+                }
+            }, 4000);
+        }
+
+        // Añadir CSS para animaciones de notificaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes slideOutRight {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
