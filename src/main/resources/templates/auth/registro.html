@@ -1107,13 +1107,12 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <i class="fas fa-user-tag input-icon"></i>
-                                    <select class="form-select" id="rol" th:field="*{rol}" required>
+                                    <select class="form-select" id="rol" th:field="*{rolNombre}" required>
                                         <option value="" id="selectRoleOption">Seleccionar rol...</option>
                                         <option value="EMPLEADO" id="employeeOption">Empleado</option>
-                                        <option value="VENDEDOR" id="vendorOption">Vendedor</option>
-                                        <option value="ADMIN" id="adminOption" sec:authorize="hasRole('ADMIN')">Administrador</option>
+                                        <option value="ADMINISTRADOR" id="adminOption" sec:authorize="hasRole('ADMIN')">Administrador</option>
                                     </select>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('rolNombre')}" th:errors="*{rolNombre}">
                                         Error en rol
                                     </div>
                                 </div>

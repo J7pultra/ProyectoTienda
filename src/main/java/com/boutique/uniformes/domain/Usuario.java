@@ -49,9 +49,13 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String apellido;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Rol rol = Rol.EMPLEADO;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "usuario_roles",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "rol_id")
+    )
+    private List<Rol> roles;
 
     @Column(name = "activo")
     private Boolean activo = true;
@@ -62,14 +66,35 @@ public class Usuario implements UserDetails {
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
 
-    public enum Rol {
-        ADMIN, EMPLEADO, VENDEDOR
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    /**
+     * Campo temporal para recibir el nombre del rol desde el formulario
+     */
+    @Transient
+    private String rolNombre;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Métodos de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
+        return roles != null ? roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.getNombre().name())).toList() : List.of();
     }
 
     @Override
@@ -100,6 +125,25 @@ public class Usuario implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    // Métodos utilitarios para compatibilidad con lógica antigua
+    public Rol getRol() {
+        return (roles != null && !roles.isEmpty()) ? roles.get(0) : null;
+    }
+    public void setRol(Rol rol) {
+        if (this.roles == null) this.roles = new java.util.ArrayList<>();
+        this.roles.clear();
+        if (rol != null) this.roles.add(rol);
+    }
+    public void setRol(String nombreRol) {
+        if (this.roles == null) this.roles = new java.util.ArrayList<>();
+        this.roles.clear();
+        if (nombreRol != null) {
+            Rol r = new Rol();
+            r.setNombre(Rol.NombreRol.valueOf(nombreRol));
+            this.roles.add(r);
+        }
     }
 
     // Getters y Setters adicionales
@@ -143,12 +187,12 @@ public class Usuario implements UserDetails {
         this.apellido = apellido;
     }
 
-    public Rol getRol() {
-        return this.rol;
+    public List<Rol> getRoles() {
+        return roles;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setRoles(List<Rol> roles) {
+        this.roles = roles;
     }
 
     public LocalDateTime getFechaCreacion() {
@@ -173,6 +217,13 @@ public class Usuario implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getRolNombre() {
+        return rolNombre;
+    }
+    public void setRolNombre(String rolNombre) {
+        this.rolNombre = rolNombre;
     }
     
     

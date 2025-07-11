@@ -66,6 +66,25 @@ public class Uniforme {
     @OneToMany(mappedBy = "uniforme", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetalleVenta> detallesVenta;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public boolean isBajoStock() {
         return stockActual <= stockMinimo;
     }

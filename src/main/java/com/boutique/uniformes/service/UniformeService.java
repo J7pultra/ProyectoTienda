@@ -30,4 +30,6 @@ public interface UniformeService {
     List<String> obtenerCategorias();
     List<Map<String, Object>> obtenerUniformesMasVendidos(int limite);
     boolean existeUniformePorCodigo(String codigo);
+    List<Uniforme> busquedaInteligente(String query);
+    List<Uniforme> obtenerUniformesBajoStock();
 }

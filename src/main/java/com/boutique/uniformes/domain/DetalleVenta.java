@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "detalle_ventas")
@@ -41,8 +42,28 @@ public class DetalleVenta {
     @Column(name = "subtotal", precision = 10, scale = 2)
     private BigDecimal subtotal;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
     @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        calcularSubtotal();
+    }
     @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+        calcularSubtotal();
+    }
+
+    // Anotaciones removidas, solo método utilitario
     private void calcularSubtotal() {
         if (cantidad != null && precioUnitario != null) {
             subtotal = precioUnitario.multiply(BigDecimal.valueOf(cantidad));

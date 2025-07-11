@@ -3,7 +3,6 @@ package com.boutique.uniformes.security;
 import com.boutique.uniformes.domain.Usuario;
 import com.boutique.uniformes.service.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -20,7 +19,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UsuarioService usuarioService;
 
-    @Autowired
     public CustomOAuth2UserService(@Lazy UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
@@ -69,7 +67,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             usuario.setNombre(nombre != null ? nombre : "Usuario");
             usuario.setApellido(apellido != null ? apellido : "Google");
             usuario.setPassword("OAUTH2_USER"); // Password placeholder
-            usuario.setRol(Usuario.Rol.EMPLEADO); // Rol por defecto
+            // Corrección: Asignar el rol por defecto usando el enum de Rol.NombreRol y el método setRol(String nombreRol)
+            usuario.setRol("EMPLEADO"); // Rol por defecto
             usuario.setActivo(true);
             usuario.setFechaCreacion(LocalDateTime.now());
             

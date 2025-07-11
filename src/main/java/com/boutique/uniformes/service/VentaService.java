@@ -24,5 +24,6 @@ public interface VentaService {
     void cancelarVenta(Long id);
     BigDecimal calcularVentasEntreFechas(LocalDate fechaInicio, LocalDate fechaFin);
     Long contarVentasEntreFechas(LocalDate fechaInicio, LocalDate fechaFin);
+    Long contarVentas();
     List<Map<String, Object>> obtenerVentasUltimos7Dias();
 }

@@ -55,15 +55,35 @@ public class Venta {
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetalleVenta> detalles;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
     public enum EstadoVenta {
         PENDIENTE, COMPLETADA, CANCELADA
     }
 
-    @PrePersist
+    // @PrePersist eliminado, ahora se llama desde prePersist
     private void generarNumeroFactura() {
         if (numeroFactura == null) {
             numeroFactura = "FAC-" + System.currentTimeMillis();
         }
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        generarNumeroFactura();
+    }
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {

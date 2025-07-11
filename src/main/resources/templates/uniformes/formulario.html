@@ -5,11 +5,56 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Registro de Uniformes</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>TODO write content</div>
+        <h1>Registrar Nuevo Uniforme</h1>
+        <form th:action="@{/uniformes/guardar}" th:object="${uniforme}" method="post">
+            <div>
+                <label>Código:</label>
+                <input type="text" th:field="*{codigo}" required />
+                <div th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+            </div>
+            <div>
+                <label>Nombre:</label>
+                <input type="text" th:field="*{nombre}" required />
+                <div th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+            </div>
+            <div>
+                <label>Descripción:</label>
+                <input type="text" th:field="*{descripcion}" />
+            </div>
+            <div>
+                <label>Categoría:</label>
+                <input type="text" th:field="*{categoria}" required />
+                <div th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
+            </div>
+            <div>
+                <label>Talla:</label>
+                <input type="text" th:field="*{talla}" required />
+                <div th:if="${#fields.hasErrors('talla')}" th:errors="*{talla}"></div>
+            </div>
+            <div>
+                <label>Color:</label>
+                <input type="text" th:field="*{color}" />
+            </div>
+            <div>
+                <label>Precio:</label>
+                <input type="number" step="0.01" th:field="*{precio}" required />
+                <div th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
+            </div>
+            <div>
+                <label>Stock actual:</label>
+                <input type="number" th:field="*{stockActual}" required />
+                <div th:if="${#fields.hasErrors('stockActual')}" th:errors="*{stockActual}"></div>
+            </div>
+            <div>
+                <label>Stock mínimo:</label>
+                <input type="number" th:field="*{stockMinimo}" />
+            </div>
+            <button type="submit">Guardar</button>
+        </form>
     </body>
 </html>

@@ -10,7 +10,7 @@
         <meta name="author" content="Boutique Uniformes">
 
         <!-- Título dinámico -->
-        <title th:replace="${title}">Boutique Uniformes</title>
+        <title th:text="${title}">Boutique Uniformes</title>
 
         <!-- Favicon -->
         <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
@@ -114,6 +114,7 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" 
+                                   th:if="${#httpServletRequest != null}"
                                    th:href="@{${#httpServletRequest.requestURI}(lang='es')}"
                                    th:classappend="${#locale.language == 'es'} ? 'active' : ''">
                                     <img src="https://flagcdn.com/16x12/es.png" class="me-2" alt="ES">
@@ -123,6 +124,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" 
+                                   th:if="${#httpServletRequest != null}"
                                    th:href="@{${#httpServletRequest.requestURI}(lang='en')}"
                                    th:classappend="${#locale.language == 'en'} ? 'active' : ''">
                                     <img src="https://flagcdn.com/16x12/us.png" class="me-2" alt="EN">
@@ -195,7 +197,7 @@
                 <ul class="sidebar-menu">
                     <li>
                         <a th:href="@{/dashboard}" class="sidebar-link" 
-                           th:classappend="${#httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/dashboard'} ? 'active' : ''">
                             <i class="fas fa-tachometer-alt"></i>
                             <span th:text="#{nav.dashboard}">Dashboard</span>
                         </a>
@@ -203,7 +205,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
                         <a th:href="@{/clientes}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/clientes')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/clientes')} ? 'active' : ''">
                             <i class="fas fa-users"></i>
                             <span th:text="#{nav.clientes}">Clientes</span>
                         </a>
@@ -211,7 +213,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
                         <a th:href="@{/empleados}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/empleados')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/empleados')} ? 'active' : ''">
                             <i class="fas fa-user-tie"></i>
                             <span th:text="#{nav.empleados}">Empleados</span>
                         </a>
@@ -219,7 +221,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
                         <a th:href="@{/uniformes}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/uniformes')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/uniformes')} ? 'active' : ''">
                             <i class="fas fa-tshirt"></i>
                             <span th:text="#{nav.uniformes}">Uniformes</span>
                         </a>
@@ -227,7 +229,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'VENDEDOR', 'EMPLEADO')">
                         <a th:href="@{/ventas}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/ventas')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/ventas')} ? 'active' : ''">
                             <i class="fas fa-shopping-cart"></i>
                             <span th:text="#{nav.ventas}">Ventas</span>
                         </a>
@@ -235,7 +237,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
                         <a th:href="@{/proveedores}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/proveedores')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/proveedores')} ? 'active' : ''">
                             <i class="fas fa-truck"></i>
                             <span th:text="#{nav.proveedores}">Proveedores</span>
                         </a>
@@ -243,7 +245,7 @@
 
                     <li sec:authorize="hasAnyRole('ADMIN', 'EMPLEADO')">
                         <a th:href="@{/asistencias}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/asistencias')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/asistencias')} ? 'active' : ''">
                             <i class="fas fa-clock"></i>
                             <span th:text="#{nav.asistencias}">Asistencias</span>
                         </a>
@@ -251,7 +253,7 @@
 
                     <li sec:authorize="hasRole('ADMIN')">
                         <a th:href="@{/usuarios}" class="sidebar-link"
-                           th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/usuarios')} ? 'active' : ''">
+                           th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #strings.startsWith(#httpServletRequest.requestURI, '/usuarios')} ? 'active' : ''">
                             <i class="fas fa-user-cog"></i>
                             <span th:text="#{nav.usuarios}">Usuarios</span>
                         </a>

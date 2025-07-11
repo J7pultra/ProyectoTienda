@@ -36,8 +36,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
     boolean existsByEmail(String email);
     
-    @Query("SELECT u FROM Usuario u WHERE u.rol = :rol AND u.activo = true")
-    List<Usuario> findByRolAndActivoTrue(@Param("rol") Usuario.Rol rol);
+    @Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.nombre = :rol AND u.activo = true")
+    List<Usuario> findByRolAndActivoTrue(@Param("rol") com.boutique.uniformes.domain.Rol.NombreRol rol);
     
     
 }

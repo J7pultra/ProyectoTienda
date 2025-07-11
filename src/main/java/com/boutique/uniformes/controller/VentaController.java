@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/ventas")
@@ -152,8 +150,7 @@ public class VentaController {
 public ResponseEntity<Map<String, Object>> guardarFactura(@RequestBody Venta venta) {
     try {
         // Obtener usuario actual
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+        // Authentication auth = SecurityContextHolder.getContext().getAuthentication(); // Variable no utilizada
         
         // Buscar empleado por email/username si tienes esa relación
         // Si no, puedes usar un empleado por defecto o el primer empleado activo
@@ -180,4 +177,15 @@ public ResponseEntity<Map<String, Object>> guardarFactura(@RequestBody Venta ven
     }
 }
 
+    @GetMapping("/buscar-cliente")
+    @ResponseBody
+    public List<com.boutique.uniformes.domain.Cliente> buscarClientePorCedula(@RequestParam String cedula) {
+        return clienteService.buscarClientesInteligente(cedula);
+    }
+
+    @GetMapping("/buscar-producto")
+    @ResponseBody
+    public List<com.boutique.uniformes.domain.Uniforme> buscarProductoPorCodigoONombre(@RequestParam String query) {
+        return uniformeService.busquedaInteligente(query);
+    }
 }

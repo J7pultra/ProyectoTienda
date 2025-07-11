@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.boutique.uniformes.service;
-
 
 import com.boutique.uniformes.domain.Empleado;
 import org.springframework.data.domain.Page;
@@ -22,4 +17,6 @@ public interface EmpleadoService {
     void cambiarEstadoEmpleado(Long id, Boolean activo);
     Long contarEmpleadosActivos();
     boolean existeEmpleadoPorDocumento(String documento);
+    java.util.List<Empleado> busquedaInteligente(String query);
+    Empleado buscarPorCedulaParaAsistencia(String cedula);
 }

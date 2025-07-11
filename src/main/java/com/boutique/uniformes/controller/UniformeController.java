@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -47,8 +49,6 @@ public class UniformeController {
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
-
-        // Crear paginación vacía por ahora
         Pageable pageable = PageRequest.of(page, size);
         Page<Object> uniformes = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
@@ -73,7 +73,7 @@ public class UniformeController {
         model.addAttribute("categorias", createMockCategorias());
         model.addAttribute("tallas", createMockTallas());
 
-        return "uniformes/lista";
+        return "uniformes/uniformes";
     }
 
     /**
@@ -82,17 +82,13 @@ public class UniformeController {
     @GetMapping("/nuevo")
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLEADO')")
     public String nuevo(Model model) {
-        Object uniforme = createMockUniforme(null);
-
+        Uniforme uniforme = new Uniforme();
         model.addAttribute("uniforme", uniforme);
         model.addAttribute("titulo", "Nuevo Uniforme");
-
-        // Listas para los selects
         model.addAttribute("categorias", createMockCategorias());
         model.addAttribute("tallas", createMockTallas());
         model.addAttribute("colores", createMockColores());
         model.addAttribute("proveedores", createMockProveedores());
-
         return "uniformes/formulario";
     }
 
@@ -144,13 +140,11 @@ public class UniformeController {
     @PostMapping("/guardar")
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLEADO')")
     public String guardar(
-            @ModelAttribute Object uniforme,
+            @ModelAttribute Uniforme uniforme,
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Aquí implementarías la lógica para guardar
-            // uniformeService.guardar(uniforme);
-
+            uniformeService.guardarUniforme(uniforme);
             redirectAttributes.addFlashAttribute("success", "Uniforme guardado exitosamente");
             return "redirect:/uniformes";
         } catch (Exception e) {
@@ -224,7 +218,7 @@ public class UniformeController {
      */
     @GetMapping("/api/disponibles")
     @ResponseBody
-    public List<Object> getUniformesDisponibles() {
+    public List<Map<String, Object>> getUniformesDisponibles() {
         return createMockUniformesDisponibles();
     }
 
@@ -233,98 +227,43 @@ public class UniformeController {
      */
     @GetMapping("/api/validate-codigo")
     @ResponseBody
-    public Object validateCodigo(@RequestParam String codigo) {
+    public Map<String, Object> validateCodigo(@RequestParam String codigo) {
         // Simular validación
         boolean exists = false; // uniformeService.existePorCodigo(codigo);
 
-        return new Object() {
-            public boolean isExists() {
-                return exists;
-            }
-        };
+        return Map.of("exists", exists);
     }
 
     /**
      * Métodos auxiliares para crear datos simulados
      */
-    private Object createMockUniforme(Long id) {
-        return new Object() {
-            public Long getId() {
-                return id != null ? id : 1L;
-            }
-
-            public String getNombre() {
-                return "Camisa Escolar Blanca";
-            }
-
-            public String getCodigo() {
-                return "CAM-001";
-            }
-
-            public String getDescripcion() {
-                return "Camisa escolar de alta calidad, tela 100% algodón";
-            }
-
-            public String getCategoria() {
-                return "Camisas";
-            }
-
-            public String getTalla() {
-                return "M";
-            }
-
-            public String getColor() {
-                return "Blanco";
-            }
-
-            public BigDecimal getPrecio() {
-                return BigDecimal.valueOf(50000);
-            }
-
-            public BigDecimal getPrecioCompra() {
-                return BigDecimal.valueOf(30000);
-            }
-
-            public int getStock() {
-                return 25;
-            }
-
-            public int getStockMinimo() {
-                return 5;
-            }
-
-            public boolean isActivo() {
-                return true;
-            }
-
-            public String getMarca() {
-                return "Uniformes Premium";
-            }
-
-            public String getMaterial() {
-                return "100% Algodón";
-            }
-
-            public Object getProveedor() {
-                return createMockProveedor();
-            }
-        };
+    private Map<String, Object> createMockUniforme(Long id) {
+        Map<String, Object> uniforme = new HashMap<>();
+        uniforme.put("id", id != null ? id : 1L);
+        uniforme.put("nombre", "Camisa Escolar Blanca");
+        uniforme.put("codigo", "CAM-001");
+        uniforme.put("descripcion", "Camisa escolar de alta calidad, tela 100% algodón");
+        uniforme.put("categoria", "Camisas");
+        uniforme.put("talla", "M");
+        uniforme.put("color", "Blanco");
+        uniforme.put("precio", BigDecimal.valueOf(50000));
+        uniforme.put("precioCompra", BigDecimal.valueOf(30000));
+        uniforme.put("stock", 25);
+        uniforme.put("stockMinimo", 5);
+        uniforme.put("activo", true);
+        uniforme.put("marca", "Uniformes Premium");
+        uniforme.put("material", "100% Algodón");
+        uniforme.put("proveedor", createMockProveedor());
+        uniforme.put("stockActual", 25);
+        return uniforme;
     }
 
-    private Object createMockProveedor() {
-        return new Object() {
-            public Long getId() {
-                return 1L;
-            }
-
-            public String getNombre() {
-                return "Textiles Colombia S.A.S";
-            }
-
-            public String getNit() {
-                return "900.123.456-7";
-            }
-        };
+    private Map<String, Object> createMockProveedor() {
+        Map<String, Object> proveedor = new HashMap<>();
+        proveedor.put("id", 1L);
+        proveedor.put("nombre", "Textiles Colombia S.A.S");
+        proveedor.put("nit", "900.123.456-7");
+        return proveedor;
     }
 
     private List<String> createMockCategorias() {
@@ -360,44 +299,25 @@ public class UniformeController {
         return colores;
     }
 
-    private List<Object> createMockProveedores() {
-        List<Object> proveedores = new ArrayList<>();
+    private List<Map<String, Object>> createMockProveedores() {
+        List<Map<String, Object>> proveedores = new ArrayList<>();
         proveedores.add(createMockProveedor());
         return proveedores;
     }
 
-    private List<Object> createMockUniformesDisponibles() {
-        List<Object> uniformes = new ArrayList<>();
+    private List<Map<String, Object>> createMockUniformesDisponibles() {
+        List<Map<String, Object>> uniformes = new ArrayList<>();
         uniformes.add(createMockUniforme(1L));
-        uniformes.add(new Object() {
-            public Long getId() {
-                return 2L;
-            }
-
-            public String getNombre() {
-                return "Pantalón Escolar Azul";
-            }
-
-            public String getCodigo() {
-                return "PAN-001";
-            }
-
-            public BigDecimal getPrecio() {
-                return BigDecimal.valueOf(75000);
-            }
-
-            public int getStock() {
-                return 15;
-            }
-
-            public String getCategoria() {
-                return "Pantalones";
-            }
-
-            public String getTalla() {
-                return "M";
-            }
-        });
+        
+        Map<String, Object> uniforme2 = new HashMap<>();
+        uniforme2.put("id", 2L);
+        uniforme2.put("nombre", "Pantalón Escolar Azul");
+        uniforme2.put("codigo", "PAN-001");
+        uniforme2.put("precio", BigDecimal.valueOf(75000));
+        uniforme2.put("stock", 15);
+        uniforme2.put("categoria", "Pantalones");
+        uniforme2.put("talla", "M");
+        uniformes.add(uniforme2);
         return uniformes;
     }
 
@@ -429,5 +349,11 @@ public class UniformeController {
         } catch (Exception e) {
             return ResponseEntity.ok(Collections.emptyList());
         }
+    }
+
+    @GetMapping("/alerta-stock-bajo")
+    @ResponseBody
+    public List<Uniforme> alertaStockBajo() {
+        return uniformeService.obtenerUniformesBajoStock();
     }
 }

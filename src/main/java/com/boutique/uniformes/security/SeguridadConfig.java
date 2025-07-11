@@ -1,6 +1,5 @@
 package com.boutique.uniformes.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -17,7 +16,6 @@ public class SeguridadConfig {
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomOAuth2UserService oAuth2UserService;
 
-    @Autowired
     public SeguridadConfig(@Lazy CustomAuthenticationSuccessHandler successHandler,
                           @Lazy CustomOAuth2UserService oAuth2UserService) {
         this.successHandler = successHandler;

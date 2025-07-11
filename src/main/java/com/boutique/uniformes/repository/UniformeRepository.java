@@ -48,9 +48,12 @@ public interface UniformeRepository extends JpaRepository<Uniforme, Long> {
     
     List<Uniforme> findByColor(String color);
     
+    @Query("SELECT u FROM Uniforme u WHERE (u.codigo = :query OR LOWER(u.nombre) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(u.categoria) LIKE LOWER(CONCAT('%',:query,'%'))) AND u.activo = true")
+    List<Uniforme> busquedaInteligente(@Param("query") String query);
+    
     @Query("SELECT u FROM Uniforme u WHERE u.precio BETWEEN :precioMin AND :precioMax AND u.activo = true")
     List<Uniforme> findByPrecioBetween(@Param("precioMin") BigDecimal precioMin, 
-                                      @Param("precioMax") BigDecimal precioMax);
+                                       @Param("precioMax") BigDecimal precioMax);
     
     @Query("SELECT DISTINCT u.categoria FROM Uniforme u WHERE u.activo = true ORDER BY u.categoria")
     List<String> findDistinctCategorias();
@@ -71,7 +74,6 @@ public interface UniformeRepository extends JpaRepository<Uniforme, Long> {
                    "INNER JOIN ventas v ON dv.venta_id = v.id " +
                    "WHERE v.estado = 'COMPLETADA' " +
                    "GROUP BY u.id, u.nombre, u.codigo " +
-                   "ORDER BY totalVendido DESC " +
-                   "LIMIT :limite", nativeQuery = true)
-    List<Map<String, Object>> findUniformesMasVendidos(@Param("limite") int limite);
+                   "ORDER BY totalVendido DESC", nativeQuery = true)
+    List<Map<String, Object>> findUniformesMasVendidos(Pageable pageable);
 }

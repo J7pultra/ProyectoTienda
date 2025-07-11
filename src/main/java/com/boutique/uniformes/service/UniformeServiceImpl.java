@@ -8,6 +8,7 @@ import com.boutique.uniformes.domain.Uniforme;
 import com.boutique.uniformes.repository.UniformeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,12 +132,23 @@ public class UniformeServiceImpl implements UniformeService {
     @Override
     @Transactional(readOnly = true)
     public List<Map<String, Object>> obtenerUniformesMasVendidos(int limite) {
-        return uniformeRepository.findUniformesMasVendidos(limite);
+        Pageable pageable = PageRequest.of(0, limite);
+        return uniformeRepository.findUniformesMasVendidos(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existeUniformePorCodigo(String codigo) {
         return uniformeRepository.existsByCodigo(codigo);
+    }
+
+    @Override
+    public List<Uniforme> busquedaInteligente(String query) {
+        return uniformeRepository.busquedaInteligente(query);
+    }
+
+    @Override
+    public List<Uniforme> obtenerUniformesBajoStock() {
+        return uniformeRepository.findByStockActualLessThanEqualStockMinimo(org.springframework.data.domain.PageRequest.of(0, 100)).getContent();
     }
 }

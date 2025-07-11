@@ -1,9 +1,10 @@
 package com.boutique.uniformes.service;
 
+import com.boutique.uniformes.domain.Rol;
 import com.boutique.uniformes.domain.Usuario;
+import com.boutique.uniformes.repository.RolRepository;
 import com.boutique.uniformes.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +23,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RolRepository rolRepository;
 
     // Usar @Lazy para romper la dependencia circular
-    @Autowired
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, 
-                             @Lazy PasswordEncoder passwordEncoder) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository,
+                             @Lazy PasswordEncoder passwordEncoder,
+                             RolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.rolRepository = rolRepository;
     }
 
    @Override
@@ -44,7 +47,7 @@ public Usuario guardarUsuario(Usuario usuario) {
     usuarioExistente.setRol(usuario.getRol());
 
     // Solo actualizar password si no es OAuth2 y si cambió
-    if (!"OAUTH2_USER".equals(usuario.getPassword()) && 
+    if (!"OAUTH2_USER".equals(usuario.getPassword()) &&
         !usuario.getPassword().equals(usuarioExistente.getPassword())) {
         usuarioExistente.setPassword(passwordEncoder.encode(usuario.getPassword()));
     }
@@ -54,18 +57,30 @@ public Usuario guardarUsuario(Usuario usuario) {
 
 @Override
 public Usuario registrarUsuario(Usuario usuario) {
+    // Si el usuario viene con un String en el campo rol (por ejemplo, desde el formulario),
+    // buscar el objeto Rol correspondiente y asignarlo
+    if (usuario.getRol() == null && usuario.getRoles() == null || usuario.getRoles().isEmpty()) {
+        // Intentar obtener el nombre del rol desde un campo temporal (por ejemplo, usuario.rolNombre)
+        try {
+            String rolNombre = (String) usuario.getClass().getDeclaredField("rolNombre").get(usuario);
+            if (rolNombre != null && !rolNombre.isBlank()) {
+                Rol.NombreRol nombreRol = Rol.NombreRol.valueOf(rolNombre.toUpperCase());
+                Rol rol = rolRepository.findByNombre(nombreRol)
+                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + rolNombre));
+                usuario.setRol(rol);
+            }
+        } catch (Exception ignored) {}
+    }
     if (existeUsuarioPorUsername(usuario.getUsername())) {
         throw new RuntimeException("Ya existe un usuario con ese nombre de usuario");
     }
     if (existeUsuarioPorEmail(usuario.getEmail())) {
         throw new RuntimeException("Ya existe un usuario con ese email");
     }
-
     // Solo encriptar si no es un usuario OAuth2
     if (!"OAUTH2_USER".equals(usuario.getPassword())) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
     }
-    
     usuario.setFechaCreacion(LocalDateTime.now());
     usuario.setActivo(true);
     return usuarioRepository.save(usuario);

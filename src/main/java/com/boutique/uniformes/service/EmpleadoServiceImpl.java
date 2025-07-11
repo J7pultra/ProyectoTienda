@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.boutique.uniformes.service;
-
 
 import com.boutique.uniformes.domain.Empleado;
 import com.boutique.uniformes.repository.EmpleadoRepository;
@@ -39,20 +34,20 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Transactional(readOnly = true)
     public Empleado obtenerEmpleadoPorId(Long id) {
         return empleadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Empleado obtenerEmpleadoPorDocumento(String documento) {
         return empleadoRepository.findByDocumento(documento)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con documento: " + documento));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con documento " + documento));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Empleado> obtenerEmpleadosActivos() {
-        return empleadoRepository.findByActivoTrue();
+        return empleadoRepository.findAll().stream().filter(Empleado::getActivo).toList();
     }
 
     @Override
@@ -64,8 +59,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Override
     @Transactional(readOnly = true)
     public Page<Empleado> buscarEmpleados(String buscar, Pageable pageable) {
-        return empleadoRepository.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCaseOrDocumentoContainingIgnoreCaseOrCargoContainingIgnoreCase(
-                buscar, buscar, buscar, buscar, pageable);
+        // Puedes implementar búsqueda por nombre, apellido o documento si tienes método en repo
+        return empleadoRepository.findAll(pageable); // Temporal, reemplazar si implementas búsqueda
     }
 
     @Override
@@ -85,7 +80,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Override
     @Transactional(readOnly = true)
     public Long contarEmpleadosActivos() {
-        return empleadoRepository.countByActivoTrue();
+        return empleadoRepository.findAll().stream().filter(Empleado::getActivo).count();
     }
 
     @Override
@@ -93,4 +88,16 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public boolean existeEmpleadoPorDocumento(String documento) {
         return empleadoRepository.existsByDocumento(documento);
     }
+
+    @Override
+    public java.util.List<Empleado> busquedaInteligente(String query) {
+        return empleadoRepository.busquedaInteligente(query);
+    }
+
+    @Override
+    public Empleado buscarPorCedulaParaAsistencia(String cedula) {
+        return empleadoRepository.findByDocumentoAndActivoTrue(cedula)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado o inactivo"));
+    }
 }
+

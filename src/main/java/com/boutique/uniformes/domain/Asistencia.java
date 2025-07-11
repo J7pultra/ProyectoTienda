@@ -2,78 +2,73 @@ package com.boutique.uniformes.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "asistencias")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Asistencia {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotNull(message = "El empleado es obligatorio")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empleado_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "empleado_id")
     private Empleado empleado;
-    
+
     @NotNull(message = "La fecha es obligatoria")
     private LocalDate fecha;
-    
-    @Column(name = "hora_entrada")
+
     private LocalTime horaEntrada;
-    
-    @Column(name = "hora_salida")
+
     private LocalTime horaSalida;
-    
-    @Enumerated(EnumType.STRING)
-    private EstadoAsistencia estado = EstadoAsistencia.PRESENTE;
-    
+
+    private String estado;
+
     private String observaciones;
-    
-    public enum EstadoAsistencia {
-        PRESENTE, AUSENTE, TARDANZA, PERMISO
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    // Getters y setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Empleado getEmpleado() { return empleado; }
+    public void setEmpleado(Empleado empleado) { this.empleado = empleado; }
+
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+
+    public LocalTime getHoraEntrada() { return horaEntrada; }
+    public void setHoraEntrada(LocalTime horaEntrada) { this.horaEntrada = horaEntrada; }
+
+    public LocalTime getHoraSalida() { return horaSalida; }
+    public void setHoraSalida(LocalTime horaSalida) { this.horaSalida = horaSalida; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
-    
-    // Agregar estos métodos:
-public LocalDate getFecha() {
-    return this.fecha;
-}
-
-public void setFecha(LocalDate fecha) {
-    this.fecha = fecha;
-}
-
-public Empleado getEmpleado() {
-    return this.empleado;
-}
-
-public void setEmpleado(Empleado empleado) {
-    this.empleado = empleado;
-}
-
-public LocalTime getHoraSalida() {
-    return this.horaSalida;
-}
-
-public void setHoraSalida(LocalTime horaSalida) {
-    this.horaSalida = horaSalida;
-}
-
-public void setHoraEntrada(LocalTime horaEntrada) {
-    this.horaEntrada = horaEntrada;
-}
-
-public void setEstado(EstadoAsistencia estado) {
-    this.estado = estado;
-}
-
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

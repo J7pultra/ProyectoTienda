@@ -139,4 +139,9 @@ public class VentaServiceImpl implements VentaService {
     public List<Map<String, Object>> obtenerVentasUltimos7Dias() {
         return ventaRepository.findVentasUltimos7Dias();
     }
+
+    @Override
+    public Long contarVentas() {
+        return ventaRepository.count();
+    }
 }

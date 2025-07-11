@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.boutique.uniformes.service;
 
 import com.boutique.uniformes.domain.Proveedor;
@@ -26,7 +22,7 @@ public class ProveedorServiceImpl implements ProveedorService {
     public Proveedor guardarProveedor(Proveedor proveedor) {
         if (proveedor.getId() == null) {
             if (existeProveedorPorNit(proveedor.getNit())) {
-                throw new RuntimeException("Ya existe un proveedor con ese NIT");
+                throw new RuntimeException("Ya existe un proveedor con ese NIT/RUC");
             }
             proveedor.setFechaRegistro(LocalDateTime.now());
             proveedor.setActivo(true);
@@ -38,14 +34,14 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Transactional(readOnly = true)
     public Proveedor obtenerProveedorPorId(Long id) {
         return proveedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con ID " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Proveedor obtenerProveedorPorNit(String nit) {
         return proveedorRepository.findByNit(nit)
-                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con NIT: " + nit));
+                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con NIT/RUC " + nit));
     }
 
     @Override
@@ -63,8 +59,7 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Override
     @Transactional(readOnly = true)
     public Page<Proveedor> buscarProveedores(String buscar, Pageable pageable) {
-        return proveedorRepository.findByNombreContainingIgnoreCaseOrNitContainingIgnoreCaseOrContactoContainingIgnoreCase(
-                buscar, buscar, buscar, pageable);
+        return proveedorRepository.findByNombreContainingIgnoreCaseOrNitContainingIgnoreCaseOrContactoContainingIgnoreCase(buscar, buscar, buscar, pageable);
     }
 
     @Override
@@ -91,5 +86,17 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Transactional(readOnly = true)
     public boolean existeProveedorPorNit(String nit) {
         return proveedorRepository.existsByNit(nit);
+    }
+
+    @Override
+    public java.util.List<Proveedor> busquedaInteligente(String query) {
+        return proveedorRepository.busquedaInteligente(query);
+    }
+
+    @Override
+    public java.util.List<Object> obtenerHistorialCompras(Long proveedorId) {
+        // Implementar consulta real de historial de compras por proveedor
+        // Ejemplo: return compraRepository.findByProveedorId(proveedorId);
+        return java.util.List.of(); // Placeholder
     }
 }
