@@ -174,7 +174,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ##  Desarrollador
 
-**Juan Carlos** - Desarrollador Principal
+**Juan Huertas** - Desarrollador Principal
 
 - GitHub: [@J7pultra](https://github.com/J7pultra)
 - Email: juan.huertas@est.ucacue.edu.ec
